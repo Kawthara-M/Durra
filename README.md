@@ -17,7 +17,7 @@ xxx
 ## Future Updates
 - Mobile platform
 - 
-## Credits
+## Attributations
 
 
 
