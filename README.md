@@ -1,6 +1,6 @@
 # Durra
 
-**By:** [Kawthar Mohammad](https://github.com/Kawthara-M) | [Ghadeer Abdulla](https://github.com/igha07) | [x](https://github.com/RagadAbdulla) <br>
+**By:** [Kawthar Mohammad](https://github.com/Kawthara-M) | [Ghadeer Abdulla](https://github.com/igha07) | [Ragad Abdulla](https://github.com/RagadAbdulla) <br>
 **Date:** x / x / 2025 
 
 ## Description
