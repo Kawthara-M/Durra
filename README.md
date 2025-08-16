@@ -4,20 +4,22 @@
 **Date:** x / x / 2025 
 
 ## Description
-Durra, the arabic pronunciation of pearl and things of value, was chosen to intitle the web-based platform matching between jewelrs and clients in Bahrain. Durra is a project developed to meet the requirements of the senior project course, and is guided by the vision of preserving Bahrain's jewelry heritage and culture. -update-
+Durra is a project developed to meet the requirements of the IT College senior project course, and is guided by the vision of preserving Bahrain's jewelry heritage and culture. "Durra" is the arabic pronunciation of pearl and things of value, and was chosen to intitle the web-based platform matching between jewelrs and jewelry seekers in Bahrain. -update to include features-
+
 ## Getting Started
-Durra has been developed with the end-user prioritized, so a first-time user is not to have a hard time figuring out things.
+Durra has been developed with the end-user prioritized, so a first-time user is not to have a hard time figuring things out.
 To ensure that, the planning phase included several diagrams...
 
 ## Technologies Used
-xxx
+- React.js (frontend)
 
 ## Wireframes
 xxx
 ## Future Updates
 - Mobile platform
-- 
-## Credits
+-
+## Attributations
+- Password Validator (front-end): [geeksforgeeks](https://www.geeksforgeeks.org/reactjs/create-a-password-validator-using-reactjs/)
 
 
 
