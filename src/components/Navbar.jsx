@@ -4,6 +4,7 @@ import "../../public/styleSheets/navbar.css"
 import userIcon from "../assets/user.png"
 import cartIcon from "../assets/cart.png"
 import searchIcon from "../assets/search.png"
+import heartIcon from "../assets/heart.png"
 
 const Navbar = ({ handleLogOut, customer }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -64,6 +65,22 @@ const Navbar = ({ handleLogOut, customer }) => {
                 title="Sign in to view profile"
               >
                 <img src={userIcon} alt="user icon" className="icon" />
+              </span>
+            )}
+            {customer ? (
+              <Link
+                to={`/favourites/${customer.id}`}
+                className="icon-btn"
+                title="Favourites"
+              >
+                <img src={heartIcon} alt="favourite icon" className="icon" />
+              </Link>
+            ) : (
+              <span
+                className="icon-btn disabled-link"
+                title="Sign in to view favourites"
+              >
+                <img src={heartIcon} alt="favourite icon" className="icon" />
               </span>
             )}
           </div>
