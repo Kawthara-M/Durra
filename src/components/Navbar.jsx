@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
-import "../../public/styleSheets/navbar.css"
+import "../../public/stylesheets/navbar.css"
 import userIcon from "../assets/user.png"
 import cartIcon from "../assets/cart.png"
 import searchIcon from "../assets/search.png"
@@ -105,19 +105,19 @@ const Navbar = ({ handleLogOut, customer }) => {
             <Link to="/jewelry" onClick={closeMenu}>
               All Jewelry
             </Link>
+            <Link to="/jewelry/rings" onClick={closeMenu}>
+              Rings
+            </Link>
             <Link to="/jewelry/earrings" onClick={closeMenu}>
               Earrings
             </Link>
             <Link to="/jewelry/bracelets" onClick={closeMenu}>
               Bracelets
             </Link>
-            <Link to="/jewelry/rings" onClick={closeMenu}>
-              Rings
-            </Link>
             <Link to="/jewelry/necklaces" onClick={closeMenu}>
               Necklaces
             </Link>
-            <Link to="/services/necklaces" onClick={closeMenu}>
+            <Link to="/services" onClick={closeMenu}>
               Services
             </Link>
           </nav>

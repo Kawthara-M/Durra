@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { Route, Routes } from "react-router-dom"
 import Navbar from "./components/Navbar"
+import Footer from "./components/Footer"
 import Authentication from "./pages/authentication"
 import "./App.css"
 
@@ -25,6 +26,7 @@ function App() {
 
   return (
     <>
+    <div className='app-container'>
       <Navbar handleLogOut={handleLogOut} user={user}  />
       <main>
         <Routes>
@@ -32,6 +34,7 @@ function App() {
           <Route path="/auth" element={<Authentication setUser={setUser}/>} />
         </Routes>
       </main>
+      <Footer/></div>
     </>
   )
 }

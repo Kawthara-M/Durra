@@ -78,7 +78,7 @@ button:not(:disabled):hover {
 }
 
 a {
-  color: #290000;
+  /* color: #290000; */
   font-weight: bold;
   text-decoration: none;
 }
