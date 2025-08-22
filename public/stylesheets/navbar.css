@@ -1,21 +1,28 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display&family=Lora&display=swap");
 
+.top-wrapper,
+.topNav,
+.sideNav,
+a, .toggleBtn {
+  background-color: var(--nav-bg);
+  color: var(--text-color);
+}
+
+
 .top-wrapper {
-  position: sticky;
   top: 0;
   z-index: 1000;
   width: 100%;
   margin: 0;
-  background-color: rgb(240, 235, 235);
 }
 
 .topNav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 1rem 0.25rem 2rem;
-  background-color: rgb(240, 235, 235);
+  padding: 1rem 1rem 0.25rem 2rem;
   position: relative;
+  border: none;
 }
 
 .topNav-left,
@@ -47,18 +54,18 @@ img.icon {
   width: 1rem;
 }
 
-.brand-logo, .brand-logo-mobile {
+.brand-logo,
+.brand-logo-mobile {
   font-family: "Playfair Display", serif;
   font-size: 1.5rem;
   font-weight: bold;
   text-decoration: none;
-  color: #290000;
   padding: 0 1rem;
 }
 .brand-logo-mobile {
   text-align: center;
   padding: 0;
-  margin-bottom:1rem;
+  margin-bottom: 1rem;
   display: block;
 }
 
@@ -73,13 +80,19 @@ img.icon {
 .pages-navbar a {
   font-family: "Lora", serif;
   font-size: 1rem;
-  color: #290000;
   text-decoration: none;
   font-weight: 400;
+  padding: 0 0.4rem;
 }
 
 .pages-navbar a:hover {
   text-decoration: underline;
+}
+
+.brand-logo,
+.pages-navbar a,
+.side-navbar-links a {
+  color: var(--text-color);
 }
 
 .disabled-link {
@@ -101,12 +114,9 @@ img.icon {
   width: 20%;
   padding: 0.5rem 0.1rem 0.5 0.1rem;
   text-align: center;
-    color:black;
-
 }
-.toggleBtn:hover, .closeBtn:hover {
+.toggleBtn:hover {
   background-color: transparent !important;
-  color:#370101;
 }
 
 @media (min-width: 541px) {
@@ -127,10 +137,8 @@ img.icon {
   left: -100vw;
   height: 100vh;
   width: 20%;
-  background-color: rgb(240, 235, 235);
   padding: 2rem 3rem;
   display: none;
-  flex-direction: column;
   gap: 1rem;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   transition: left 0.3s ease-in-out;
@@ -139,6 +147,7 @@ img.icon {
 @media (max-width: 540px) {
   .sideNav {
     display: flex;
+    flex-direction: column;
   }
 }
 
@@ -154,9 +163,8 @@ img.icon {
 
 .side-navbar-links a {
   text-decoration: none;
-  color: #290000;
 }
 
-.hide-on-mobile{
-  display:none;
+.hide-on-mobile {
+  display: none;
 }

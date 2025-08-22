@@ -1,8 +1,34 @@
-body{
-  max-width: 100vw;
-  height:100vh;
-  margin: 0;
-  text-align: center;
-  background-color: rgb(245, 244, 244);
+body.light {
+  --bg-color: rgb(
+    244,
+    236,
+    236
+  ); /*the background color of content between navbar and footer*/
+  --footer-bg: rgb(243, 230, 230);
+  --text-color: rgb(39, 38, 38);
+  --nav-bg: rgb(243, 230, 230);
 }
 
+body.dark {
+  --bg-color: #1a1a1a;
+  --footer-bg: #242424;
+  --text-color: #f3f3f3;
+  --nav-bg: #2c2c2c;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+main {
+  flex: 1;
+}
