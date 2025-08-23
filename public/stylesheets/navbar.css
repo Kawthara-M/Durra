@@ -3,15 +3,14 @@
 .top-wrapper,
 .topNav,
 .sideNav,
-a, .toggleBtn {
+a,
+.toggleBtn {
   background-color: var(--nav-bg);
   color: var(--text-color);
 }
 
-
 .top-wrapper {
   top: 0;
-  z-index: 1000;
   width: 100%;
   margin: 0;
 }
@@ -25,7 +24,6 @@ a, .toggleBtn {
   border: none;
 }
 
-.topNav-left,
 .topNav-right,
 .topNav-center {
   display: flex;
@@ -40,7 +38,7 @@ a, .toggleBtn {
 .topNav-right {
   flex: 1;
   justify-content: flex-end;
-  gap: 0.6rem;
+  gap: 0.4rem;
 }
 
 .topNav-center {
@@ -56,7 +54,6 @@ img.icon {
 
 .brand-logo,
 .brand-logo-mobile {
-  font-family: "Playfair Display", serif;
   font-size: 1.5rem;
   font-weight: bold;
   text-decoration: none;
@@ -105,6 +102,9 @@ img.icon {
   border: none;
   cursor: pointer;
 }
+.icon-btn:hover {
+  background-color: transparent;
+}
 
 .toggleBtn {
   font-size: 1rem;
@@ -118,19 +118,6 @@ img.icon {
 .toggleBtn:hover {
   background-color: transparent !important;
 }
-
-@media (min-width: 541px) {
-  .toggleBtn {
-    display: none;
-  }
-}
-
-@media (max-width: 540px) {
-  .pages-navbar.desktop-navbar {
-    display: none;
-  }
-}
-
 .sideNav {
   position: fixed;
   top: 0;
@@ -144,7 +131,23 @@ img.icon {
   transition: left 0.3s ease-in-out;
   z-index: 1000;
 }
-@media (max-width: 540px) {
+
+/* if you are changing padding or margin of pages-navbar you might need to change the following media queries*/
+/* media queries are the one's responsible for showing the nav as a hidden menu for smaller screens*/
+
+@media (min-width: 616px) {
+  .toggleBtn {
+    display: none;
+  }
+}
+
+@media (max-width: 615px) {
+  .pages-navbar.desktop-navbar {
+    display: none;
+  }
+}
+
+@media (max-width: 615px) {
   .sideNav {
     display: flex;
     flex-direction: column;
@@ -167,4 +170,30 @@ img.icon {
 
 .hide-on-mobile {
   display: none;
+}
+
+#search,
+#search:hover {
+  background-color: transparent;
+  height: fit-content;
+  padding: 0;
+}
+
+.search-bar-container {
+  padding: 1rem 1rem;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  padding: 0 1rem;
+  width: 80%;
+  height: 2.5rem;
+  max-width: 630px;
+  margin-bottom: 0;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  font-family: inherit;
 }

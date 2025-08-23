@@ -8,6 +8,7 @@ import heartIcon from "../assets/heart.png"
 
 const Navbar = ({ handleLogOut, customer }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [showSearchInput, setShowSearchInput] = useState(false)
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
@@ -35,7 +36,12 @@ const Navbar = ({ handleLogOut, customer }) => {
 
           <div className="topNav-right">
             <Link to="#">
-              <img src={searchIcon} alt="search icon" className="icon" />
+              <button
+                onClick={() => setShowSearchInput(!showSearchInput)}
+                id="search"
+              >
+                <img src={searchIcon} alt="search icon" className="icon" />
+              </button>
             </Link>
 
             {customer ? (
@@ -86,14 +92,25 @@ const Navbar = ({ handleLogOut, customer }) => {
           </div>
         </nav>
 
-        <nav className="pages-navbar desktop-navbar">
+      
+
+        {showSearchInput ? (
+          <div className="search-bar-container">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="search-input"
+              // Optional: onChange or onKeyDown to handle search
+            />
+          </div>
+        ):   <nav className="pages-navbar desktop-navbar">
           <Link to="/jewelry">All Jewelry</Link>
           <Link to="/jewelry/earrings">Earrings</Link>
           <Link to="/jewelry/bracelets">Bracelets</Link>
           <Link to="/jewelry/rings">Rings</Link>
           <Link to="/jewelry/necklaces">Necklaces</Link>
           <Link to="/services/necklaces">Services</Link>
-        </nav>
+        </nav> }
 
         <div className={`sideNav ${isOpen ? "open" : ""}`}>
           <div className="sidebar-logo">

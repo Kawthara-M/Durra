@@ -45,7 +45,7 @@ const Footer = () => {
           >
             <img src={themeIcon} alt="Theme icon"  />
           </button>
-          {/* theme should be part of user page, but it currentlt doesn't exist */}
+          {/* theme should be part of user page, but it currently doesn't exist */}
         </div>
         <p id="durra">© 2025 DURRA</p>
       </footer>
