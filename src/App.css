@@ -12,7 +12,7 @@ body.light {
 body.dark {
   --bg-color: #1a1a1a;
   --footer-bg: #242424;
-  --text-color: #f3f3f3;
+  --text-color: #f3e6e6;
   --nav-bg: #2c2c2c;
 }
 
@@ -21,6 +21,7 @@ body {
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
   margin: 0;
+  font-family: "Playfair Display", serif; /* change to what's suitable if not okay*/
 }
 
 .app-container {
