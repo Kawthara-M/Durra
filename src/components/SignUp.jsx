@@ -163,7 +163,7 @@ const SignUp = ({ setShowSignUp }) => {
         </form>
         {/*   {errorMessage && <span className="error">{errorMessage}</span>} */}
 
-        <p>
+        <p id="switch">
           Already have an account?{" "}
           <button
             type="button"
