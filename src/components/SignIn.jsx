@@ -71,7 +71,7 @@ const SignIn = (
           Sign In
         </button>
       </form>
-      <p>
+      <p id="switch">
         Don't have an Account?
         <button className="switch"
           type="button"

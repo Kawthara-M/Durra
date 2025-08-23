@@ -26,7 +26,7 @@ h2 {
   font-weight: bold;
   margin-bottom: 1rem;
   font-size: 2.5rem;
-  color: #290000;
+  color: var(--text-color);
 }
 
 label {
@@ -69,8 +69,10 @@ button:disabled {
   background-color: #d9d9d9;
   cursor: not-allowed;
 }
-p {
+
+#switch {
   font-size: 0.85rem;
+  text-align: center;
 }
 
 button:not(:disabled):hover {
@@ -78,7 +80,6 @@ button:not(:disabled):hover {
 }
 
 a {
-  /* color: #290000; */
   font-weight: bold;
   text-decoration: none;
 }
@@ -106,7 +107,7 @@ a {
 .phone-code {
   position: absolute;
   left: 0.75rem;
-  bottom: .5rem;
+  bottom: 0.5rem;
   display: flex;
   align-items: center;
   font-size: 1rem;
@@ -118,16 +119,16 @@ a {
 
 .phone-input-wrapper input {
   width: 100%;
-  padding: 0.6rem 0.6rem 0.6rem 4rem; 
+  padding: 0.6rem 0.6rem 0.6rem 4rem;
   font-size: 1rem;
   border: 1px solid #bbb;
   border-radius: 5px;
   box-sizing: border-box;
-  height: 2.5rem; 
+  height: 2.5rem;
   line-height: 1.2;
 }
 .switch {
-    background: none;
+  background: none;
   border: none;
   color: #290000;
   font-weight: bold;
@@ -137,9 +138,9 @@ a {
   text-decoration: none;
 }
 .switch:hover {
-  background-color: transparent !important; 
-  color: #290000; 
-  text-decoration: underline; 
+  background-color: transparent !important;
+  color: #290000;
+  text-decoration: underline;
 }
 
 .label-with-icon {
@@ -161,12 +162,12 @@ a {
   cursor: help;
   font-weight: bold;
   line-height: 1rem;
-  border: 1px solid #bbb; 
+  border: 1px solid #bbb;
 }
 
 .tooltip-error {
-  border:1px solid #6f0101;
-  color:#6f0101;
+  border: 1px solid #6f0101;
+  color: #6f0101;
 }
 
 .input-error {
@@ -180,4 +181,3 @@ a {
   margin-bottom: 1rem;
   display: block;
 }
-
