@@ -1,4 +1,5 @@
 import { useContext } from "react"
+import { Navigate, useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import instaIcon from "../assets/instagram.png"
 import themeIcon from "../assets/theme.png"
@@ -7,7 +8,8 @@ import { ThemeContext } from "../context/ThemeContext"
 import "../../public/stylesheets/footer.css"
 
 const Footer = () => {
-  const { toggleTheme, theme } = useContext(ThemeContext)
+  const { toggleTheme } = useContext(ThemeContext)
+  const navigate = useNavigate()
 
   return (
     <>
@@ -16,7 +18,7 @@ const Footer = () => {
           <div className="container">
             <h6>General</h6>
             <div className="options">
-              <p>About Us</p>
+              <p onClick={()=> {navigate("/about")}}>About Us</p>
               <p>Privacy Policy</p>
               <p>Terms and Conditions</p>
             </div>

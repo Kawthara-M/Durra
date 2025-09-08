@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
+import { useUser } from "../context/UserContext"
 import "../../public/stylesheets/navbar.css"
 import userIcon from "../assets/user.png"
 import cartIcon from "../assets/cart.png"
@@ -9,6 +10,7 @@ import heartIcon from "../assets/heart.png"
 const Navbar = ({ handleLogOut, customer }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [showSearchInput, setShowSearchInput] = useState(false)
+  const { user } = useUser()
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
@@ -43,56 +45,70 @@ const Navbar = ({ handleLogOut, customer }) => {
                 <img src={searchIcon} alt="search icon" className="icon" />
               </button>
             </Link>
+            {user ? (
+              <>
+                {/* Cart Icon - Only for customers */}
+                {user.role === "customer" && (
+                  <Link to="/cart" title="Cart">
+                    <img src={cartIcon} alt="cart icon" className="icon" />
+                  </Link>
+                )}
 
-            {customer ? (
-              <Link to="/cart" title="Cart">
-                <img src={cartIcon} alt="cart icon" className="icon" />
-              </Link>
-            ) : (
-              <span
-                className="icon-btn disabled-link"
-                title="Sign in to view cart"
-              >
-                <img src={cartIcon} alt="cart icon" className="icon" />
-              </span>
-            )}
+                {/* Profile Icon */}
+                {customer && (
+                  <Link
+                    to={`/profile/${customer.id}`}
+                    className="icon-btn"
+                    title="User"
+                  >
+                    <img src={userIcon} alt="user icon" className="icon" />
+                  </Link>
+                )}
 
-            {customer ? (
-              <Link
-                to={`/profile/${customer.id}`}
-                className="icon-btn"
-                title="User"
-              >
-                <img src={userIcon} alt="user icon" className="icon" />
-              </Link>
+                {/* Favourites Icon */}
+                {customer && (
+                  <Link
+                    to={`/favourites/${customer.id}`}
+                    className="icon-btn"
+                    title="Favourites"
+                  >
+                    <img
+                      src={heartIcon}
+                      alt="favourite icon"
+                      className="icon"
+                    />
+                  </Link>
+                )}
+              </>
             ) : (
-              <span
-                className="icon-btn disabled-link"
-                title="Sign in to view profile"
-              >
-                <img src={userIcon} alt="user icon" className="icon" />
-              </span>
-            )}
-            {customer ? (
-              <Link
-                to={`/favourites/${customer.id}`}
-                className="icon-btn"
-                title="Favourites"
-              >
-                <img src={heartIcon} alt="favourite icon" className="icon" />
-              </Link>
-            ) : (
-              <span
-                className="icon-btn disabled-link"
-                title="Sign in to view favourites"
-              >
-                <img src={heartIcon} alt="favourite icon" className="icon" />
-              </span>
+              <>
+                {/* Disabled Cart Icon */}
+                <span
+                  className="icon-btn disabled-link"
+                  title="Sign in to view cart"
+                >
+                  <img src={cartIcon} alt="cart icon" className="icon" />
+                </span>
+
+                {/* Disabled Profile Icon */}
+                <span
+                  className="icon-btn disabled-link"
+                  title="Sign in to view profile"
+                >
+                  <img src={userIcon} alt="user icon" className="icon" />
+                </span>
+
+                {/* Disabled Favourites Icon */}
+                <span
+                  className="icon-btn disabled-link"
+                  title="Sign in to view favourites"
+                >
+                  <img src={heartIcon} alt="favourite icon" className="icon" />
+                </span>
+              </>
             )}
           </div>
         </nav>
-
-      
 
         {showSearchInput ? (
           <div className="search-bar-container">
@@ -100,17 +116,18 @@ const Navbar = ({ handleLogOut, customer }) => {
               type="text"
               placeholder="Search..."
               className="search-input"
-              // Optional: onChange or onKeyDown to handle search
             />
           </div>
-        ):   <nav className="pages-navbar desktop-navbar">
-          <Link to="/jewelry">All Jewelry</Link>
-          <Link to="/jewelry/earrings">Earrings</Link>
-          <Link to="/jewelry/bracelets">Bracelets</Link>
-          <Link to="/jewelry/rings">Rings</Link>
-          <Link to="/jewelry/necklaces">Necklaces</Link>
-          <Link to="/services/necklaces">Services</Link>
-        </nav> }
+        ) : (
+          <nav className="pages-navbar desktop-navbar">
+            <Link to="/jewelry">All Jewelry</Link>
+            <Link to="/jewelry/earrings">Earrings</Link>
+            <Link to="/jewelry/bracelets">Bracelets</Link>
+            <Link to="/jewelry/rings">Rings</Link>
+            <Link to="/jewelry/necklaces">Necklaces</Link>
+            <Link to="/services/necklaces">Services</Link>
+          </nav>
+        )}
 
         <div className={`sideNav ${isOpen ? "open" : ""}`}>
           <div className="sidebar-logo">

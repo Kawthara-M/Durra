@@ -4,11 +4,10 @@ import { useNavigate, Link } from "react-router-dom"
 
 import "../../public/styleSheets/auth.css"
 
-const SignIn = (
-  {
-    /*  setUser  */
-   setShowSignUp}
-) => {
+const SignIn = ({
+  /*  setUser  */
+  setShowSignUp,
+}) => {
   let navigate = useNavigate()
   const initialState = { email: "", passwordDigest: "" }
   const [errorMessage, setErrorMessage] = useState("")
@@ -24,7 +23,7 @@ const SignIn = (
     setErrorMessage("")
 
     /*   try {
-      const payload = await SignInCustomer(formValues)
+      const payload = await SignInUser(formValues)
       if (payload && payload.id) {
         setFormValues(initialState)
         setUser(payload)
@@ -73,7 +72,8 @@ const SignIn = (
       </form>
       <p id="switch">
         Don't have an Account?
-        <button className="switch"
+        <button
+          className="switch"
           type="button"
           onClick={() => setShowSignUp(true)}
         >
