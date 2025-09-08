@@ -1,0 +1,21 @@
+.about-durra {
+  max-width: 700px;
+  margin: 2rem auto;
+  font-family: 'Segoe UI', sans-serif;
+  line-height: 1.6;
+}
+
+.about-durra h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.about-durra h2 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+}
+
+.about-durra ul {
+  padding-left: 1.5rem;
+  margin-top: 1rem;
+}

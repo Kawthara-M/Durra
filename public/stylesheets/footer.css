@@ -52,3 +52,7 @@ img {
   height: 1rem;
   width: 1rem;
 }
+
+footer p {
+  cursor: pointer;
+}

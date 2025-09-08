@@ -1,5 +1,5 @@
 <h1>
-  <img src="src/assets/pearl.png"  width="30" height="30" style="vertical-align:middle; filter: drop-shadow(0 0 0.50rem rgba(230, 242, 243, 1));">
+  <img src="src/assets/pearl.png"  width="30" height="30" style="vertical-align:middle; filter: drop-shadow(0 0 0.40rem rgba(230, 242, 243, 1));">
   Durra
 </h1>
 
@@ -16,6 +16,7 @@ To ensure that, the planning phase included several diagrams...
 
 ## ⚙️ Technologies Used
 - React.js (frontend)
+- Node.js, Express Framework, MongoDB (backend)
 
 ## 🗺️ Prototype
 The following figma prototypes present a visual blueprint of the application's user interface and layout structure. Designed in a high-fidelity format, they served as a guidance of front-end development.
@@ -27,6 +28,7 @@ The following figma prototypes present a visual blueprint of the application's u
 ## Attributations
 - Password Validator (front-end): [geeksforgeeks](https://www.geeksforgeeks.org/reactjs/create-a-password-validator-using-reactjs/)
 - Icons: [flatIcon](https://www.flaticon.com/)
+- Loading Animations: [LottieFiles](https://lottiefiles.com/)
 
 
 

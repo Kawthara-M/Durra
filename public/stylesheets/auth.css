@@ -7,7 +7,6 @@
 }
 
 form {
-  background-color: #ffffff;
   padding: 3rem 1.5rem;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -57,8 +56,8 @@ button {
   padding: 0.6rem;
   font-size: 1rem;
   font-weight: 400;
-  color: white;
-  background-color: #6f0101;
+  background-color: #6f0101; 
+  /* set colors in App.css */
   border: none;
   border-radius: 5px;
   cursor: pointer;

@@ -1,12 +1,15 @@
 import { createRoot } from "react-dom/client"
 import { BrowserRouter } from "react-router-dom"
-import App from "./App.jsx"
 import { ThemeProvider } from "./context/ThemeContext.jsx"
+import { UserProvider } from "./context/UserContext"
+import App from "./App.jsx"
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+    <UserProvider>
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
+    </UserProvider>
   </BrowserRouter>
 )

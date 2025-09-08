@@ -44,7 +44,7 @@ const SignUp = ({ setShowSignUp }) => {
     setErrorMessage("")
 
     /*     try {
-      const payload = await SignUpCustomer(formValues)
+      const payload = await SignUpUser(formValues)
       if (payload) {
         setFormValues(initialState)
         navigate("/auth/sign-in")
