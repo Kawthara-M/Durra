@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
 import { useUser } from "../context/UserContext"
-import "../../public/stylesheets/navbar.css"
 import userIcon from "../assets/user.png"
 import cartIcon from "../assets/cart.png"
 import searchIcon from "../assets/search.png"
 import heartIcon from "../assets/heart.png"
+import "../../public/stylesheets/navbar.css"
 
 const Navbar = ({ handleLogOut, customer }) => {
   const [isOpen, setIsOpen] = useState(false)
