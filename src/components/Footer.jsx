@@ -1,8 +1,10 @@
 import { useContext } from "react"
-import { Navigate, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
+import { useUser } from "../context/UserContext"
 import instaIcon from "../assets/instagram.png"
 import themeIcon from "../assets/theme.png"
+import logoutIcon from "../assets/logout.png"
 
 import { ThemeContext } from "../context/ThemeContext"
 import "../../public/stylesheets/footer.css"
@@ -10,6 +12,7 @@ import "../../public/stylesheets/footer.css"
 const Footer = () => {
   const { toggleTheme } = useContext(ThemeContext)
   const navigate = useNavigate()
+  const { handleLogOut } = useUser()
 
   return (
     <>
@@ -18,7 +21,13 @@ const Footer = () => {
           <div className="container">
             <h6>General</h6>
             <div className="options">
-              <p onClick={()=> {navigate("/about")}}>About Us</p>
+              <p
+                onClick={() => {
+                  navigate("/about")
+                }}
+              >
+                About Us
+              </p>
               <p>Privacy Policy</p>
               <p>Terms and Conditions</p>
             </div>
@@ -41,11 +50,11 @@ const Footer = () => {
           >
             <img src={instaIcon} alt="Instagram icon" className="icon" />
           </Link>
-          <button
-            onClick={toggleTheme}
-            title="Toggle Theme" id="theme"
-          >
-            <img src={themeIcon} alt="Theme icon"  />
+          <button onClick={toggleTheme} title="Toggle Theme" id="theme">
+            <img src={themeIcon} alt="Theme icon" />
+          </button>
+          <button onClick={()=> handleLogOut()} title="Logout" id="logout">
+            <img src={logoutIcon} alt="Logout icon" />
           </button>
           {/* theme should be part of user page, but it currently doesn't exist */}
         </div>

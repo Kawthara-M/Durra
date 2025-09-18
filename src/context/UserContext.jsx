@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react"
-import { CheckSession } from "../services/auth"
+import { CheckSession } from "../services/Auth"
 import { useNavigate } from "react-router-dom"
 
 const UserContext = createContext()

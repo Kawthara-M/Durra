@@ -7,11 +7,16 @@ const Authentication = () => {
 
   return (
     <>
+        <div className="authentication-card">
       {showSignUp ? (
         <SignUp setShowSignUp={setShowSignUp} />
       ) : (
         <SignIn setShowSignUp={setShowSignUp} />
       )}
+      
+          
+        </div>
+      
     </>
   )
 }

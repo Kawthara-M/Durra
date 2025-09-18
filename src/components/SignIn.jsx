@@ -1,15 +1,12 @@
 import { useState } from "react"
 import { SignInUser } from "../services/Auth"
-import { useNavigate, Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import "../../public/styleSheets/auth.css"
 
-const SignIn = ({
-  /*  setUser  */
-  setShowSignUp,
-}) => {
+const SignIn = ({ setShowSignUp }) => {
   let navigate = useNavigate()
-  const initialState = { email: "", passwordDigest: "" }
+  const initialState = { email: "", password: "" }
   const [errorMessage, setErrorMessage] = useState("")
 
   const [formValues, setFormValues] = useState(initialState)
@@ -22,16 +19,15 @@ const SignIn = ({
     e.preventDefault()
     setErrorMessage("")
 
-    /*   try {
+    try {
       const payload = await SignInUser(formValues)
       if (payload && payload.id) {
         setFormValues(initialState)
-        setUser(payload)
         navigate("/Home")
       }
     } catch (error) {
       setErrorMessage(error.message)
-    } */
+    }
   }
 
   return (
@@ -64,12 +60,13 @@ const SignIn = ({
             value={formValues.password}
             required
           />
-          {errorMessage === "" ? null : <span>{errorMessage}</span>}
+          {errorMessage && <span className="error">{errorMessage}</span>}
         </div>
-        <button /* disabled={!formValues.email || !formValues.password} */>
+        <button disabled={!formValues.email || !formValues.password}>
           Sign In
         </button>
       </form>
+     
       <p id="switch">
         Don't have an Account?
         <button

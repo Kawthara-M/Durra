@@ -9,11 +9,11 @@
 form {
   padding: 3rem 1.5rem;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
   width: 100%;
-  max-width: 350px;
+  max-width: 400px;
   height: fit-content;
-  border: 1px solid #d0d0d0;
+  /* border: 1px solid #d0d0d0; */
   box-sizing: border-box;
 }
 .sign-up {
@@ -56,18 +56,13 @@ button {
   padding: 0.6rem;
   font-size: 1rem;
   font-weight: 400;
-  background-color: #6f0101; 
-  /* set colors in App.css */
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-button:disabled {
-  background-color: #d9d9d9;
-  cursor: not-allowed;
-}
+
 
 #switch {
   font-size: 0.85rem;

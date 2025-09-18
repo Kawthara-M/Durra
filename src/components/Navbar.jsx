@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
 import { useUser } from "../context/UserContext"
+import { useNavigate } from "react-router-dom"
 import userIcon from "../assets/user.png"
 import cartIcon from "../assets/cart.png"
 import searchIcon from "../assets/search.png"
 import heartIcon from "../assets/heart.png"
 import "../../public/stylesheets/navbar.css"
 
-const Navbar = ({ handleLogOut, customer }) => {
+const Navbar = ({}) => {
+  const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
   const [showSearchInput, setShowSearchInput] = useState(false)
   const { user } = useUser()
@@ -48,37 +50,37 @@ const Navbar = ({ handleLogOut, customer }) => {
             {user ? (
               <>
                 {/* Cart Icon - Only for customers */}
-                {user.role === "customer" && (
-                  <Link to="/cart" title="Cart">
-                    <img src={cartIcon} alt="cart icon" className="icon" />
-                  </Link>
+                {user.role === "Customer" && (
+                  <>
+                    <Link to="/cart" title="Cart">
+                      <img src={cartIcon} alt="cart icon" className="icon" />
+                    </Link>
+                    
+
+                    {/* Favourites Icon  */}
+
+                    <Link
+                      to={`/favourites/${user.id}`}
+                      className="icon-btn"
+                      title="Favourites"
+                    >
+                      <img
+                        src={heartIcon}
+                        alt="favourite icon"
+                        className="icon"
+                      />
+                    </Link>
+                    <Link
+                      to={`/profile/${user.id}`}
+                      className="icon-btn"
+                      title="User"
+                    >
+                      <img src={userIcon} alt="user icon" className="icon" />
+                    </Link>
+                  </>
                 )}
 
                 {/* Profile Icon */}
-                {customer && (
-                  <Link
-                    to={`/profile/${customer.id}`}
-                    className="icon-btn"
-                    title="User"
-                  >
-                    <img src={userIcon} alt="user icon" className="icon" />
-                  </Link>
-                )}
-
-                {/* Favourites Icon */}
-                {customer && (
-                  <Link
-                    to={`/favourites/${customer.id}`}
-                    className="icon-btn"
-                    title="Favourites"
-                  >
-                    <img
-                      src={heartIcon}
-                      alt="favourite icon"
-                      className="icon"
-                    />
-                  </Link>
-                )}
               </>
             ) : (
               <>
@@ -90,20 +92,23 @@ const Navbar = ({ handleLogOut, customer }) => {
                   <img src={cartIcon} alt="cart icon" className="icon" />
                 </span>
 
-                {/* Disabled Profile Icon */}
-                <span
-                  className="icon-btn disabled-link"
-                  title="Sign in to view profile"
-                >
-                  <img src={userIcon} alt="user icon" className="icon" />
-                </span>
-
                 {/* Disabled Favourites Icon */}
                 <span
                   className="icon-btn disabled-link"
                   title="Sign in to view favourites"
                 >
                   <img src={heartIcon} alt="favourite icon" className="icon" />
+                </span>
+                {/* Disabled Profile Icon */}
+                <span className="icon-btn" title="Sign in to view profile">
+                  <img
+                    src={userIcon}
+                    alt="user icon"
+                    className="icon"
+                    onClick={() => {
+                      navigate("/auth")
+                    }}
+                  />
                 </span>
               </>
             )}

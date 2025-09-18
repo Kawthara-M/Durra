@@ -42,7 +42,7 @@ h6 {
   align-items: center;
 }
 
-#theme {
+#theme, #logout {
   display: inline;
   background-color: transparent;
 }
