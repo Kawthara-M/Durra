@@ -13,7 +13,7 @@ footer {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  margin-bottom: .2rem;
+  margin-bottom: .1rem;
 }
 
 .container {
@@ -45,12 +45,6 @@ h6 {
 #theme, #logout {
   display: inline;
   background-color: transparent;
-}
-
-img {
-  display: inline;
-  height: 1rem;
-  width: 1rem;
 }
 
 footer p {
