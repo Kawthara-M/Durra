@@ -4,39 +4,55 @@ import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 import AboutUs from "./pages/AboutUs"
 import Authentication from "./pages/Authentication"
+import Home from "./pages/Home"
+import { useUser } from "./context/UserContext"
 import "./App.css"
+import User from "./services/api"
 
 function App() {
-  const [user, setUser] = useState()
-  const checkToken = async () => {
-    const userData = await CheckSession()
-    setUser(userData)
-  }
+  const { user } = useUser()
 
-  const handleLogOut = () => {
-    setUser(null)
-    localStorage.clear()
-  }
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    if (token) {
-      checkToken()
+  
+    async function fetchMetalRates() {
+      const url =
+        "https://api.metals.dev/v1/latest?api_key=GF9QACGGAWN9BJKRDDYO374KRDDYO&currency=BHD&unit=g"
+
+      const response = await fetch(url, {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+
+      const result = await response.json()
+      console.log(result)
     }
+    // fetchMetalRates()
+    const getShops = async()=> {
+      const shops = await User.get("/shops")
+      console.log(shops)
+    }
+    getShops()
+    
   }, [])
 
   return (
     <>
-    <div className='app-container'>
-      <Navbar handleLogOut={handleLogOut} user={user}  />
-      <main>
-        <Routes>
-          {/* <Route path="/*" element={<Home />} /> */}
-          <Route path="/auth" element={<Authentication setUser={setUser}/>} />
-          <Route path="/about" element={<AboutUs/>} />
-        </Routes>
-      </main>
-      <Footer/></div>
+      <div className="app-container">
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/*" element={<Home />} />
+            <Route
+              path="/auth"
+              element={<Authentication />}
+            />
+            <Route path="/about" element={<AboutUs />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </>
   )
 }

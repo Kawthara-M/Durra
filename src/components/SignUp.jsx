@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { SignUpUser } from "../services/Auth"
-import { useNavigate, Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import "../../public/styleSheets/auth.css"
 
@@ -11,11 +11,13 @@ const SignUp = ({ setShowSignUp }) => {
   const [errorMessage, setErrorMessage] = useState("")
 
   const initialState = {
-    name: "",
+    fName: "",
+    lName: "",
     email: "",
     phone: "",
     password: "",
     confirmPassword: "",
+    role: "Customer",
   }
 
   const [formValues, setFormValues] = useState(initialState)
@@ -43,15 +45,17 @@ const SignUp = ({ setShowSignUp }) => {
     e.preventDefault()
     setErrorMessage("")
 
-    /*     try {
+    try {
+      console.log(formValues)
       const payload = await SignUpUser(formValues)
       if (payload) {
         setFormValues(initialState)
-        navigate("/auth/sign-in")
+        setShowSignUp(false)
+        // navigate("/auth/sign-in")
       }
     } catch (error) {
       setErrorMessage(error.message)
-    } */
+    }
   }
 
   return (
@@ -64,10 +68,10 @@ const SignUp = ({ setShowSignUp }) => {
               First Name
               <input
                 type="text"
-                name="firstName"
+                name="fName"
                 placeholder="First Name"
                 onChange={handleChange}
-                value={formValues.firstName}
+                value={formValues.fName}
                 required
               />
             </label>
@@ -76,11 +80,10 @@ const SignUp = ({ setShowSignUp }) => {
               Last Name
               <input
                 type="text"
-                name="lastName"
+                name="lName"
                 placeholder="Last Name"
                 onChange={handleChange}
-                value={formValues.lastName}
-                required
+                value={formValues.lName}
               />
             </label>
           </div>
@@ -148,20 +151,20 @@ const SignUp = ({ setShowSignUp }) => {
             autoComplete="off"
           />
           <button
-          /* disabled={
-              !formValues.name ||
+           disabled={
+              !formValues.fName ||
               !formValues.email ||
               !formValues.phone ||
               !formValues.password ||
               !formValues.confirmPassword ||
               (!formValues.password &&
                 formValues.password === formValues.confirmPassword)
-            } */
+            } 
           >
             Sign Up
           </button>
         </form>
-        {/*   {errorMessage && <span className="error">{errorMessage}</span>} */}
+          {errorMessage && <span className="error">{errorMessage}</span>}
 
         <p id="switch">
           Already have an account?{" "}
