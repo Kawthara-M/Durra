@@ -66,7 +66,7 @@ const SignIn = ({ setShowSignUp }) => {
           Sign In
         </button>
       </form>
-     
+
       <p id="switch">
         Don't have an Account?
         <button
