@@ -63,14 +63,9 @@ button {
 }
 
 
-
 #switch {
   font-size: 0.85rem;
   text-align: center;
-}
-
-button:not(:disabled):hover {
-  background-color: #290000;
 }
 
 a {

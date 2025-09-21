@@ -12,15 +12,17 @@ import "../../public/stylesheets/footer.css"
 const Footer = () => {
   const { toggleTheme } = useContext(ThemeContext)
   const navigate = useNavigate()
-  const { handleLogOut } = useUser()
+  const { user, handleLogOut } = useUser()
 
   return (
     <>
       <footer>
         <div className="links">
-          <div className="container">
+          <div
+            className={`container `}
+          >
             <h6>General</h6>
-            <div className="options">
+            <div className={`options ${user && user.role === "Jeweler" ? "row" : null}`}>
               <p
                 onClick={() => {
                   navigate("/about")
@@ -33,14 +35,22 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="container">
-            <h6>Customer Service</h6>
-            <div className="options">
-              <p>Delivery</p>
-              <p>Size Guide</p>
-              <p>Refund Policy</p>
+          {user ? user.role === "Customer" ? (
+            <div className="container">
+              <h6>Customer Service</h6>
+              <div className="options">
+                <p>Delivery</p>
+                <p>Size Guide</p>
+                <p>Refund Policy</p>
+              </div>
             </div>
-          </div>
+          ) : null: <div className="container">
+              <h6>Customer Service</h6>
+              <div className="options">
+                <p>Delivery</p>
+                <p>Size Guide</p>
+              </div>
+            </div>}
         </div>
         <div className="social-media">
           <Link

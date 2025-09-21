@@ -9,6 +9,7 @@ body.light {
   --nav-bg: rgb(243, 230, 230);
   --btn-bg: #6f0101;
   --btn-color: #f1f1f1;
+  --accent-color: #5f0f0f;
 }
 
 body.dark {
@@ -18,12 +19,15 @@ body.dark {
   --nav-bg: #2c2c2c;
 }
 
+html,
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
   margin: 0;
+  padding: 0;
   font-family: "Playfair Display", serif; /* change to what's suitable if not okay*/
+  overflow-x: hidden;
 }
 
 .app-container {
@@ -31,11 +35,11 @@ body {
   flex-direction: column;
   min-height: 100vh;
   margin: 0;
+  padding: 0;
 }
 main {
   flex: 1;
 }
-
 
 /* button common styling */
 button {
@@ -65,6 +69,9 @@ img.icon {
 }
 
 /* links styling */
+a {
+  color: var(--text-color);
+}
 a:hover {
   text-decoration: underline;
 }
@@ -73,5 +80,3 @@ a:hover {
   opacity: 0.4;
   cursor: not-allowed;
 }
-
-

@@ -1,16 +1,15 @@
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { Route, Routes } from "react-router-dom"
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 import AboutUs from "./pages/AboutUs"
 import Authentication from "./pages/Authentication"
 import Home from "./pages/Home"
-import { useUser } from "./context/UserContext"
+import JewelryAddForm from "./components/JewelryAddForm"
+
 import "./App.css"
-import User from "./services/api"
 
 function App() {
-  const { user } = useUser()
 
 
   useEffect(() => {
@@ -29,11 +28,6 @@ function App() {
       console.log(result)
     }
     // fetchMetalRates()
-    const getShops = async()=> {
-      const shops = await User.get("/shops")
-      console.log(shops)
-    }
-    getShops()
     
   }, [])
 
@@ -49,6 +43,7 @@ function App() {
               element={<Authentication />}
             />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/add-jewelry" element={<JewelryAddForm />} />
           </Routes>
         </main>
         <Footer />
