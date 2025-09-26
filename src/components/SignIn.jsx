@@ -1,10 +1,12 @@
 import { useState } from "react"
 import { SignInUser } from "../services/Auth"
 import { useNavigate } from "react-router-dom"
+import { useUser } from "../context/UserContext"
 
 import "../../public/styleSheets/auth.css"
 
 const SignIn = ({ setShowSignUp }) => {
+  const { setUser } = useUser()
   let navigate = useNavigate()
   const initialState = { email: "", password: "" }
   const [errorMessage, setErrorMessage] = useState("")
@@ -22,7 +24,8 @@ const SignIn = ({ setShowSignUp }) => {
     try {
       const payload = await SignInUser(formValues)
       if (payload && payload.id) {
-        setFormValues(initialState)
+        setUser(payload)
+        setFormValues({ email: "", password: "" })
         navigate("/Home")
       }
     } catch (error) {
@@ -57,6 +60,7 @@ const SignIn = ({ setShowSignUp }) => {
             type="password"
             id="password"
             name="password"
+            placeholder="Enter your password"
             value={formValues.password}
             required
           />
@@ -65,18 +69,17 @@ const SignIn = ({ setShowSignUp }) => {
         <button disabled={!formValues.email || !formValues.password}>
           Sign In
         </button>
+        <p id="switch">
+          Don't have an Account?
+          <button
+            className="switch"
+            type="button"
+            onClick={() => setShowSignUp(true)}
+          >
+            Sign Up
+          </button>
+        </p>
       </form>
-
-      <p id="switch">
-        Don't have an Account?
-        <button
-          className="switch"
-          type="button"
-          onClick={() => setShowSignUp(true)}
-        >
-          Sign Up
-        </button>
-      </p>
     </div>
   )
 }

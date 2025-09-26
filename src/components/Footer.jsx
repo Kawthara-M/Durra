@@ -22,7 +22,7 @@ const Footer = () => {
             className={`container `}
           >
             <h6>General</h6>
-            <div className={`options ${user && user.role === "Jeweler" ? "row" : null}`}>
+            <div className={`options row`}>
               <p
                 onClick={() => {
                   navigate("/about")
@@ -38,7 +38,7 @@ const Footer = () => {
           {user ? user.role === "Customer" ? (
             <div className="container">
               <h6>Customer Service</h6>
-              <div className="options">
+              <div className="options row">
                 <p>Delivery</p>
                 <p>Size Guide</p>
                 <p>Refund Policy</p>
@@ -46,7 +46,7 @@ const Footer = () => {
             </div>
           ) : null: <div className="container">
               <h6>Customer Service</h6>
-              <div className="options">
+              <div className="options row">
                 <p>Delivery</p>
                 <p>Size Guide</p>
               </div>

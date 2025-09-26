@@ -3,7 +3,7 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0 0 0.5rem 2rem;
+  padding: .5rem 0 0.5rem 2rem;
   background-color: var(--footer-bg);
   color: var(--text-color);
 }
@@ -55,4 +55,7 @@ footer p {
   display: flex;
   flex-direction: row;
   gap: 0.8rem;
+  padding-left: 0.2rem;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
 }
