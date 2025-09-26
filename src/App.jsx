@@ -1,35 +1,16 @@
-import { useEffect } from "react"
 import { Route, Routes } from "react-router-dom"
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 import AboutUs from "./pages/AboutUs"
 import Authentication from "./pages/Authentication"
 import Home from "./pages/Home"
-import JewelryAddForm from "./components/JewelryAddForm"
+import JewelerServices from "./pages/JewelerServices"
+import JewelryForm from "./components/JewelryForm"
+import ServicesForm from "./components/ServicesForm"
 
 import "./App.css"
 
 function App() {
-
-
-  useEffect(() => {
-  
-    async function fetchMetalRates() {
-      const url =
-        "https://api.metals.dev/v1/latest?api_key=GF9QACGGAWN9BJKRDDYO374KRDDYO&currency=BHD&unit=g"
-
-      const response = await fetch(url, {
-        headers: {
-          Accept: "application/json",
-        },
-      })
-
-      const result = await response.json()
-      console.log(result)
-    }
-    // fetchMetalRates()
-    
-  }, [])
 
   return (
     <>
@@ -43,7 +24,9 @@ function App() {
               element={<Authentication />}
             />
             <Route path="/about" element={<AboutUs />} />
-            <Route path="/add-jewelry" element={<JewelryAddForm />} />
+            <Route path="/add-jewelry" element={<JewelryForm />} />
+            <Route path="/add-services" element={<ServicesForm />} />
+            <Route path="/jeweler-services" element={<JewelerServices />} />
           </Routes>
         </main>
         <Footer />

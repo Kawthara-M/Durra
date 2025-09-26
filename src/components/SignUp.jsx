@@ -151,7 +151,7 @@ const SignUp = ({ setShowSignUp }) => {
             autoComplete="off"
           />
           <button
-           disabled={
+            disabled={
               !formValues.fName ||
               !formValues.email ||
               !formValues.phone ||
@@ -159,23 +159,22 @@ const SignUp = ({ setShowSignUp }) => {
               !formValues.confirmPassword ||
               (!formValues.password &&
                 formValues.password === formValues.confirmPassword)
-            } 
+            }
           >
             Sign Up
           </button>
+          <p id="switch">
+            Already have an account?{" "}
+            <button
+              type="button"
+              className="switch"
+              onClick={() => setShowSignUp(false)}
+            >
+              Sign In
+            </button>
+          </p>
         </form>
-          {errorMessage && <span className="error">{errorMessage}</span>}
-
-        <p id="switch">
-          Already have an account?{" "}
-          <button
-            type="button"
-            className="switch"
-            onClick={() => setShowSignUp(false)}
-          >
-            Sign In
-          </button>
-        </p>
+        {errorMessage && <span className="error">{errorMessage}</span>}
       </div>
     </div>
   )

@@ -52,7 +52,7 @@ const Navbar = ({}) => {
                 <button className="toggleBtn" onClick={toggleMenu}>
                   ☰
                 </button>
-              ) : (
+              ) : user?.role === "Jeweler" ? (
                 <>
                   <Link to="/" className="brand-logo">
                     DURRA
@@ -60,10 +60,17 @@ const Navbar = ({}) => {
                   <Link to="/add-jewelry" className="jeweler-options">
                     Jewelry
                   </Link>
+                  <Link to="/jeweler-services" className="jeweler-options">
+                    Services
+                  </Link>
                   <Link to="/" className="jeweler-options">
                     Orders
                   </Link>
                 </>
+              ) : (
+                <button className="toggleBtn" onClick={toggleMenu}>
+                  ☰
+                </button>
               )
             ) : (
               <button className="toggleBtn" onClick={toggleMenu}>
@@ -142,21 +149,7 @@ const Navbar = ({}) => {
                     <img src={searchIcon} alt="search icon" className="icon" />
                   </button>
                 </Link>
-                {/* Disabled Cart Icon */}
-                <span
-                  className="icon-btn disabled-link"
-                  title="Sign in to view cart"
-                >
-                  <img src={cartIcon} alt="cart icon" className="icon" />
-                </span>
 
-                {/* Disabled Favourites Icon */}
-                <span
-                  className="icon-btn disabled-link"
-                  title="Sign in to view favourites"
-                >
-                  <img src={heartIcon} alt="favourite icon" className="icon" />
-                </span>
                 {/* Disabled Profile Icon */}
                 <span className="icon-btn" title="Sign in to view profile">
                   <img
@@ -184,23 +177,23 @@ const Navbar = ({}) => {
               </div>
             ) : (
               <nav className="pages-navbar desktop-navbar">
-                <Link to="/jewelry">All Jewelry</Link>
-                <Link to="/jewelry/earrings">Earrings</Link>
+                <Link to="/jewelry">Jewelry</Link>
+                {/* <Link to="/jewelry/earrings">Earrings</Link>
                 <Link to="/jewelry/bracelets">Bracelets</Link>
                 <Link to="/jewelry/rings">Rings</Link>
-                <Link to="/jewelry/necklaces">Necklaces</Link>
-                <Link to="/services/necklaces">Services</Link>
+                <Link to="/jewelry/necklaces">Necklaces</Link> */}
+                <Link to="/services">Services</Link>
               </nav>
             )
           ) : null
         ) : (
           <nav className="pages-navbar desktop-navbar">
-            <Link to="/jewelry">All Jewelry</Link>
-            <Link to="/jewelry/earrings">Earrings</Link>
+            <Link to="/jewelry">Jewelry</Link>
+            {/* <Link to="/jewelry/earrings">Earrings</Link>
             <Link to="/jewelry/bracelets">Bracelets</Link>
             <Link to="/jewelry/rings">Rings</Link>
-            <Link to="/jewelry/necklaces">Necklaces</Link>
-            <Link to="/services/necklaces">Services</Link>
+            <Link to="/jewelry/necklaces">Necklaces</Link> */}
+            <Link to="/services">Services</Link>
           </nav>
         )}
 

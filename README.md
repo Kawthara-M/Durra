@@ -28,6 +28,8 @@ The following figma prototypes present a visual blueprint of the application's u
 ## Attributations
 - Password Validator (front-end): [geeksforgeeks](https://www.geeksforgeeks.org/reactjs/create-a-password-validator-using-reactjs/)
 - Icons: [flatIcon](https://www.flaticon.com/)
+- Feedback Modal: [uiverse.io](https://uiverse.io/akshat-patel28/quick-baboon-29)
+- Services Card: [uiverse.io](https://uiverse.io/satyamchaudharydev/itchy-chipmunk-95)
 - Loading Animations: [LottieFiles](https://lottiefiles.com/)
 
 
