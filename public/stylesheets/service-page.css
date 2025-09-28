@@ -1,0 +1,117 @@
+.service-page, .order-page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  padding: 2rem;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.service-page-heading {
+  display: block;
+  width: 100vw;
+  color: var(--accent-color)
+}
+
+.service-page-content, .order-page-content {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  width: 100%;
+  margin: 0 0 1rem 0;
+  gap:1.5rem;
+  align-items: stretch;
+}
+
+.service-images {
+  width: 55%;
+}
+.service-image-slider {
+  position: relative;
+  width: 100%;
+  height: 100%; 
+  overflow: hidden;
+}
+
+.image-box {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.box-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.left-arrow,
+.right-arrow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 10%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  opacity: .9;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 2;
+  transition: background-color 0.3s ease;
+}
+
+.left-arrow:hover,
+.right-arrow:hover {
+  background-color: rgba(255, 255, 255, 0.6); /
+}
+
+.left-arrow {
+  left: 0;
+}
+
+.right-arrow {
+  right: 0;
+}
+
+.service-information, .order-information {
+  flex: 1;
+}
+.heading-and-editor {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  align-items: center;
+}
+
+.heading-and-editor h2, .reviews-heading {
+  margin-bottom: 0.5rem;
+}
+
+#jeweler-service-description {
+  margin-bottom: 1rem;
+  line-height: 1.4rem;
+}
+
+.jeweler-service-details {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.service-reviews {
+  display: flex;
+  flex-direction: column;
+  width:100vw;
+}

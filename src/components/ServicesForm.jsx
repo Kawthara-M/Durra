@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 import User from "../services/api"
 import AddNavigation from "./AddNavigation"
@@ -8,6 +8,7 @@ import FeedbackModal from "./FeedbackModal"
 import "../../public/stylesheets/jewelery-add.css"
 
 const ServicesForm = () => {
+  const { serviceId } = useParams()
   const navigate = useNavigate()
   const views = ["General", "Images", "Upload"]
   const [view, setView] = useState("General")
@@ -24,11 +25,43 @@ const ServicesForm = () => {
   const [errors, setErrors] = useState({})
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
+  useEffect(() => {
+    const fetchService = async () => {
+      if (!serviceId) return
+
+      try {
+        const response = await User.get(`/services/${serviceId}`)
+        const data = response.data.service
+
+        const imageObjects = data.images.map((imgUrl, idx) => ({
+          src: imgUrl,
+          file: null,
+          name: `Image-${idx + 1}`,
+          existing: true,
+        }))
+
+        setFormData({
+          name: data.name || "",
+          price: data.price || "",
+          limitPerOrder: data.limitPerOrder || 1,
+          description: data.description || "",
+          images: imageObjects || [],
+        })
+      } catch (err) {
+        console.error("Failed to load service", err)
+      }
+    }
+
+    fetchService()
+  }, [serviceId])
+
   const [feedback, setFeedback] = useState({
     show: false,
-    success: false,
+    type: "success",
     message: "",
   })
+
+  const isEdit = serviceId // it means we're editing, cant just use it without !
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files)
@@ -122,38 +155,55 @@ const ServicesForm = () => {
     data.append("limitPerOrder", formData.limitPerOrder)
     data.append("description", formData.description)
 
-    formData.images.forEach((imgObj) => {
-      data.append("images", imgObj.file) 
+    const existingImages = formData.images
+      .filter((img) => !img.file && img.src)
+      .map((img) => img.src)
+
+    const newImages = formData.images
+      .filter((img) => img.file)
+      .map((img) => img.file)
+
+    data.append("existingImages", JSON.stringify(existingImages))
+
+    newImages.forEach((file) => {
+      data.append("images", file)
     })
 
     try {
-      const response = await User.post("/services", data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
+      let response
 
-      setFeedback({
-        show: true,
-        success: true,
-        message: "Service created successfully!",
-      })
-
-      setFormData(initialState)
-    } catch (err) {
-      console.error("Submission error:", err)
-
-      let errMsg = "Unexpected error occurred."
-
-      if (err.response) {
-        errMsg = err.response.data.error || errMsg
-      } else if (err.request) {
-        errMsg = "No response from server. Please try again later."
+      if (serviceId) {
+        response = await User.put(`/services/${serviceId}`, data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+      } else {
+        response = await User.post("/services", data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
       }
 
       setFeedback({
         show: true,
-        success: false,
+        type: "success",
+        message: serviceId
+          ? "Service updated successfully!"
+          : "Service created successfully!",
+      })
+
+      if (!serviceId) {
+        setFormData(initialState)
+      }
+    } catch (err) {
+      console.error("Submission error:", err)
+
+      let errMsg = "Unexpected error occurred."
+      if (err.response) {
+        errMsg = err.response.data.error || errMsg
+      }
+
+      setFeedback({
+        show: true,
+        type: "error",
         message: errMsg,
       })
     }
@@ -167,7 +217,11 @@ const ServicesForm = () => {
   }
 
   const handleGoToServices = () => {
-    navigate("/jeweler-services")
+    if (isEdit) {
+      navigate(`/show-service/${serviceId}`)
+    } else {
+      navigate("/jeweler-services")
+    }
   }
 
   return (
@@ -314,7 +368,7 @@ const ServicesForm = () => {
               </div>
 
               <section>
-                <h3>Description of {formData.name || "Unnamed Service"}</h3>
+                <h3>Description of {formData.name || "Service"}</h3>
                 <p>{formData.description || "No description provided."}</p>
               </section>
 
@@ -349,13 +403,16 @@ const ServicesForm = () => {
 
       <FeedbackModal
         show={feedback.show}
-        success={feedback.success}
+        type={feedback.type} 
         message={feedback.message}
         onClose={handleStay}
         actions={
-          feedback.success
+          feedback.type === "success"
             ? [
-                { label: "Add Another", onClick: handleStay },
+                {
+                  label: isEdit ? "Edit Again" : "Add Another",
+                  onClick: handleStay,
+                },
                 {
                   label: "View Service",
                   onClick: handleGoToServices,

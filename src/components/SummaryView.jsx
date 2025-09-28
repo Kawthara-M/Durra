@@ -122,7 +122,7 @@ const totalCost = useMemo(
           <ul>
             {pearls.map((p, i) => (
               <li key={i}>
-                Type:{p.type}, Color: {p.color}, Shape: {p.shape}, Number:{" "}
+                Type: {p.type}, Color: {p.color}, Shape: {p.shape}, Number:{" "}
                 {p.number}, Weight: {p.weight}g
               </li>
             ))}
@@ -146,7 +146,7 @@ const totalCost = useMemo(
       <section className="cost-section">
         <h3>Cost Summary</h3>
         <div>
-          <p>Precious Material Cost: {preciousMaterialCost.toFixed(2)} BHD</p>
+          <p>Precious Metal Cost: {preciousMaterialCost.toFixed(2)} BHD</p>
           <p>Production Cost: {productionCost.toFixed(2)} BHD</p>
         </div>
 

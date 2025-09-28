@@ -1,5 +1,5 @@
 .jewelry-add-form,
-.services-add-form {
+.services-add-form, .services-edit-form {
   height: 100vh;
   width: 100%;
   display: flex;
@@ -269,7 +269,6 @@
 }
 
 .summary-view h2 {
-  font-size: 2rem;
   margin-bottom: 0;
 }
 
