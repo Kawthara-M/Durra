@@ -7,6 +7,9 @@ import Home from "./pages/Home"
 import JewelerServices from "./pages/JewelerServices"
 import JewelryForm from "./components/JewelryForm"
 import ServicesForm from "./components/ServicesForm"
+import JewelerServicePage from "./pages/JewelerServicePage"
+import JewelerOrdersPage from "./pages/JewelerOrdersPage"
+import JewelerOrderPage from "./pages/JewelerOrderPage"
 
 import "./App.css"
 
@@ -26,7 +29,11 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/add-jewelry" element={<JewelryForm />} />
             <Route path="/add-services" element={<ServicesForm />} />
+            <Route path="/edit-service/:serviceId" element={<ServicesForm />} />
             <Route path="/jeweler-services" element={<JewelerServices />} />
+            <Route path="/jeweler-orders" element={<JewelerOrdersPage />} />
+            <Route path="/show-order/:orderId" element={<JewelerOrderPage />} />
+            <Route path="/show-service/:serviceId" element={<JewelerServicePage />} />
           </Routes>
         </main>
         <Footer />

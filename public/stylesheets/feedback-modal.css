@@ -11,7 +11,6 @@
   z-index: 1000;
 }
 
-/* Reuse your card style */
 .card {
   width: fit-content;
   height: 20vh;
@@ -40,9 +39,8 @@
 }
 
 .icon {
-  width: 17px;
-  height: 17px;
-  color: #269b24;
+  width: 1rem;
+  height: 1rem;
 }
 
 .message-text-container {

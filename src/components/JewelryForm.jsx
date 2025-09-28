@@ -1,12 +1,20 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import AddNavigation from "./AddNavigation"
 import SummaryView from "./SummaryView"
+import FeedbackModal from "./FeedbackModal"
+import {
+  fetchMetalRates,
+  calculatePreciousMaterialCost,
+} from "../services/calculator"
 
-import placeholder from "../assets/placeholder.png"
 import deleteIcon from "../assets/delete.png"
+
+import User from "../services/api"
 import "../../public/stylesheets/jewelery-add.css"
 
 const JewelryForm = () => {
+  const navigate = useNavigate()
   const views = [
     "General",
     "Images",
@@ -15,7 +23,7 @@ const JewelryForm = () => {
     "Diamonds",
     "Other Materials",
     "Certifications",
-    "Launch",
+    "Upload",
   ]
 
   const karatOptionsByMaterial = {
@@ -33,11 +41,12 @@ const JewelryForm = () => {
     ],
     platinium: [{ value: "950", label: "950" }],
   }
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     name: "",
     type: "",
     mainMaterial: "",
     totalWeight: "",
+    originPrice: "",
     totalPrice: "",
     productionCost: "",
     limitPerOrder: 1,
@@ -48,10 +57,13 @@ const JewelryForm = () => {
     diamonds: [],
     otherMaterials: [],
     certifications: [],
-  })
+  }
+
+  const [formData, setFormData] = useState(initialFormData)
   const [errors, setErrors] = useState({})
   const [view, setView] = useState("General")
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [metalRates, setMetalRates] = useState({})
 
   const addEntry = (section, newEntry) => {
     setFormData((prev) => {
@@ -133,6 +145,8 @@ const JewelryForm = () => {
   }
 
   const validateMaterialWeight = (section, updatedList) => {
+    console.log("Validating weight for:", section, updatedList)
+    console.log("Total weight limit:", formData.totalWeight)
     const totalWeightLimit = parseFloat(formData.totalWeight || 0)
 
     const totalMaterialWeight = updatedList.reduce((acc, item) => {
@@ -141,7 +155,7 @@ const JewelryForm = () => {
       return acc + weight * number
     }, 0)
 
-    const errorKey = `${section}Error`
+    const errorKey = `${section}`
 
     setErrors((prevErrors) => ({
       ...prevErrors,
@@ -159,16 +173,18 @@ const JewelryForm = () => {
   const handleChange = (e, section, index) => {
     const { name, value } = e.target
 
-    if (section && index !== null) {
+    if (section && index !== null && index !== undefined) {
       setFormData((prev) => {
         const updatedSection = [...prev[section]]
-        updatedSection[index] = { ...updatedSection[index], [name]: value }
+        const updatedItem = { ...updatedSection[index], [name]: value }
 
         if (section === "preciousMaterials" && name === "name") {
           const karatOptions = karatOptionsByMaterial[value] || []
-          updatedSection[index].karat =
+          updatedItem.karat =
             karatOptions.length > 0 ? karatOptions[0].value : ""
         }
+
+        updatedSection[index] = updatedItem
 
         if (
           [
@@ -181,6 +197,25 @@ const JewelryForm = () => {
           validateMaterialWeight(section, updatedSection)
         }
 
+        const requiredFieldsBySection = {
+          preciousMaterials: ["name", "karat", "weight"],
+          pearls: ["type", "shape", "color", "number", "weight"],
+          diamonds: ["type", "clarity", "number", "weight"],
+          otherMaterials: ["name", "weight"],
+          certifications: ["name", "reportDate", "reportNumber"],
+        }
+
+        const requiredFields = requiredFieldsBySection[section] || []
+        const isEntryValid = requiredFields.every(
+          (field) => updatedItem[field] !== "" && updatedItem[field] !== null
+        )
+
+        const errorKey = `${section}Fields`
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [errorKey]: isEntryValid ? null : prevErrors[errorKey],
+        }))
+
         return {
           ...prev,
           [section]: updatedSection,
@@ -191,60 +226,215 @@ const JewelryForm = () => {
         ...prev,
         [name]: value,
       }))
+
+      // Clear general errors for top-level fields when user corrects them
+      const topLevelFieldErrorKeys = {
+        name: "generalError",
+        type: "generalError",
+        mainMaterial: "generalError",
+        totalWeight: "generalError",
+        productionCost: "generalError",
+      }
+
+      const errorKey = topLevelFieldErrorKeys[name]
+      if (errorKey) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [errorKey]: null,
+        }))
+      }
     }
   }
 
-  const handleSubmit = () => {
-    if (
-      !formData.name ||
-      !formData.type ||
-      !formData.mainMaterial ||
-      !formData.totalWeight ||
-      !formData.productionCost ||
-      formData.images.length === 0 ||
-      (formData.preciousMaterials.length === 0 &&
-        formData.pearls.length === 0 &&
-        formData.diamonds.length === 0 &&
-        formData.otherMaterials.length === 0)
-    ) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        launchError: "Please fill out all required fields.",
-      }))
-    } else {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        generalError: null,
-      }))
+  const [showModal, setShowModal] = useState(false)
+  const [modalActions, setModalActions] = useState([])
+  const [modalMessage, setModalMessage] = useState("")
+
+  const validateForm = (form) => {
+    const newErrors = {}
+
+    if (!form.name) newErrors.name = "Name is required."
+    if (!form.type) newErrors.type = "Type is required."
+    if (!form.mainMaterial)
+      newErrors.mainMaterial = "Main material is required."
+    if (!form.totalWeight) newErrors.totalWeight = "Total weight is required."
+    if (!form.productionCost)
+      newErrors.productionCost = "Production cost is required."
+    if (form.images.length === 0)
+      newErrors.images = "At least one image is required."
+
+    const hasNoMaterials =
+      form.preciousMaterials.length === 0 &&
+      form.pearls.length === 0 &&
+      form.diamonds.length === 0 &&
+      form.otherMaterials.length === 0
+
+    if (hasNoMaterials) {
+      newErrors.materials =
+        "Add at least one material (precious, pearl, diamond, or other)."
     }
 
-    if (formData.preciousMaterials.length > 0) {
-      const allValid = formData.preciousMaterials.every((material) => {
-        return material.name && material.karat && material.weight
-      })
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        preciousMaterialsError: allValid
-          ? null
-          : "Please fill out all required fields for precious materials.",
-      }))
+    if (form.preciousMaterials.length > 0) {
+      const allValid = form.preciousMaterials.every(
+        (m) => m.name && m.karat && m.weight
+      )
+      if (!allValid)
+        newErrors.preciousMaterials =
+          "Fill all required fields in precious materials."
     }
-    if (formData.pearls.length > 0) {
-      const allValid = formData.pearls.every((pearl) => {
-        return (
-          pearl.type &&
-          pearl.shape &&
-          pearl.color &&
-          pearl.number &&
-          pearl.weight
-        )
+
+    if (form.pearls.length > 0) {
+      const allValid = form.pearls.every(
+        (p) => p.type && p.shape && p.color && p.number && p.weight
+      )
+      if (!allValid) newErrors.pearls = "Fill all required fields in pearls."
+    }
+
+    if (form.diamonds.length > 0) {
+      const allValid = form.diamonds.every(
+        (d) => d.type && d.clarity && d.number && d.weight
+      )
+      if (!allValid)
+        newErrors.diamonds = "Fill all required fields in diamonds."
+    }
+
+    if (form.otherMaterials.length > 0) {
+      const allValid = form.otherMaterials.every((m) => m.name && m.weight)
+      if (!allValid)
+        newErrors.otherMaterials = "Fill name and weight in other materials."
+    }
+
+    if (form.certifications.length > 0) {
+      const allValid = form.certifications.every(
+        (c) => c.name && c.reportDate && c.reportNumber
+      )
+      if (!allValid)
+        newErrors.certifications = "Complete all certification fields."
+    }
+
+    const totalWeightLimit = parseFloat(form.totalWeight || 0)
+
+    const sectionsToValidate = [
+      "preciousMaterials",
+      "pearls",
+      "diamonds",
+      "otherMaterials",
+    ]
+
+    sectionsToValidate.forEach((section) => {
+      const totalMaterialWeight = form[section].reduce((acc, item) => {
+        const weight = parseFloat(item.weight || 0)
+        const number = parseFloat(item.number || 1)
+        return acc + weight * number
+      }, 0)
+
+      if (totalMaterialWeight > totalWeightLimit) {
+        newErrors[section] = `Total ${section
+          .replace(/([A-Z])/g, " $1")
+          .toLowerCase()} weight (${totalMaterialWeight.toFixed(
+          2
+        )}g) exceeds total allowed weight (${totalWeightLimit}g).`
+      }
+    })
+
+    return newErrors
+  }
+
+  useEffect(() => {
+    if (view === "Upload") {
+      const validationErrors = validateForm(formData)
+
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors)
+        console.log(validationErrors)
+        return
+      } else {
+        setErrors(null)
+      }
+    }
+  }, [view])
+
+  const handleSubmit = async () => {
+    // validation
+    const validationErrors = validateForm(formData)
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
+
+    try {
+      const rates = await fetchMetalRates()
+      setMetalRates(rates)
+
+      const totalPrice = parseFloat(formData.totalPrice || 0)
+      const preciousMaterialCost = calculatePreciousMaterialCost(
+        formData.preciousMaterials,
+        metalRates
+      )
+      const originPrice = totalPrice - preciousMaterialCost
+
+      const finalFormData = {
+        ...formData,
+        originPrice: originPrice.toFixed(2),
+      }
+      const data = new FormData()
+
+      data.append("name", formData.name)
+      data.append("type", formData.type)
+      data.append("mainMaterial", formData.mainMaterial)
+      data.append("totalWeight", formData.totalWeight)
+      data.append("originPrice", finalFormData.originPrice)
+      data.append("productionCost", formData.productionCost)
+      data.append("limitPerOrder", formData.limitPerOrder)
+      data.append("description", formData.description)
+
+      data.append(
+        "preciousMaterials",
+        JSON.stringify(formData.preciousMaterials)
+      )
+      data.append("pearls", JSON.stringify(formData.pearls))
+      data.append("diamonds", JSON.stringify(formData.diamonds))
+      data.append("otherMaterials", JSON.stringify(formData.otherMaterials))
+      data.append("certifications", JSON.stringify(formData.certifications))
+
+      formData.images.forEach((imageObj) => {
+        data.append("images", imageObj.file)
       })
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        pearlsError: allValid
-          ? null
-          : "Please fill out all required fields for pearls.",
-      }))
+
+      console.log("data", data)
+
+      const response = await User.post(`/jewelry/`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+
+      setShowModal(true)
+      setModalMessage("Jewelry created successfully!")
+      setModalActions([
+        {
+          label: "Add Another",
+          onClick: () => {
+            setFormData(initialFormData)
+            setErrors({})
+            setShowModal(false)
+          },
+        },
+        {
+          label: "Go to Jewelry List",
+          onClick: () => {
+            navigate("/jeweler-jewelry")
+          },
+        },
+      ])
+    } catch (error) {
+      setShowModal(true)
+      setModalMessage(
+        error.response?.data?.error ||
+          "Failed to create jewelry. Please try again."
+      )
+      setModalActions([])
     }
   }
 
@@ -347,9 +537,9 @@ const JewelryForm = () => {
                 onChange={handleChange}
                 rows="10"
               />
-              {errors.generalError && (
+              {/* {errors.generalError && (
                 <p className="error">{errors.generalError}</p>
-              )}
+              )} */}
             </>
           ) : null}
           {view === "Precious Metals" ? (
@@ -440,9 +630,6 @@ const JewelryForm = () => {
                     </div>
                   ))}
               </div>
-              {errors.preciousMaterialsError && (
-                <p className="error">{errors.preciousMaterialsError}</p>
-              )}
 
               <button
                 type="button"
@@ -452,7 +639,6 @@ const JewelryForm = () => {
                     name: "gold",
                     karat: "24",
                     weight: "",
-                    karatCost: "",
                   })
                 }
               >
@@ -549,9 +735,6 @@ const JewelryForm = () => {
                     </button>
                   </div>
                 ))}
-                <p className="error">
-                  {errors["pearlsError"] ? errors["pearlsError"] : null}
-                </p>
               </div>
               <button
                 type="button"
@@ -674,9 +857,9 @@ const JewelryForm = () => {
                     </button>
                   </div>
                 ))}
-                <p className="error">
+                {/* <p className="error">
                   {errors["diamondsError"] ? errors["diamondsError"] : null}
-                </p>
+                </p> */}
               </div>{" "}
               <button
                 type="button"
@@ -758,9 +941,7 @@ const JewelryForm = () => {
                     </button>
                   </div>
                 ))}
-                <p className="error">
-                  {errors["othersError"] ? errors["othersError"] : null}
-                </p>
+                <p className="error"></p>
               </div>{" "}
               <button
                 type="button"
@@ -915,39 +1096,37 @@ const JewelryForm = () => {
               )}
             </>
           ) : null}
-          {view === "Launch" && (
+          {view === "Upload" && (
             <>
               <SummaryView formData={formData} handleChange={handleChange} />
-              {errors.submitError && (
-                <p className="error">{errors.submitError}</p>
-              )}
-              {errors.generalError && (
+              {errors?.generalError && (
                 <p className="error">{errors.generalError}</p>
+              )}{" "}
+              {errors?.images && <p className="error">{errors.images}</p>}{" "}
+              {errors?.materials && <p className="error">{errors.materials}</p>}
+              {errors?.preciousMaterials && (
+                <p className="error">{errors.preciousMaterials}</p>
               )}
-              {errors.imagesError && (
-                <p className="error">{errors.imagesError}</p>
+              {errors?.preciousMaterialsFields && (
+                <p className="error">{errors.preciousMaterialsFields}</p>
               )}
-              {errors.preciousMaterialsError && (
-                <p className="error">{errors.preciousMaterialsError}</p>
+              {errors?.pearls && <p className="error">{errors.pearls}</p>}
+              {errors?.diamonds && <p className="error">{errors.diamonds}</p>}
+              {errors?.otherMaterials && (
+                <p className="error">{errors.otherMaterials}</p>
               )}
-              {errors.pearlsError && (
-                <p className="error">{errors.pearlsError}</p>
-              )}
-              {errors.diamondsError && (
-                <p className="error">{errors.diamondsError}</p>
-              )}
-              {errors.otherMaterialsError && (
-                <p className="error">{errors.otherMaterialsError}</p>
-              )}
-              {errors.othercertificationsError && (
-                <p className="error">{errors.otherMaterialsError}</p>
+              {errors?.certifications && (
+                <p className="error">{errors.certifications}</p>
               )}
               <button
                 type="button"
                 onClick={() => {
                   handleSubmit()
                 }}
-                className={`${errors ? "disabled" : ""}`}
+                className={
+                 errors && Object.values(errors).some((err) => err) ? "disabled" : ""
+                }
+                disabled={errors && Object.values(errors).some((err) => err)}
               >
                 Submit Jewelry Info
               </button>
@@ -955,6 +1134,15 @@ const JewelryForm = () => {
           )}
         </div>
       </div>
+      {showModal && (
+        <FeedbackModal
+          show={showModal}
+          type="success"
+          message={modalMessage}
+          onClose={() => setShowModal(false)}
+          actions={modalActions}
+        />
+      )}
     </>
   )
 }

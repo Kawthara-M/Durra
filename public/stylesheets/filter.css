@@ -1,0 +1,95 @@
+.filter-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.filter-wrapper {
+  position: relative;
+  width: 40vw;
+  background-color: var(--bg-color);
+  height: 100%;
+  padding: 20px;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+}
+
+.close-filter-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: transparent;
+  font-size: 1.5rem;
+  border: none;
+  cursor: pointer;
+  color: var(--text-color);
+  text-align: left;
+}
+
+.filter-sidebar {
+  position: fixed;
+  top: 80px;
+  right: 0;
+  width: 40vw;
+  height: calc(100vh - 80px);
+  background-color: var(--bg-color);
+  border-left: 1px solid #ccc;
+  padding: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+}
+
+.filter-title {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.filter-group {
+  margin-bottom: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.filter-group select,
+.filter-group input[type="checkbox"] {
+  width: 50%;
+  padding: 6px;
+}
+
+.filter-group select {
+  background-color: transparent;
+  border: solid 1px #ccc;
+  border-radius: 6px;
+}
+
+.apply-filter-btn {
+  width: 80%;
+  background-color: var(--btn-bg);
+  color: var(--btn-color);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  position: absolute;
+  bottom: 1rem;
+  margin: 0 1rem;
+}
+
+.apply-filter-btn:hover {
+  background-color: #111;
+}
