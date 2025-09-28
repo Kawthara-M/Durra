@@ -57,7 +57,7 @@ const Navbar = ({}) => {
                   <Link to="/" className="brand-logo">
                     DURRA
                   </Link>
-                  <Link to="/add-jewelry" className="jeweler-options">
+                  <Link to="/jeweler-jewelry" className="jeweler-options">
                     Jewelry
                   </Link>
                   <Link to="/jeweler-services" className="jeweler-options">
