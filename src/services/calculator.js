@@ -1,20 +1,20 @@
-/* export const fetchMetalRates = async () => {
-  try {
-    const url =
-      "https://api.metals.dev/v1/latest?api_key=GF9QACGGAWN9BJKRDDYO374KRDDYO&currency=BHD&unit=g"
-    const response = await fetch(url, {
-      headers: {
-        Accept: "application/json",
-      },
-    })
+// export const fetchMetalRates = async () => {
+//   try {
+//     const url =
+//       "https://api.metals.dev/v1/latest?api_key=GF9QACGGAWN9BJKRDDYO374KRDDYO&currency=BHD&unit=g"
+//     const response = await fetch(url, {
+//       headers: {
+//         Accept: "application/json",
+//       },
+//     })
 
-    const result = await response.json()
-    return result?.metals || {}
-  } catch (error) {
-    console.error("Failed to fetch metal rates", error)
-    throw new Error("Failed to load metal rates")
-  }
-} */
+//     const result = await response.json()
+//     return result?.metals || {}
+//   } catch (error) {
+//     console.error("Failed to fetch metal rates", error)
+//     throw new Error("Failed to load metal rates")
+//   }
+// }
 
   // to save api req available
   export const fetchMetalRates = async () => {
@@ -65,10 +65,10 @@ export const calculatePreciousMaterialCost = (
   }, 0)
 }
 
-// Total cost = precious materials + production
+// Total cost = precious materials + origin
 export const calculateTotalCost = (
   preciousMaterialCost = 0,
-  productionCost = 0
+  originCost = 0
 ) => {
-  return parseFloat(preciousMaterialCost) + parseFloat(productionCost)
+  return parseFloat(preciousMaterialCost) + parseFloat(originCost)
 }

@@ -22,7 +22,7 @@ const FeedbackModal = ({
         return {
           icon: <FaTimes className="icon" />,
           color: "#d10000",
-          title: "Error!",
+          title: "Error",
         }
       case "confirm":
         return {

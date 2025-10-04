@@ -1,0 +1,34 @@
+.jewelry-details-wrapper {
+  border-top: 1px solid var(--text-color);
+  border-bottom: 1px solid var(--text-color);
+  margin: 1rem 0;
+}
+
+.jewelry-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.jewelry-details-heading {
+  font-size: var(--font-size-h5);
+  font-weight: 600;
+}
+
+.jewelry-extra-details {
+  padding: 0 1rem 1rem 1.3rem;
+  font-size: var(--font-size-text-s);
+  line-height: 1.5rem;
+}
+
+.jewelry-details p {
+  font-size: var(--font-size-text-l);
+  color: var(--text-color);
+  margin: 0;
+}
+
+.list-details {
+  padding: 0 1.4rem;
+}
