@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import AddNavigation from "./AddNavigation"
 import SummaryView from "./SummaryView"
 import FeedbackModal from "./FeedbackModal"
@@ -14,6 +14,7 @@ import User from "../services/api"
 import "../../public/stylesheets/jewelery-add.css"
 
 const JewelryForm = () => {
+  const { jewelryId } = useParams()
   const navigate = useNavigate()
   const views = [
     "General",
@@ -64,6 +65,54 @@ const JewelryForm = () => {
   const [view, setView] = useState("General")
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [metalRates, setMetalRates] = useState({})
+  const isEdit = jewelryId
+
+  useEffect(() => {
+    const fetchJewelry = async () => {
+      try {
+        const response = await User.get(`/jewelry/${jewelryId}`)
+        console.log(response)
+        const data = response.data.jewelry
+
+        const transformedData = {
+          name: data.name || "",
+          type: data.type || "",
+          mainMaterial: data.mainMaterial || "",
+          totalWeight: data.totalWeight || "",
+          originPrice: data.originPrice || "",
+          totalPrice: data.totalPrice || "",
+          productionCost: data.productionCost || "",
+          limitPerOrder: data.limitPerOrder || 1,
+          description: data.description || "",
+          images: (data.images || []).map((url, idx) => ({
+            src: url,
+            name: `Image-${idx + 1}`,
+            file: null,
+          })),
+          preciousMaterials: data.preciousMaterials || [],
+          pearls: data.pearls || [],
+          diamonds: data.diamonds || [],
+          otherMaterials: data.otherMaterials || [],
+          certifications: data.certifications || [],
+        }
+
+        setFormData(transformedData)
+      } catch (error) {
+        setShowModal(true)
+        setModalMessage("Failed to load jewelry for editing.")
+        setModalActions([
+          {
+            label: "Go Back",
+            onClick: () => navigate("/jeweler-jewelry"),
+          },
+        ])
+      }
+    }
+
+    if (isEdit) {
+      fetchJewelry()
+    }
+  }, [isEdit, jewelryId])
 
   const addEntry = (section, newEntry) => {
     setFormData((prev) => {
@@ -108,7 +157,11 @@ const JewelryForm = () => {
     const files = Array.from(e.target.files)
 
     if (formData.images.length + files.length > 5) {
-      setErrors()
+      setErrors((prev) => ({
+        ...prev,
+        images: "Maximum 5 images allowed.",
+      }))
+      return
     }
 
     const validImages = files.filter((file) => file.type.startsWith("image/"))
@@ -118,10 +171,20 @@ const JewelryForm = () => {
       name: file.name,
     }))
 
-    setFormData((prev) => ({
-      ...prev,
-      images: [...prev.images, ...imageObjects],
-    }))
+    if (imageObjects.length === 0) {
+      return
+    }
+
+    setFormData((prev) => {
+      const updatedImages = [...prev.images, ...imageObjects]
+
+      setCurrentImageIndex(prev.images.length)
+
+      return {
+        ...prev,
+        images: updatedImages,
+      }
+    })
 
     e.target.value = ""
   }
@@ -146,7 +209,6 @@ const JewelryForm = () => {
 
   const validateMaterialWeight = (section, updatedList) => {
     console.log("Validating weight for:", section, updatedList)
-    console.log("Total weight limit:", formData.totalWeight)
     const totalWeightLimit = parseFloat(formData.totalWeight || 0)
 
     const totalMaterialWeight = updatedList.reduce((acc, item) => {
@@ -165,7 +227,7 @@ const JewelryForm = () => {
               .replace(/([A-Z])/g, " $1")
               .toLowerCase()} weight (${totalMaterialWeight.toFixed(
               2
-            )}g) exceeds total allowed weight (${totalWeightLimit}g).`
+            )}g) exceeds total jewelry weight (${totalWeightLimit}g).`
           : null,
     }))
   }
@@ -227,7 +289,6 @@ const JewelryForm = () => {
         [name]: value,
       }))
 
-      // Clear general errors for top-level fields when user corrects them
       const topLevelFieldErrorKeys = {
         name: "generalError",
         type: "generalError",
@@ -249,6 +310,7 @@ const JewelryForm = () => {
   const [showModal, setShowModal] = useState(false)
   const [modalActions, setModalActions] = useState([])
   const [modalMessage, setModalMessage] = useState("")
+  const [modalType, setModalType] = useState("success")
 
   const validateForm = (form) => {
     const newErrors = {}
@@ -398,37 +460,62 @@ const JewelryForm = () => {
       data.append("otherMaterials", JSON.stringify(formData.otherMaterials))
       data.append("certifications", JSON.stringify(formData.certifications))
 
-      formData.images.forEach((imageObj) => {
-        data.append("images", imageObj.file)
-      })
+      const existingImages = formData.images
+        .filter((img) => !img.file && img.src)
+        .map((img) => img.src)
 
-      console.log("data", data)
+      data.append("existingImages", JSON.stringify(existingImages))
 
-      const response = await User.post(`/jewelry/`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
+      formData.images
+        .filter((img) => img.file)
+        .forEach((imageObj) => {
+          data.append("images", imageObj.file)
+        })
+
+      const response = isEdit
+        ? await User.put(`/jewelry/${jewelryId}`, data, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+        : await User.post(`/jewelry/`, data, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
 
       setShowModal(true)
-      setModalMessage("Jewelry created successfully!")
-      setModalActions([
-        {
-          label: "Add Another",
-          onClick: () => {
-            setFormData(initialFormData)
-            setErrors({})
-            setShowModal(false)
-          },
-        },
-        {
-          label: "Go to Jewelry List",
-          onClick: () => {
-            navigate("/jeweler-jewelry")
-          },
-        },
-      ])
+      setModalMessage(
+        isEdit
+          ? "Jewelry updated successfully!"
+          : "Jewelry created successfully!"
+      )
+      setModalActions(
+        isEdit
+          ? [
+              {
+                label: "Edit Again",
+                onClick: () => setShowModal(false),
+              },
+              {
+                label: "Show Jewelry",
+                onClick: () => navigate(`/show-jewelry/${jewelryId}`),
+                primary: true,
+              },
+            ]
+          : [
+              {
+                label: "Add Another",
+                onClick: () => {
+                  setFormData(initialFormData)
+                  setErrors({})
+                  setShowModal(false)
+                },
+              },
+              {
+                label: "Go to Jewelry List",
+                onClick: () => navigate("/jeweler-jewelry"),
+              },
+            ]
+      )
     } catch (error) {
+      setModalType("error")
       setShowModal(true)
       setModalMessage(
         error.response?.data?.error ||
@@ -451,95 +538,117 @@ const JewelryForm = () => {
                 Provide them and then provide the other information relative to
                 your piece, you may skip sections that do not apply.
               </p>
-              <label htmlFor="name">
-                <span className="required">*</span> Name{" "}
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Jewelry Name"
-                required
-              />
-              <label htmlFor="type">
-                <span className="required">*</span> Type
-              </label>
-              <input
-                type="text"
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                placeholder="necklace, bracelet, earring..."
-                required
-              />
-              <label htmlFor="mainMaterial">
-                <span className="required">*</span> Main Material
-              </label>
-              <input
-                type="text"
-                name="mainMaterial"
-                value={formData.mainMaterial}
-                onChange={handleChange}
-                placeholder="gold, silver..."
-                required
-              />
-              <label htmlFor="totalWeight">
-                <span className="required">*</span> Total Weight (in grams)
-              </label>
-              <input
-                type="number"
-                name="totalWeight"
-                value={formData.totalWeight}
-                onChange={handleChange}
-                placeholder="0.00"
-                step="0.01"
-                required
-              />
-              <label htmlFor="productionCost">Production Cost (in BHD)</label>
-              <input
-                type="number"
-                name="productionCost"
-                value={formData.productionCost}
-                onChange={handleChange}
-                placeholder="0.00"
-                min="0.00"
-                required
-              />
-              <div className="label-with-icon">
-                <label htmlFor="limitPerOrder">Limit Per Order</label>
-                <span
-                  className={`tooltip-icon`}
-                  title="How many of this item do you accept per each order?."
-                >
-                  ?
-                </span>
+              <div className="general-inputs">
+                <div className="label-and-input">
+                  <label htmlFor="name">
+                    <span className="required">*</span> Name{" "}
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Jewelry Name"
+                    required
+                  />
+                </div>
+
+                <div className="label-and-input">
+                  <label htmlFor="type">
+                    <span className="required">*</span> Type
+                  </label>
+                  <input
+                    type="text"
+                    name="type"
+                    value={formData.type}
+                    onChange={handleChange}
+                    placeholder="Necklace, bracelet, earring, ring..."
+                    required
+                  />
+                </div>
+
+                <div className="label-and-input">
+                  <label htmlFor="mainMaterial">
+                    <span className="required">*</span> Main Material
+                  </label>
+                  <input
+                    type="text"
+                    name="mainMaterial"
+                    value={formData.mainMaterial}
+                    onChange={handleChange}
+                    placeholder="Gold, silver..."
+                    required
+                  />
+                </div>
+
+                <div className="label-and-input">
+                  <label htmlFor="totalWeight">
+                    <span className="required">*</span> Total Weight (in grams)
+                  </label>
+                  <input
+                    type="number"
+                    name="totalWeight"
+                    value={formData.totalWeight}
+                    onChange={handleChange}
+                    placeholder="0.00"
+                    step="0.01"
+                    required
+                  />
+                </div>
+
+                <div className="label-and-input">
+                  <label htmlFor="productionCost">
+                    Production Cost (in BHD)
+                  </label>
+                  <input
+                    type="number"
+                    name="productionCost"
+                    value={formData.productionCost}
+                    onChange={handleChange}
+                    placeholder="0.00"
+                    min="0.00"
+                    required
+                  />
+                </div>
+
+                <div className="label-and-input">
+                  <div className="label-with-icon">
+                    <label htmlFor="limitPerOrder">Limit Per Order</label>
+                    <span
+                      className={`tooltip-icon`}
+                      title="How many of this item do you accept per each order?."
+                    >
+                      ?
+                    </span>
+                  </div>
+                  <input
+                    type="number"
+                    name="limitPerOrder"
+                    min="1"
+                    value={formData.limitPerOrder}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="label-and-input">
+                  <div className="label-with-icon">
+                    <label htmlFor="description">Description</label>
+                    <span
+                      className={`tooltip-icon`}
+                      title="Jewelry piece description that will show up for customers"
+                    >
+                      ?
+                    </span>
+                  </div>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows="8"
+                    maxLength={1000}
+                  />
+                </div>
               </div>
-              <input
-                type="number"
-                name="limitPerOrder"
-                min="1"
-                value={formData.limitPerOrder}
-                onChange={handleChange}
-              />
-              <div className="label-with-icon">
-                <label htmlFor="description">Description</label>
-                <span
-                  className={`tooltip-icon`}
-                  title="Jewelry piece description that will show up for customers"
-                >
-                  ?
-                </span>
-              </div>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows="10"
-              />
-              {/* {errors.generalError && (
-                <p className="error">{errors.generalError}</p>
-              )} */}
             </>
           ) : null}
           {view === "Precious Metals" ? (
@@ -599,12 +708,12 @@ const JewelryForm = () => {
                         <div className="label-and-selector">
                           {" "}
                           <label htmlFor="weight">
-                            <span className="required">*</span> Weight{" "}
+                            <span className="required">*</span> Weight
                           </label>{" "}
                           <input
                             type="number"
                             name="weight"
-                            placeholder="Weight (grams)"
+                            placeholder="0.00 (grams)"
                             value={entry.weight}
                             onChange={(e) =>
                               handleChange(e, "preciousMaterials", index)
@@ -613,7 +722,8 @@ const JewelryForm = () => {
                             max={formData.totalWeight}
                             step="0.01"
                             className="material-weight"
-                          />
+                          />{" "}
+                          g
                         </div>
                       </div>
                       <button
@@ -660,79 +770,95 @@ const JewelryForm = () => {
                 </p>
                 {formData?.pearls?.map((entry, index) => (
                   <div key={index} className="pearl-group">
-                    <h4 className="pearl-group-heading">
-                      Pearl Type {index + 1}
-                    </h4>
-                    <label htmlFor="type">
-                      <span className="required">*</span> Type
-                    </label>
-                    <input
-                      type="text"
-                      name="type"
-                      placeholder="Type"
-                      value={entry.type}
-                      onChange={(e) => handleChange(e, "pearls", index)}
-                    />
-
-                    <label htmlFor="shape">
-                      <span className="required">*</span> Shape
-                    </label>
-                    <input
-                      type="text"
-                      name="shape"
-                      placeholder="Shape (e.g. round, baroque...)"
-                      value={entry.shape}
-                      onChange={(e) => handleChange(e, "pearls", index)}
-                    />
-
-                    <label htmlFor="color">
-                      <span className="required">*</span> Color
-                    </label>
-                    <input
-                      type="text"
-                      name="color"
-                      placeholder="Color (e.g. white, pink...)"
-                      value={entry.color}
-                      onChange={(e) => handleChange(e, "pearls", index)}
-                    />
-
-                    <label htmlFor="number">
-                      <span className="required">*</span> Number
-                    </label>
-                    <input
-                      type="number"
-                      name="number"
-                      placeholder="Number of Pearls of this type"
-                      value={entry.number}
-                      onChange={(e) => handleChange(e, "pearls", index)}
-                      max={formData.totalWeight}
-                    />
-
-                    <label htmlFor="weight">
-                      <span className="required">*</span> Weight
-                    </label>
-                    <input
-                      type="number"
-                      name="weight"
-                      placeholder="Weight (grams)"
-                      value={entry.weight}
-                      onChange={(e) => handleChange(e, "pearls", index)}
-                      min="0"
-                      max={formData.totalWeight}
-                      step="0.01"
-                    />
-
-                    <button
-                      type="button"
-                      className="icon-btn delete-material"
-                      onClick={() => removeEntry("pearls", index)}
-                    >
-                      <img
-                        src={deleteIcon}
-                        alt="delete icon"
-                        className="icon"
+                    <span className="inline">
+                      {" "}
+                      <h4 className="pearl-group-heading">
+                        Pearl Type {index + 1}
+                      </h4>
+                      <button
+                        type="button"
+                        className="icon-btn delete-material"
+                        onClick={() => removeEntry("pearls", index)}
+                      >
+                        <img
+                          src={deleteIcon}
+                          alt="delete icon"
+                          className="icon"
+                        />
+                      </button>
+                    </span>
+                    <div className="pearl-inputs">
+                      <label htmlFor="type">
+                        <span className="required">*</span> Type
+                      </label>
+                      <input
+                        className="pearl-type"
+                        type="text"
+                        name="type"
+                        placeholder="Type"
+                        value={entry.type}
+                        onChange={(e) => handleChange(e, "pearls", index)}
                       />
-                    </button>
+                      <div className="two-inputs">
+                        <div>
+                          {" "}
+                          <label htmlFor="shape">
+                            <span className="required">*</span> Shape
+                          </label>
+                          <input
+                            type="text"
+                            name="shape"
+                            placeholder="Shape (e.g. round, baroque...)"
+                            value={entry.shape}
+                            onChange={(e) => handleChange(e, "pearls", index)}
+                          />
+                        </div>
+                        <div>
+                          {" "}
+                          <label htmlFor="color">
+                            <span className="required">*</span> Color
+                          </label>
+                          <input
+                            type="text"
+                            name="color"
+                            placeholder="Color (e.g. white, pink...)"
+                            value={entry.color}
+                            onChange={(e) => handleChange(e, "pearls", index)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="two-inputs">
+                        <div>
+                          <label htmlFor="number">
+                            <span className="required">*</span> Number
+                          </label>
+                          <input
+                            type="number"
+                            name="number"
+                            placeholder="Number of Pearls of this type"
+                            value={entry.number}
+                            onChange={(e) => handleChange(e, "pearls", index)}
+                            max={formData.totalWeight}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="weight">
+                            <span className="required">*</span> Weight
+                          </label>
+                          <input
+                            type="number"
+                            name="weight"
+                            placeholder="Weight (grams)"
+                            value={entry.weight}
+                            onChange={(e) => handleChange(e, "pearls", index)}
+                            min="0"
+                            max={formData.totalWeight}
+                            step="0.01"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -748,6 +874,7 @@ const JewelryForm = () => {
                     number: "",
                   })
                 }
+                title="Add Another Pearl"
               >
                 +
               </button>
@@ -760,106 +887,129 @@ const JewelryForm = () => {
                 <p className="clarification">
                   According to the Ministry of Industry and Commerce, Jewelry
                   pieces that contain diamonds, must provide a description of
-                  the weight and purity (clarity) of them. The other
-                  characteristics required proovide your customers with a better
-                  informed expirence. If the piece contains no diamonds, simply
-                  leave this section empty.
+                  the weight and purity (clarity). The other characteristics
+                  mentioned, provide your customers with a better informed
+                  expirence. If the piece contains no diamonds, simply leave
+                  this section empty.
                 </p>
                 {formData?.diamonds?.map((entry, index) => (
                   <div key={index} className="diamond-group">
-                    <label htmlFor="type">
-                      <span className="required">*</span> Type
-                    </label>
-                    <input
-                      type="text"
-                      name="type"
-                      placeholder="Type (e.g. natural, lab-grown)"
-                      value={entry.type}
-                      onChange={(e) => handleChange(e, "diamonds", index)}
-                      required
-                    />
+                    <span className="inline">
+                      {" "}
+                      <h4 className="diamond-group-heading">
+                        Diamond Type {index + 1}
+                      </h4>
+                      <button
+                        type="button"
+                        className="icon-btn delete-material"
+                        onClick={() => removeEntry("diamonds", index)}
+                      >
+                        <img
+                          src={deleteIcon}
+                          alt="delete icon"
+                          className="icon"
+                        />
+                      </button>
+                    </span>
 
-                    <label htmlFor="clarity">
-                      <span className="required">*</span> Clarity
-                    </label>
-                    <input
-                      type="text"
-                      name="clarity"
-                      placeholder="Clarity"
-                      value={entry.clarity}
-                      onChange={(e) => handleChange(e, "diamonds", index)}
-                      required
-                    />
-
-                    <label htmlFor="color">Color</label>
-                    <input
-                      type="text"
-                      name="color"
-                      placeholder="Color"
-                      value={entry.color}
-                      onChange={(e) => handleChange(e, "diamonds", index)}
-                    />
-
-                    <label htmlFor="cutGrade">Cut Grade</label>
-                    <input
-                      type="text"
-                      name="cutGrade"
-                      placeholder="Cut Grade"
-                      value={entry.cutGrade}
-                      onChange={(e) => handleChange(e, "diamonds", index)}
-                    />
-
-                    <label htmlFor="shape">Shape</label>
-                    <input
-                      type="text"
-                      name="shape"
-                      placeholder="Shape (e.g. round, princess)"
-                      value={entry.shape}
-                      onChange={(e) => handleChange(e, "diamonds", index)}
-                    />
-
-                    <label htmlFor="number">
-                      <span className="required">*</span> Number
-                    </label>
-                    <input
-                      type="number"
-                      name="number"
-                      placeholder="Number of diamonds of this type"
-                      value={entry.number}
-                      onChange={(e) => handleChange(e, "diamonds", index)}
-                      min="1"
-                      required
-                    />
-
-                    <label htmlFor="weight">
-                      <span className="required">*</span> Weight
-                    </label>
-                    <input
-                      type="number"
-                      name="weight"
-                      placeholder="Weight (carats)"
-                      value={entry.weight}
-                      onChange={(e) => handleChange(e, "diamonds", index)}
-                      min="0"
-                      step="0.01"
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="icon-btn delete-material"
-                      onClick={() => removeEntry("diamonds", index)}
-                    >
-                      <img
-                        src={deleteIcon}
-                        alt="delete icon"
-                        className="icon"
+                    <div className="diamond-inputs">
+                      <label htmlFor="type">
+                        <span className="required">*</span> Type
+                      </label>
+                      <input
+                        type="text"
+                        name="type"
+                        placeholder="Type (e.g. natural, lab-grown)"
+                        value={entry.type}
+                        onChange={(e) => handleChange(e, "diamonds", index)}
+                        required
+                        className="diamond-type"
                       />
-                    </button>
+
+                      <div className="two-inputs">
+                        <div>
+                          <label htmlFor="shape">Shape</label>
+                          <input
+                            type="text"
+                            name="shape"
+                            placeholder="Shape (e.g. round, princess)"
+                            value={entry.shape}
+                            onChange={(e) => handleChange(e, "diamonds", index)}
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="color">Color</label>
+                          <input
+                            type="text"
+                            name="color"
+                            placeholder="Color"
+                            value={entry.color}
+                            onChange={(e) => handleChange(e, "diamonds", index)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="two-inputs">
+                        <div>
+                          <label htmlFor="clarity">
+                            <span className="required">*</span> Clarity
+                          </label>
+                          <input
+                            type="text"
+                            name="clarity"
+                            placeholder="Clarity"
+                            value={entry.clarity}
+                            onChange={(e) => handleChange(e, "diamonds", index)}
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="cutGrade">Cut Grade</label>
+                          <input
+                            type="text"
+                            name="cutGrade"
+                            placeholder="Cut Grade"
+                            value={entry.cutGrade}
+                            onChange={(e) => handleChange(e, "diamonds", index)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="two-inputs">
+                        <div>
+                          <label htmlFor="number">
+                            <span className="required">*</span> Number
+                          </label>
+                          <input
+                            type="number"
+                            name="number"
+                            placeholder="Number of diamonds of this type"
+                            value={entry.number}
+                            onChange={(e) => handleChange(e, "diamonds", index)}
+                            min="1"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="weight">
+                            <span className="required">*</span> Weight
+                          </label>
+                          <input
+                            type="number"
+                            name="weight"
+                            placeholder="0.00 (carats)"
+                            value={entry.weight}
+                            onChange={(e) => handleChange(e, "diamonds", index)}
+                            min="0"
+                            step="0.01"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
-                {/* <p className="error">
-                  {errors["diamondsError"] ? errors["diamondsError"] : null}
-                </p> */}
               </div>{" "}
               <button
                 type="button"
@@ -893,6 +1043,23 @@ const JewelryForm = () => {
                 </p>
                 {formData?.otherMaterials?.map((entry, index) => (
                   <div key={index} className="other-material-group">
+                    <span className="inline">
+                      {" "}
+                      <h4 className="diamond-group-heading">
+                        Material {index + 1}
+                      </h4>
+                      <button
+                        type="button"
+                        className="icon-btn delete-material"
+                        onClick={() => removeEntry("otherMaterials", index)}
+                      >
+                        <img
+                          src={deleteIcon}
+                          alt="delete icon"
+                          className="icon"
+                        />
+                      </button>
+                    </span>
                     <div className="other-material-row">
                       <div className="label-and-input">
                         {" "}
@@ -928,20 +1095,8 @@ const JewelryForm = () => {
                         />
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      className="icon-btn delete-material"
-                      onClick={() => removeEntry("otherMaterials", index)}
-                    >
-                      <img
-                        src={deleteIcon}
-                        alt="delete icon"
-                        className="icon"
-                      />
-                    </button>
                   </div>
                 ))}
-                <p className="error"></p>
               </div>{" "}
               <button
                 type="button"
@@ -962,54 +1117,18 @@ const JewelryForm = () => {
               <div className="certifications-form">
                 <h2 className="view-title">Certifications</h2>{" "}
                 <p className="clarification">
-                  Provide certification details for any precious stones,
-                  diamonds, or pearls included with this jewelry. This adds
-                  trust and traceability for your customers.
+                  Provide certification details for any precious metals,
+                  diamonds, or pearls in this jewelry. This adds trust and
+                  traceability for your customers.
                 </p>
                 {formData?.certifications?.map((entry, index) => (
-                  <div key={index} className="certification-group">
-                    <label htmlFor="name">
-                      <span className="required">*</span> Name
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Certifier Name (e.g. GIA)"
-                      value={entry.name}
-                      onChange={(e) => handleChange(e, "certifications", index)}
-                    />
-                    <div className="certifications-details">
+                  <>
+                    <div key={index} className="certification-group">
+                    <span className="inline">
                       {" "}
-                      <div className="label-and-">
-                        {" "}
-                        <label htmlFor="reportNumber">
-                          <span className="required">*</span> Report Number
-                        </label>
-                        <input
-                          type="text"
-                          name="reportNumber"
-                          placeholder="Report Number"
-                          value={entry.reportNumber}
-                          onChange={(e) =>
-                            handleChange(e, "certifications", index)
-                          }
-                        />
-                      </div>
-                      <div className="label-and-input">
-                        {" "}
-                        <label htmlFor="reportDate">
-                          <span className="required">*</span> Report Date
-                        </label>
-                        <input
-                          type="date"
-                          name="reportDate"
-                          placeholder="Report Date"
-                          value={entry.reportDate}
-                          onChange={(e) =>
-                            handleChange(e, "certifications", index)
-                          }
-                        />
-                      </div>
+                      <h4 className="diamond-group-heading">
+                        Certification {index + 1}
+                      </h4>
                       <button
                         type="button"
                         className="icon-btn delete-material"
@@ -1021,14 +1140,60 @@ const JewelryForm = () => {
                           className="icon"
                         />
                       </button>
+                    </span>
+                      <div className="certification-name">
+                        <label htmlFor="name">
+                          <span className="required">*</span> Name
+                        </label>
+                        <input
+                          type="text"
+                          name="name"
+                          placeholder="Certifier Name (e.g. GIA)"
+                          value={entry.name}
+                          onChange={(e) =>
+                            handleChange(e, "certifications", index)
+                          }
+                        />
+                      </div>
+                      <div className="certifications-details">
+                        {" "}
+                        <div className="label-and-">
+                          {" "}
+                          <label htmlFor="reportNumber">
+                            <span className="required">*</span> Report Number
+                          </label>
+                          <input
+                            type="text"
+                            name="reportNumber"
+                            placeholder="Report Number"
+                            value={entry.reportNumber}
+                            onChange={(e) =>
+                              handleChange(e, "certifications", index)
+                            }
+                          />
+                        </div>
+                        <div className="label-and-input">
+                          {" "}
+                          <label htmlFor="reportDate">
+                            <span className="required">*</span> Report Date
+                          </label>
+                          <input
+                            type="date"
+                            name="reportDate"
+                            placeholder="Report Date"
+                            value={entry.reportDate}
+                            onChange={(e) =>
+                              handleChange(e, "certifications", index)
+                            }
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </>
                 ))}
-                <p className="error">
-                  {errors["certificationsError"]
-                    ? errors["certificationsError"]
-                    : null}
-                </p>
+                {/* <p className="error">
+                  {errors?.certifications ? errors["certifications"] : null}
+                </p> */}
               </div>{" "}
               <button
                 type="button"
@@ -1054,28 +1219,41 @@ const JewelryForm = () => {
                   most 5.
                 </p>
                 {formData.images.length > 0 && (
-                  <div className="image-slider">
-                    <button className="slider-arrow left" onClick={handlePrev}>
-                      &#8592;
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handleImageRemove(currentImageIndex)}
+                      className="delete-image"
+                    >
+                      &times;
                     </button>
-                    <div className="slider-image-box">
+                    <div className="jewelry-image-container">
                       <img
-                        src={formData.images[currentImageIndex].src}
-                        alt={`Image ${currentImageIndex + 1}`}
+                        src={formData.images[currentImageIndex]?.src}
+                        alt={`${
+                          formData.name
+                            ? formData.name + "Image"
+                            : "Jewelry Image"
+                        } `}
                         className="slider-image"
                       />
+                      <div className="jewelry-image-overlay" />
+
                       <button
-                        type="button"
-                        onClick={() => handleImageRemove(currentImageIndex)}
-                        className="delete-image"
+                        className="image-nav-button nav-left"
+                        onClick={handlePrev}
                       >
-                        &times;
+                        &#8592;
+                      </button>
+
+                      <button
+                        className="image-nav-button nav-right"
+                        onClick={handleNext}
+                      >
+                        &#8594;
                       </button>
                     </div>
-                    <button className="slider-arrow right" onClick={handleNext}>
-                      &#8594;
-                    </button>
-                  </div>
+                  </>
                 )}
               </div>
               {formData?.images?.length < 5 && (
@@ -1091,41 +1269,46 @@ const JewelryForm = () => {
                   />
                 </label>
               )}
-              {errors.imagesError && (
-                <p className="error">{errors.imagesError}</p>
-              )}
+              {/* {errors?.images && <p className="error">{errors.images}</p>} */}
             </>
           ) : null}
           {view === "Upload" && (
             <>
               <SummaryView formData={formData} handleChange={handleChange} />
-              {errors?.generalError && (
-                <p className="error">{errors.generalError}</p>
-              )}{" "}
-              {errors?.images && <p className="error">{errors.images}</p>}{" "}
-              {errors?.materials && <p className="error">{errors.materials}</p>}
-              {errors?.preciousMaterials && (
-                <p className="error">{errors.preciousMaterials}</p>
-              )}
-              {errors?.preciousMaterialsFields && (
-                <p className="error">{errors.preciousMaterialsFields}</p>
-              )}
-              {errors?.pearls && <p className="error">{errors.pearls}</p>}
-              {errors?.diamonds && <p className="error">{errors.diamonds}</p>}
-              {errors?.otherMaterials && (
-                <p className="error">{errors.otherMaterials}</p>
-              )}
-              {errors?.certifications && (
-                <p className="error">{errors.certifications}</p>
-              )}
+              <div className="errors-in-summary">
+                {errors?.generalError && (
+                  <p className="error">{errors.generalError}</p>
+                )}{" "}
+                {errors?.images && <p className="error">{errors.images}</p>}{" "}
+                {errors?.materials && (
+                  <p className="error">{errors.materials}</p>
+                )}
+                {errors?.preciousMaterials && (
+                  <p className="error">{errors.preciousMaterials}</p>
+                )}
+                {errors?.preciousMaterialsFields && (
+                  <p className="error">{errors.preciousMaterialsFields}</p>
+                )}
+                {errors?.pearls && <p className="error">{errors.pearls}</p>}
+                {errors?.diamonds && <p className="error">{errors.diamonds}</p>}
+                {errors?.otherMaterials && (
+                  <p className="error">{errors.otherMaterials}</p>
+                )}
+                {errors?.certifications && (
+                  <p className="error">{errors.certifications}</p>
+                )}
+              </div>
               <button
                 type="button"
                 onClick={() => {
                   handleSubmit()
                 }}
                 className={
-                 errors && Object.values(errors).some((err) => err) ? "disabled" : ""
+                  errors && Object.values(errors).some((err) => err)
+                    ? "disabled"
+                    : ""
                 }
+                id="submit-jewelry"
                 disabled={errors && Object.values(errors).some((err) => err)}
               >
                 Submit Jewelry Info
@@ -1137,10 +1320,10 @@ const JewelryForm = () => {
       {showModal && (
         <FeedbackModal
           show={showModal}
-          type="success"
+          type={modalType}
           message={modalMessage}
-          onClose={() => setShowModal(false)}
           actions={modalActions}
+          onClose={() => setShowModal(false)}
         />
       )}
     </>

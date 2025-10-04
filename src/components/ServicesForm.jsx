@@ -61,7 +61,7 @@ const ServicesForm = () => {
     message: "",
   })
 
-  const isEdit = serviceId // it means we're editing, cant just use it without !
+  const isEdit = serviceId // it means we're editing
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files)

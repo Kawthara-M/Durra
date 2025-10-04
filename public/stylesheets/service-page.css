@@ -30,7 +30,7 @@
 }
 
 .service-images {
-  width: 55%;
+  width: 40%;
 }
 .service-image-slider {
   position: relative;
@@ -95,13 +95,13 @@
   align-items: center;
 }
 
-.heading-and-editor h2, .reviews-heading {
+.reviews-heading, .service-description  {
   margin-bottom: 0.5rem;
+  font-weight: 600;
 }
 
 #jeweler-service-description {
   margin-bottom: 1rem;
-  line-height: 1.4rem;
 }
 
 .jeweler-service-details {
@@ -110,8 +110,30 @@
   gap: 0.6rem;
 }
 
+.jeweler-service-details h3 {
+  font-size:var(--font-size-h5);
+  font-weight: 500;
+}
+
+.jeweler-service-details p {
+  font-size:var(--font-size-text-l);
+}
+
+.price {
+  font-size: var(--font-size-text-m) !important;
+}
+
 .service-reviews {
   display: flex;
   flex-direction: column;
   width:100vw;
+}
+
+@media (max-width:700px){
+  .service-page-content{
+    flex-direction: column;
+  }
+  .service-images{
+    width: 100%;
+  }
 }

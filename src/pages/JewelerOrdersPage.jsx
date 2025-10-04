@@ -58,6 +58,7 @@ const JewelerorderPage = () => {
     const getOrders = async () => {
       const response = await User.get(`/orders/`)
       setAllOrders(response.data.orders)
+      console.log(response.data.orders)
     }
 
     getOrders()
@@ -115,24 +116,27 @@ const JewelerorderPage = () => {
                     <h3 className="order-card__title">Order </h3>
                     <p>#{order._id}</p>
                   </div>
-
                 </div>
-                <div className="order-details">
+                <div className="order-image">
+                  {/* show image of jewelry or service */}
+                  {order.jewelryOrder?.length > 0 ? (
+                    <img
+                      src={`${order.jewelryOrder[0].jewelry.images[0]}`}
+                      alt="First Jewelry Order Image"
+                    />
+                  ) : order.serviceOrder?.length > 0 ? (
+                    <img
+                      src={`${order.serviceOrder[0].service.images[0]}`}
+                      alt="First Service Order Image"
+                    />
+                  ) : null}
+                </div>
+                <div className="order-overview">
                   <div className="order-content">
                     <h4>Content(s): </h4>
                     <p> {order.jewelryOrder?.length > 0 ? "Jewelry" : null}</p>
                     <p> {order.serviceOrder?.length > 0 ? "Service" : null}</p>
                   </div>
-                  <div className="order-collection-method">
-                    <h4>Collection Method: </h4>
-                    <p> {order.collectionMethod}</p>
-                  </div>
-                  <div className="order-total-price">
-                    <h4>Total Price: </h4>
-                    <p> {order.totalPrice} BHD</p>
-                  </div>
-                </div>
-                <div>
                   <div className="order-status">
                     <h4>Order Status:</h4>
                     <p>{order.status}</p>

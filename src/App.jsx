@@ -11,12 +11,11 @@ import ServicesForm from "./components/ServicesForm"
 import JewelerServicePage from "./pages/JewelerServicePage"
 import JewelerOrdersPage from "./pages/JewelerOrdersPage"
 import JewelerOrderPage from "./pages/JewelerOrderPage"
-
+import JewelryPiecePage from "./pages/JewelryPiecePage"
 
 import "./App.css"
 
 function App() {
-
   return (
     <>
       <div className="app-container">
@@ -24,19 +23,27 @@ function App() {
         <main>
           <Routes>
             <Route path="/*" element={<Home />} />
-            <Route
-              path="/auth"
-              element={<Authentication />}
-            />
+            <Route path="/auth" element={<Authentication />} />
             <Route path="/about" element={<AboutUs />} />
-            <Route path="/add-jewelry" element={<JewelryForm />} />
-            <Route path="/add-services" element={<ServicesForm />} />
-            <Route path="/edit-service/:serviceId" element={<ServicesForm />} />
+
             <Route path="/jeweler-services" element={<JewelerServices />} />
             <Route path="/jeweler-jewelry" element={<JewelerJewelryPage />} />
             <Route path="/jeweler-orders" element={<JewelerOrdersPage />} />
+
+            <Route path="/add-jewelry" element={<JewelryForm />} />
+            <Route path="/add-services" element={<ServicesForm />} />
+            <Route path="/edit-jewelry/:jewelryId" element={<JewelryForm />} />
+            <Route path="/edit-service/:serviceId" element={<ServicesForm />} />
+
+            <Route
+              path="/show-jewelry/:jewelryId"
+              element={<JewelryPiecePage />}
+            />
+            <Route
+              path="/show-service/:serviceId"
+              element={<JewelerServicePage />}
+            />
             <Route path="/show-order/:orderId" element={<JewelerOrderPage />} />
-            <Route path="/show-service/:serviceId" element={<JewelerServicePage />} />
           </Routes>
         </main>
         <Footer />

@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap");
+
 *,
 *::before,
 *::after {
@@ -8,16 +10,16 @@
 }
 
 :root {
-  /* --font-size-text-ss: 1.5rem;
-  --font-size-text-s: 1.8rem;
-  --font-size-text-m: 2.1rem;
-  --font-size-text-l: 2.4rem; */
-  --font-size-h6: .8rem;
-  --font-size-h5: 1rem;
-  --font-size-h4: 1.2rem;
-  --font-size-h3: 1.8rem;
-  --font-size-h2: 2.6rem;
-  --font-size-h1: 3rem;
+  --font-size-text-ss: 0.9rem;
+  --font-size-text-s: 1rem;
+  --font-size-text-m: 1.2rem;
+  --font-size-text-l: 1.4rem;
+  --font-size-h6: 1rem;
+  --font-size-h5: 1.4rem;
+  --font-size-h4: 1.6rem;
+  --font-size-h3: 2rem;
+  --font-size-h2: 2.2rem;
+  --font-size-h1: 2.6rem;
 }
 
 body.light {
@@ -46,7 +48,8 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
   margin: 0;
   padding: 0;
-  font-family: "Playfair Display", serif; /* change to what's suitable if not okay*/
+  font-family: "Playfair", serif; /* change to what's suitable if not okay*/
+  font-weight: 300;
   overflow-x: hidden;
 }
 
@@ -68,32 +71,32 @@ main {
 
 h1 {
   font-size: var(--font-size-h1);
-  line-height: var(--line-height-h1);
 }
 
 h2 {
   font-size: var(--font-size-h2);
-  line-height: var(--line-height-h2);
 }
 
 h3 {
   font-size: var(--font-size-h3);
-  line-height: var(--line-height-h3);
 }
 
 h4 {
   font-size: var(--font-size-h4);
-  line-height: var(--line-height-h4);
 }
 
 h5 {
   font-size: var(--font-size-h5);
-  line-height: var(--line-height-h5);
 }
 
 h6 {
   font-size: var(--font-size-h6);
-  line-height: var(--line-height-h6);
+}
+
+p {
+  text-align: justify;
+  font-size: var(--font-size-text-s);
+  line-height: 1.4rem;
 }
 
 /* button common styling */
@@ -138,7 +141,7 @@ a:hover {
 /* input related elements styling */
 label {
   display: block;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.2rem;
   font-weight: bold;
   text-align: left;
 }
@@ -151,9 +154,19 @@ textarea {
   padding: 0.5rem;
 }
 
-p {
-  text-align: justify;
+.inline {
+  display: flex;
 }
+
+.price {
+  font-family: 'sans-serif';
+}
+/* 
+.hr {
+  background-color:#958e8e;
+  width: 100%;
+  height:1px;
+} */
 
 .disabled-link {
   opacity: 0.4;

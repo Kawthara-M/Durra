@@ -4,7 +4,6 @@ import { useNavigate, Link } from "react-router-dom"
 import User from "../services/api"
 
 import placeholder from "../assets/placeholder.png"
-import "../../public/stylesheets/jeweler-services.css"
 
 const JewelerJewelryPage = () => {
   const navigate = useNavigate()
@@ -46,9 +45,6 @@ const JewelerJewelryPage = () => {
                   <div className="service-card__date">
                     Created on {new Date(j.createdAt).toLocaleDateString()}
                   </div>
-                  <div className="service-card__date">
-                    Updated on {new Date(j.updatedAt).toLocaleDateString()}
-                  </div>
                 </div>
 
                 <div className="service-card__arrow" title="Show Service Page">
@@ -72,9 +68,9 @@ const JewelerJewelryPage = () => {
 
         <button
           type="button"
-          className="add-service"
+          className="add-to-jewelry-list"
           title="Add Services"
-          onClick={() => navigate("/add-services")}
+          onClick={() => navigate("/add-jewelry")}
         >
           +
         </button>

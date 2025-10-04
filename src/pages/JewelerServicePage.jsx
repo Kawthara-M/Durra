@@ -55,8 +55,6 @@ const JewelerServicePage = () => {
       {service && (
         <>
           <div className="service-page">
-            <h1 className="service-page-heading"> {service.name}</h1>
-            <hr />
             <div className="service-page-content">
               <div className="service-images">
                 {service.images.length > 0 && (
@@ -79,8 +77,7 @@ const JewelerServicePage = () => {
               </div>
               <div className="service-information">
                 <div className="heading-and-editor">
-                  {" "}
-                  <h2 className="service-description">Description</h2>
+                  <h1> {service.name}</h1>
                   <Link to={`/edit-service/${serviceId}`}>
                     <img src={editIcon} alt="edit icon" className="icon" />
                   </Link>
@@ -92,17 +89,16 @@ const JewelerServicePage = () => {
                       onClick={() => setShowDeleteModal(true)}
                     />
                   </Link>
-                </div>
+                </div>{" "}
+                <h2 className="service-description">Description</h2>
                 <p id="jeweler-service-description">{service.description}</p>
-
                 <div className="jeweler-service-details">
                   <h3 className="service-limit">Limit Per Order:</h3>
                   <p>{service.limitPerOrder}</p>
                 </div>
-
                 <div className="jeweler-service-details">
                   <h3 className="service-price">Price:</h3>
-                  <p>{service.price} BHD</p>
+                  <p className="price">{service.price} BHD</p>
                 </div>
               </div>
             </div>
