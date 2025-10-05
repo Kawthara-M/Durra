@@ -2,11 +2,12 @@ import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 
 import Filter from "../components/Filter.jsx"
+import { STATUS_DISPLAY_MAP } from "../services/statusMap.js"
 import User from "../services/api.js"
 
 import "../../public/stylesheets/jeweler-orders.css"
 
-const JewelerorderPage = () => {
+const JewelerOrderPage = () => {
   const [allOrders, setAllOrders] = useState([])
   const [filteredOrders, setFilteredOrders] = useState([])
 
@@ -33,12 +34,15 @@ const JewelerorderPage = () => {
       label: "Status",
       type: "select",
       options: [
-        { value: "submitted", label: "pending" },
-        { value: "accepted", label: "accepted" },
-        { value: "rejected", label: "rejected" },
-        { value: "processing", label: "processing" },
-        { value: "pickup", label: "ready for pickup" },
-        { value: "delivered", label: "delivered" },
+        { value: "submitted", label: "Pending" },
+        { value: "accepted", label: "Accepted" },
+        { value: "rejected", label: "Rejected" },
+        { value: "processing", label: "Processing" },
+        { value: "pickup", label: "Ready for Pickup" },
+        { value: "ready", label: "Ready for Delivery" },
+        { value: "out", label: "Out for Delivery" },
+        { value: "delivered", label: "Delivered" },
+        { value: "picked-up", label: "Picked up" },
       ],
     },
     {
@@ -58,7 +62,6 @@ const JewelerorderPage = () => {
     const getOrders = async () => {
       const response = await User.get(`/orders/`)
       setAllOrders(response.data.orders)
-      console.log(response.data.orders)
     }
 
     getOrders()
@@ -118,7 +121,6 @@ const JewelerorderPage = () => {
                   </div>
                 </div>
                 <div className="order-image">
-                  {/* show image of jewelry or service */}
                   {order.jewelryOrder?.length > 0 ? (
                     <img
                       src={`${order.jewelryOrder[0].jewelry.images[0]}`}
@@ -139,19 +141,19 @@ const JewelerorderPage = () => {
                   </div>
                   <div className="order-status">
                     <h4>Order Status:</h4>
-                    <p>{order.status}</p>
+                    <p>{STATUS_DISPLAY_MAP[order.status] || order.status}</p>
                   </div>
                 </div>
 
-                {/*    <div className="order-dates">
+                <div className="order-dates">
                   <div className="order-card__date">
                     Created on {new Date(order.createdAt).toLocaleDateString()}
                   </div>
-                  <div className="order-card__date">
+                  {/* <div className="order-card__date">
                     Updated on {new Date(order.updatedAt).toLocaleDateString()}
-                  </div>
+                  </div> */}
                 </div>
- */}
+
                 <div className="order-card__arrow" title="Show order Page">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -196,4 +198,4 @@ const JewelerorderPage = () => {
   )
 }
 
-export default JewelerorderPage
+export default JewelerOrderPage

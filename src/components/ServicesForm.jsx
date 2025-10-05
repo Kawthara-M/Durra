@@ -310,49 +310,64 @@ const ServicesForm = () => {
           {view === "Images" && (
             <>
               <div className="images-view">
-                <h2 className="view-title">Images</h2>
+                <h2 className="view-title">Images</h2>{" "}
                 <p className="clarification">
-                  Please provide between 1 and 5 images.
+                  Images of services provide customer of unspoken details and
+                  speak of your work. Please provide at least 1 image, and at
+                  most 5.
                 </p>
                 {formData.images.length > 0 && (
-                  <div className="image-slider">
-                    <button className="slider-arrow left" onClick={handlePrev}>
-                      ←
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handleImageRemove(currentImageIndex)}
+                      className="delete-image"
+                    >
+                      &times;
                     </button>
-                    <div className="slider-image-box">
+                    <div className="jewelry-image-container">
                       <img
-                        src={formData.images[currentImageIndex].src}
-                        alt={`Image ${currentImageIndex + 1}`}
+                        src={formData.images[currentImageIndex]?.src}
+                        alt={`${
+                          formData.name
+                            ? formData.name + "Image"
+                            : "Jewelry Image"
+                        } `}
                         className="slider-image"
                       />
+                      <div className="jewelry-image-overlay" />
+
                       <button
-                        type="button"
-                        onClick={() => handleImageRemove(currentImageIndex)}
-                        className="delete-image"
+                        className="image-nav-button nav-left"
+                        onClick={handlePrev}
                       >
-                        ×
+                        &#8592;
+                      </button>
+
+                      <button
+                        className="image-nav-button nav-right"
+                        onClick={handleNext}
+                      >
+                        &#8594;
                       </button>
                     </div>
-                    <button className="slider-arrow right" onClick={handleNext}>
-                      →
-                    </button>
-                  </div>
-                )}
-                {formData.images.length < 5 && (
-                  <label className="image-add-label" title="Add Image">
-                    +
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleImageChange}
-                      disabled={formData.images.length >= 5}
-                      className="image-add"
-                    />
-                  </label>
+                  </>
                 )}
               </div>
-              {errors.imagesError && (
+              {formData?.images?.length < 5 && (
+                <label className="image-add-label" title="Add Image">
+                  +
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                    disabled={formData.images.length >= 5}
+                    className="image-add"
+                  />
+                </label>
+              )}
+              {errors?.imagesError && (
                 <p className="error">{errors.imagesError}</p>
               )}
             </>
@@ -383,14 +398,16 @@ const ServicesForm = () => {
                   step="0.01"
                 />
               </section>
-
-              <div className="submit-section">
-                {errors.uploadError && (
-                  <p className="error">{errors.uploadError}</p>
-                )}
+              <div className="jeweler-submit">
+                {" "}
+                <div className="errors-in-summary">
+                  {errors.uploadError && (
+                    <p className="error">{errors.uploadError}</p>
+                  )}
+                </div>
                 <button
                   onClick={handleSubmit}
-                  className="jeweler-submit"
+                  
                   disabled={!!errors.uploadError}
                 >
                   Submit
@@ -403,7 +420,7 @@ const ServicesForm = () => {
 
       <FeedbackModal
         show={feedback.show}
-        type={feedback.type} 
+        type={feedback.type}
         message={feedback.message}
         onClose={handleStay}
         actions={

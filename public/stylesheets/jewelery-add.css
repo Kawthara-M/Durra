@@ -9,7 +9,8 @@
 }
 
 .add-sidebar {
-  width: 15vw;
+  width: fit-content;
+  padding: 1rem;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -303,8 +304,13 @@
 }
 
 .summary-view {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
+  width: 100%;
   padding-bottom: 6rem;
+  overflow-x: hidden;
 }
 
 .summary-view h2 {
@@ -351,6 +357,7 @@
   position: absolute;
   bottom: 1rem;
   width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -458,8 +465,8 @@
 
 .add-to-jewelry-list {
   display: flex;
-  justify-content: center; 
-  align-items: center; 
+  justify-content: center;
+  align-items: center;
 
   position: absolute;
   bottom: 0;
@@ -472,12 +479,18 @@
   background-color: rgba(255, 255, 255, 0.8);
   border: solid 1px #333;
   color: #333;
-  font-size: .8rem;
+  font-size: 0.8rem;
   z-index: 2;
 
   text-align: center;
-  line-height: 1.5rem; 
-  margin-bottom:.5rem;
+  line-height: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.jeweler-submit {
+  position: absolute;
+  bottom: 0;
+  width:100%;
 }
 
 @media (max-width: 1100px) {
@@ -514,9 +527,9 @@
 }
 
 @media (max-width: 770px) {
-  .add-sidebar {
+  /* .add-sidebar {
     width: 25vw;
-  }
+  } */
   .view-title {
     max-width: 60vw;
   }
