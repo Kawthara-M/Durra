@@ -47,10 +47,10 @@ const JewelerServices = () => {
                     Created on{" "}
                     {new Date(service.createdAt).toLocaleDateString()}
                   </div>
-                  <div className="service-card__date">
+                  {/* <div className="service-card__date">
                     Updated on{" "}
                     {new Date(service.updatedAt).toLocaleDateString()}
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="service-card__arrow" title="Show Service Page">

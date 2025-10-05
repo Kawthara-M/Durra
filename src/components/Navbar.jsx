@@ -42,44 +42,53 @@ const Navbar = ({}) => {
     <>
       <div className="top-wrapper">
         <nav className="topNav">
-          <div
-            className={`topNav-left ${
-              user && user.role != "Customer" ? "large-left" : null
-            }`}
-          >
+          <div className={`topNav-left large-left`}>
+            <button className="toggleBtn" onClick={toggleMenu}>
+              ☰
+            </button>
+            <Link to="/" className={`brand-logo ${isOpen ? "hide-on-mobile" : ""}`}>
+              DURRA
+            </Link>
             {user ? (
               user?.role === "Customer" ? (
-                <button className="toggleBtn" onClick={toggleMenu}>
-                  ☰
-                </button>
+                <Link to="/" className="brand-logo">
+                  DURRA
+                </Link>
               ) : user?.role === "Jeweler" ? (
                 <>
-                  <Link to="/" className="brand-logo">
-                    DURRA
-                  </Link>
-                  <Link to="/jeweler-jewelry" className="jeweler-options">
+                  <Link to="/jeweler-jewelry" className="jeweler-options desktop-only">
                     Jewelry
                   </Link>
-                  <Link to="/jeweler-services" className="jeweler-options">
+                  <Link to="/jeweler-jewelry" className="jeweler-options desktop-only">
+                    Collections
+                  </Link>
+                  <Link to="/jeweler-services" className="jeweler-options desktop-only">
                     Services
                   </Link>
-                  <Link to="/jeweler-orders" className="jeweler-options">
+                  <Link to="/jeweler-orders" className="jeweler-options desktop-only">
                     Orders
                   </Link>
                 </>
               ) : (
-                <button className="toggleBtn" onClick={toggleMenu}>
-                  ☰
-                </button>
+                <Link to="/" className="brand-logo">
+                  DURRA
+                </Link>
               )
             ) : (
-              <button className="toggleBtn" onClick={toggleMenu}>
-                ☰
-              </button>
+              <>
+                {/* for guests */}
+
+                <Link to="/jewelry" className="guest-link desktop-only">
+                  Jewelry
+                </Link>
+                <Link to="/services" className="guest-link desktop-only">
+                  Service
+                </Link>
+              </>
             )}
           </div>
 
-          <div className={`topNav-center ${isOpen ? "hide-on-mobile" : ""}`}>
+          {/* <div className={`topNav-center ${isOpen ? "hide-on-mobile" : ""}`}>
             {user ? (
               user.role === "Customer" ? (
                 <Link to="/" className="brand-logo">
@@ -91,7 +100,7 @@ const Navbar = ({}) => {
                 DURRA
               </Link>
             )}
-          </div>
+          </div> */}
 
           <div className="topNav-right">
             {user ? (
@@ -175,27 +184,9 @@ const Navbar = ({}) => {
                   className="search-input"
                 />
               </div>
-            ) : (
-              <nav className="pages-navbar desktop-navbar">
-                <Link to="/jewelry">Jewelry</Link>
-                {/* <Link to="/jewelry/earrings">Earrings</Link>
-                <Link to="/jewelry/bracelets">Bracelets</Link>
-                <Link to="/jewelry/rings">Rings</Link>
-                <Link to="/jewelry/necklaces">Necklaces</Link> */}
-                <Link to="/services">Services</Link>
-              </nav>
-            )
+            ) : null
           ) : null
-        ) : (
-          <nav className="pages-navbar desktop-navbar">
-            <Link to="/jewelry">Jewelry</Link>
-            {/* <Link to="/jewelry/earrings">Earrings</Link>
-            <Link to="/jewelry/bracelets">Bracelets</Link>
-            <Link to="/jewelry/rings">Rings</Link>
-            <Link to="/jewelry/necklaces">Necklaces</Link> */}
-            <Link to="/services">Services</Link>
-          </nav>
-        )}
+        ) : null}
 
         <div className={`sideNav ${isOpen ? "open" : ""}`}>
           <div className="sidebar-logo">
@@ -204,25 +195,45 @@ const Navbar = ({}) => {
             </Link>
           </div>
           <nav className="pages-navbar side-navbar-links">
-            <Link to="/jewelry" onClick={closeMenu}>
-              All Jewelry
-            </Link>
-            <Link to="/jewelry/rings" onClick={closeMenu}>
-              Rings
-            </Link>
-            <Link to="/jewelry/earrings" onClick={closeMenu}>
-              Earrings
-            </Link>
-            <Link to="/jewelry/bracelets" onClick={closeMenu}>
-              Bracelets
-            </Link>
-            <Link to="/jewelry/necklaces" onClick={closeMenu}>
-              Necklaces
-            </Link>
-            <Link to="/services" onClick={closeMenu}>
-              Services
-            </Link>
+            {user?.role === "Customer" || !user ? (
+              <>
+                <Link to="/jewelry" onClick={closeMenu}>
+                  All Jewelry
+                </Link>
+                <Link to="/jewelry/rings" onClick={closeMenu}>
+                  Rings
+                </Link>
+                <Link to="/jewelry/earrings" onClick={closeMenu}>
+                  Earrings
+                </Link>
+                <Link to="/jewelry/bracelets" onClick={closeMenu}>
+                  Bracelets
+                </Link>
+                <Link to="/jewelry/necklaces" onClick={closeMenu}>
+                  Necklaces
+                </Link>
+                <Link to="/services" onClick={closeMenu}>
+                  Services
+                </Link>
+              </>
+            ) : user?.role === "Jeweler" ? (
+              <>
+                <Link to="/jeweler-jewelry" onClick={closeMenu}>
+                  Jewelry
+                </Link>
+                <Link to="/jeweler-jewelry" onClick={closeMenu}>
+                  Collections
+                </Link>
+                <Link to="/jeweler-services" onClick={closeMenu}>
+                  Services
+                </Link>
+                <Link to="/jeweler-orders" onClick={closeMenu}>
+                  Orders
+                </Link>
+              </>
+            ) : null}
           </nav>
+
           <div></div>
         </div>
       </div>
