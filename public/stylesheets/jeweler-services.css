@@ -1,5 +1,5 @@
 .jeweler-services,
-.orders-page {
+.orders-page, .jeweler-collections {
   position: relative;
   width: 100%;
   height: 100%;
@@ -12,7 +12,7 @@
   box-sizing: border-box;
   align-items: stretch;
 }
-.services-heading,
+.services-heading, .collections-heading,
 #orders-page-heading {
   grid-column: 1 / -1;
   margin-bottom: 0;
@@ -86,8 +86,9 @@
   align-items: center;
 }
 
-.service-card__arrow svg {
+.service-card__arrow span {
   transition: 0.2s;
+  color: white;
 }
 
 .service-card:hover .service-card__title {
@@ -99,7 +100,7 @@
   background: #111;
 }
 
-.service-card:hover .service-card__arrow svg {
+.service-card:hover .service-card__arrow span {
   transform: translateX(2px);
 }
 

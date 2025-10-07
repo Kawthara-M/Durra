@@ -1,4 +1,10 @@
+.authentication-card {
+  width: 30vw;
+  height: fit-content;
+  box-sizing: border-box;
+}
 .wrapper {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -6,70 +12,32 @@
   padding: 1rem;
 }
 
-form {
-  padding: 3rem 1.5rem;
-  border-radius: 10px;
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); */
-  width: 100%;
-  max-width: 45vw;
-  height: fit-content;
-  /* border: 1px solid #d0d0d0; */
-  box-sizing: border-box;
-}
-.sign-up {
-  padding: 1rem 2rem;
-  max-width: 40vw;
-}
-
-h2 {
+h1 {
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   color: var(--text-color);
 }
 
-input {
+.authentication-card form, .signUp-form {
   width: 100%;
-  padding: 0.6rem;
-  font-size: 1rem;
-  border: 1px solid #bbb;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-
-input:focus {
-  border-color: #370101;
-  outline: 1px solid #370101;
-}
-
-button {
-  width: 100%;
-  padding: 0.6rem;
-  font-weight: 400;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
 
 #switch {
   font-size: 0.85rem;
   text-align: center;
-}
-
-a {
-  text-decoration: none;
+  margin-top: .1rem;
 }
 
 .name-row {
   display: flex;
   gap: 1rem;
   width: 100%;
-  margin-bottom: 0.01rem;
 }
 
-.name-row label {
+.name-row div {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -160,9 +128,13 @@ a {
   display: block;
 }
 
-@media (max-width:400px) {
-  form {
-    max-width: 70vw;
+@media (max-width: 960px) {
+  .authentication-card {
+    width: 45vw;
   }
-  
+}
+@media (max-width: 650px) {
+  .authentication-card {
+    width: 70vw;
+  }
 }

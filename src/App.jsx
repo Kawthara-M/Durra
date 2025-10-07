@@ -5,11 +5,12 @@ import AboutUs from "./pages/AboutUs"
 import Authentication from "./pages/Authentication"
 import Home from "./pages/Home"
 import JewelerJewelryPage from "./pages/JewelerJewelryPage"
+import JewelerCollectionsPage from "./pages/JewelerCollectionsPage"
 import JewelerServices from "./pages/JewelerServices"
+import JewelerOrdersPage from "./pages/JewelerOrdersPage"
 import JewelryForm from "./components/JewelryForm"
 import ServicesForm from "./components/ServicesForm"
 import JewelerServicePage from "./pages/JewelerServicePage"
-import JewelerOrdersPage from "./pages/JewelerOrdersPage"
 import JewelerOrderPage from "./pages/JewelerOrderPage"
 import JewelryPiecePage from "./pages/JewelryPiecePage"
 
@@ -26,8 +27,9 @@ function App() {
             <Route path="/auth" element={<Authentication />} />
             <Route path="/about" element={<AboutUs />} />
 
-            <Route path="/jeweler-services" element={<JewelerServices />} />
             <Route path="/jeweler-jewelry" element={<JewelerJewelryPage />} />
+            <Route path="/jeweler-collections" element={<JewelerCollectionsPage />} />
+            <Route path="/jeweler-services" element={<JewelerServices />} />
             <Route path="/jeweler-orders" element={<JewelerOrdersPage />} />
 
             <Route path="/add-jewelry" element={<JewelryForm />} />
