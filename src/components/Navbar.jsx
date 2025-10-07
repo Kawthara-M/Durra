@@ -46,26 +46,49 @@ const Navbar = ({}) => {
             <button className="toggleBtn" onClick={toggleMenu}>
               ☰
             </button>
-            <Link to="/" className={`brand-logo ${isOpen ? "hide-on-mobile" : ""}`}>
+            <Link
+              to="/"
+              className={`brand-logo ${isOpen ? "hide-on-mobile" : ""}`}
+            >
               DURRA
             </Link>
             {user ? (
               user?.role === "Customer" ? (
-                <Link to="/" className="brand-logo">
-                  DURRA
-                </Link>
-              ) : user?.role === "Jeweler" ? (
                 <>
-                  <Link to="/jeweler-jewelry" className="jeweler-options desktop-only">
+                  <Link to="/" className="desktop-only">
                     Jewelry
                   </Link>
-                  <Link to="/jeweler-jewelry" className="jeweler-options desktop-only">
+                  <Link to="/" className="desktop-only">
                     Collections
                   </Link>
-                  <Link to="/jeweler-services" className="jeweler-options desktop-only">
+                  <Link to="/" className="desktop-only">
                     Services
                   </Link>
-                  <Link to="/jeweler-orders" className="jeweler-options desktop-only">
+                </>
+              ) : user?.role === "Jeweler" ? (
+                <>
+                  <Link
+                    to="/jeweler-jewelry"
+                    className="jeweler-options desktop-only"
+                  >
+                    Jewelry
+                  </Link>
+                  <Link
+                    to="/jeweler-collections"
+                    className="jeweler-options desktop-only"
+                  >
+                    Collections
+                  </Link>
+                  <Link
+                    to="/jeweler-services"
+                    className="jeweler-options desktop-only"
+                  >
+                    Services
+                  </Link>
+                  <Link
+                    to="/jeweler-orders"
+                    className="jeweler-options desktop-only"
+                  >
                     Orders
                   </Link>
                 </>
@@ -82,7 +105,7 @@ const Navbar = ({}) => {
                   Jewelry
                 </Link>
                 <Link to="/services" className="guest-link desktop-only">
-                  Service
+                  Services
                 </Link>
               </>
             )}
@@ -190,9 +213,9 @@ const Navbar = ({}) => {
 
         <div className={`sideNav ${isOpen ? "open" : ""}`}>
           <div className="sidebar-logo">
-            <Link to="/" className="brand-logo-mobile" onClick={closeMenu}>
+            <span className="brand-logo-mobile" onClick={closeMenu}>
               DURRA
-            </Link>
+            </span>
           </div>
           <nav className="pages-navbar side-navbar-links">
             {user?.role === "Customer" || !user ? (

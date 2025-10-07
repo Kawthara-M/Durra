@@ -101,8 +101,19 @@ p {
 
 /* button common styling */
 button {
+  width: 100%;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 5px;
+
   background-color: var(--btn-bg);
   color: var(--btn-color);
+
+  font-family: "Playfair", serif;
+  font-size: var(--font-size-text-s);
+  font-weight: 400;
+
+  cursor: pointer;
 }
 
 button:disabled {
@@ -130,6 +141,7 @@ img.icon {
 /* links styling */
 a {
   color: var(--text-color);
+  text-decoration: none;
 }
 
 a:hover {
@@ -147,7 +159,14 @@ label {
 }
 
 input {
+  width: 100%;
   margin: 0;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
 }
 
 textarea {
@@ -159,7 +178,7 @@ textarea {
 }
 
 .price {
-  font-family: 'sans-serif';
+  font-family: "sans-serif";
 }
 /* 
 .hr {

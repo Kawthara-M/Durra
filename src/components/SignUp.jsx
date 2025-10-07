@@ -60,12 +60,13 @@ const SignUp = ({ setShowSignUp }) => {
 
   return (
     <div className="wrapper">
-      <h2 className="form-title">Sign Up</h2>
+      <h1 className="form-title">Sign Up</h1>
       <div className="signUp-form">
         <form onSubmit={handleSubmit} className="sign-up">
           <div className="name-row">
-            <label>
-              First Name
+            <div>
+              {" "}
+              <label>First Name</label>
               <input
                 type="text"
                 name="fName"
@@ -74,10 +75,9 @@ const SignUp = ({ setShowSignUp }) => {
                 value={formValues.fName}
                 required
               />
-            </label>
-
-            <label>
-              Last Name
+            </div>
+            <div>
+              <label>Last Name</label>{" "}
               <input
                 type="text"
                 name="lName"
@@ -85,7 +85,7 @@ const SignUp = ({ setShowSignUp }) => {
                 onChange={handleChange}
                 value={formValues.lName}
               />
-            </label>
+            </div>
           </div>
 
           <label htmlFor="email">Email</label>

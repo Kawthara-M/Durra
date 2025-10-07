@@ -49,6 +49,7 @@
   font-weight: bold;
   text-decoration: none;
   padding: 0 1rem;
+  cursor: pointer;
 }
 .brand-logo-mobile {
   text-align: center;
@@ -57,23 +58,7 @@
   display: block;
 }
 
-.pages-navbar.desktop-navbar {
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.pages-navbar a {
-  font-size: 1rem;
-  text-decoration: none;
-  font-weight: 400;
-  padding: 0 0.4rem;
-}
-
 .brand-logo,
-.pages-navbar a,
 .side-navbar-links a {
   color: var(--text-color);
 }
@@ -103,29 +88,6 @@
   transition: left 0.3s ease-in-out;
   z-index: 1000;
   box-sizing: border-box;
-}
-
-/* if you are changing padding or margin of pages-navbar you might need to change the following media queries*/
-/* media queries are the one's responsible for showing the nav as a hidden menu for smaller screens*/
-
-@media (min-width: 616px) {
-  .toggleBtn {
-    display: none;
-  }
-}
-
-@media (max-width: 615px) {
-  .pages-navbar.desktop-navbar {
-    display: none;
-  }
-  .sideNav {
-    display: flex;
-    flex-direction: column;
-  }
-  .topNav {
-    padding-top: 0.5rem;
-    padding-left: 0.5rem;
-  }
 }
 
 .sideNav.open {
@@ -188,7 +150,26 @@
   margin-bottom: 0.5rem;
 }
 
+.desktop-only {
+  margin: 0 .5rem;
+}
+/* media queries are the one's responsible for showing the nav as a hidden menu for smaller screens*/
+
+@media (min-width: 616px) {
+  .toggleBtn {
+    display: none;
+  }
+}
+
 @media (max-width: 615px) {
+  .sideNav {
+    display: flex;
+    flex-direction: column;
+  }
+  .topNav {
+    padding-top: 0.5rem;
+    padding-left: 0.5rem;
+  }
   .desktop-only {
     display: none;
   }

@@ -35,7 +35,7 @@ const SignIn = ({ setShowSignUp }) => {
 
   return (
     <div className="wrapper">
-      <h2>Sign In</h2>
+      <h1>Sign In</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email">Email</label>
@@ -64,19 +64,20 @@ const SignIn = ({ setShowSignUp }) => {
             value={formValues.password}
             required
           />
-          {errorMessage && <span className="error">{errorMessage}</span>}
         </div>
-        <button disabled={!formValues.email || !formValues.password}>
-          Sign In
-        </button>
+        <div>
+          {errorMessage && <span className="error">{errorMessage}</span>}
+          <button disabled={!formValues.email || !formValues.password}>
+            Sign In
+          </button>
+        </div>
         <p id="switch">
-          Don't have an Account?
           <button
             className="switch"
             type="button"
             onClick={() => setShowSignUp(true)}
           >
-            Sign Up
+            Create an Account?
           </button>
         </p>
       </form>
