@@ -1,5 +1,6 @@
 .jeweler-services,
-.orders-page, .jeweler-collections {
+.orders-page,
+.jeweler-collections {
   position: relative;
   width: 100%;
   height: 100%;
@@ -12,7 +13,8 @@
   box-sizing: border-box;
   align-items: stretch;
 }
-.services-heading, .collections-heading,
+.services-heading,
+.collections-heading,
 #orders-page-heading {
   grid-column: 1 / -1;
   margin-bottom: 0;
@@ -127,7 +129,9 @@
 }
 
 .jeweler-services a:hover,
-.order-link:hover {
+.order-link:hover,
+.jeweler-collections a:hover {
   text-decoration: none;
   color: var(--text-color);
 }
+

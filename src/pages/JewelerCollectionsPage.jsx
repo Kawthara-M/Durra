@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 
 import User from "../services/api"
 import placeholder from "../assets/placeholder.png"
+import "../../public/stylesheets/jeweler-services.css"
 
 const JewelerCollectionsPage = () => {
   const [collections, setCollections] = useState(null)

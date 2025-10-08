@@ -1,4 +1,4 @@
-.jewelry-details-wrapper {
+.jewelry-details-wrapper, .collection-details-wrapper {
   border-top: 1px solid var(--text-color);
   border-bottom: 1px solid var(--text-color);
   margin: 1rem 0;
@@ -12,7 +12,7 @@
   cursor: pointer;
 }
 
-.jewelry-details-heading {
+.jewelry-details-heading, .collection-toggle-title {
   font-size: var(--font-size-h5);
   font-weight: 600;
 }
@@ -32,3 +32,41 @@
 .list-details {
   padding: 0 1.4rem;
 }
+
+/* collection css */
+
+.collection-toggle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+}
+
+.collection-item-section {
+  margin-bottom: 1.5rem;
+  padding: 0 1rem;
+  border-radius: 6px;
+}
+
+.collection-item-title {
+  font-size: var(--font-size-h6);
+  font-weight: 600;
+}
+
+.collection-item-details p {
+  margin: 0.2rem;
+}
+
+.collection-list {
+  margin: 0.5rem 0 1rem;
+  padding-left: 1.6rem;
+}
+
+.collection-list li {
+  list-style-type: disc;
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+}
+

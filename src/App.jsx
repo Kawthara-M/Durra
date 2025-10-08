@@ -13,6 +13,7 @@ import ServicesForm from "./components/ServicesForm"
 import JewelerServicePage from "./pages/JewelerServicePage"
 import JewelerOrderPage from "./pages/JewelerOrderPage"
 import JewelryPiecePage from "./pages/JewelryPiecePage"
+import JewelerCollectionPage from "./pages/JewelerCollectionPage"
 
 import "./App.css"
 
@@ -40,6 +41,10 @@ function App() {
             <Route
               path="/show-jewelry/:jewelryId"
               element={<JewelryPiecePage />}
+            />
+            <Route
+              path="/show-collection/:collectionId"
+              element={<JewelerCollectionPage />}
             />
             <Route
               path="/show-service/:serviceId"
