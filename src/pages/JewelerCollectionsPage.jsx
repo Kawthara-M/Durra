@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+
 
 import User from "../services/api"
 import placeholder from "../assets/placeholder.png"
 import "../../public/stylesheets/jeweler-services.css"
 
 const JewelerCollectionsPage = () => {
+  const navigate = useNavigate()
   const [collections, setCollections] = useState(null)
 
   useEffect(() => {
     const getCollections = async () => {
       const response = await User.get(`/collections/`)
-      console.log(response.data.collections)
       setCollections(response.data.collections)
     }
     getCollections()
@@ -35,7 +36,9 @@ const JewelerCollectionsPage = () => {
                   className="service-card__image"
                 />
 
-                <p className="service-card__content">{collection.description}</p>
+                <p className="service-card__content">
+                  {collection.description}
+                </p>
                 <div>
                   <div className="service-card__date">
                     Created on{" "}
@@ -50,6 +53,15 @@ const JewelerCollectionsPage = () => {
             </Link>
           ))
         )}
+
+        <button
+          type="button"
+          className="add-service"
+          title="Add Collection"
+          onClick={() => navigate("/add-collections")}
+        >
+          +
+        </button>
       </div>
     </>
   )

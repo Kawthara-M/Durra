@@ -10,6 +10,7 @@ import JewelerServices from "./pages/JewelerServices"
 import JewelerOrdersPage from "./pages/JewelerOrdersPage"
 import JewelryForm from "./components/JewelryForm"
 import ServicesForm from "./components/ServicesForm"
+import CollectionForm from "./components/CollectionForm"
 import JewelerServicePage from "./pages/JewelerServicePage"
 import JewelerOrderPage from "./pages/JewelerOrderPage"
 import JewelryPiecePage from "./pages/JewelryPiecePage"
@@ -35,6 +36,7 @@ function App() {
 
             <Route path="/add-jewelry" element={<JewelryForm />} />
             <Route path="/add-services" element={<ServicesForm />} />
+            <Route path="/add-collections" element={<CollectionForm />} />
             <Route path="/edit-jewelry/:jewelryId" element={<JewelryForm />} />
             <Route path="/edit-service/:serviceId" element={<ServicesForm />} />
 
