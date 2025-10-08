@@ -204,9 +204,6 @@ const JewelerOrderPage = () => {
                     </p>
                   </div>
                 </div>
-                {/* <button className="jeweler-update-status">
-                  Update Order Status
-                </button> */}
               </div>
             </div>
             <div className="order-information">

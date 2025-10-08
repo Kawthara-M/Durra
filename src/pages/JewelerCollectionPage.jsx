@@ -12,6 +12,7 @@ const JewelerCollectionPage = () => {
 
   const [collection, setCollection] = useState(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
@@ -46,8 +47,9 @@ const JewelerCollectionPage = () => {
       setErrorMessage(message)
     }
   }
-  return <>
-  {collection && (
+  return (
+    <>
+      {collection && (
         <>
           <div className="service-page">
             <div className="service-page-content">
@@ -58,11 +60,11 @@ const JewelerCollectionPage = () => {
                       ←
                     </button>
                     <div className="image-box">
-                      {/* <img
-                        src={service.images[currentImageIndex]}
+                      <img
+                        src={collection.images[currentImageIndex]}
                         alt={`Image ${currentImageIndex + 1}`}
                         className="box-image"
-                      /> */}
+                      />
                     </div>
                     <button className="right-arrow" onClick={handleNext}>
                       →
@@ -96,6 +98,95 @@ const JewelerCollectionPage = () => {
                   {/* <p className="price">{service.price} BHD</p> */}
                 </div>
               </div>
+            </div>
+            <div className="collection-details-wrapper">
+              <div
+                className="collection-toggle-header"
+                onClick={() => setIsExpanded((prev) => !prev)}
+              >
+                <h3 className="collection-toggle-title">Contents</h3>
+                <p>{isExpanded ? "-" : "+"}</p>
+              </div>
+
+              {isExpanded &&
+                collection.jewelry.map((item) => (
+                  <div key={item._id} className="collection-item-section">
+                    <h4 className="collection-item-title">{item.name}</h4>
+                    <div className="collection-item-details">
+                      <p>
+                        <strong>Total Weight:</strong> {item.totalWeight}g
+                      </p>
+
+                      {/* {item.preciousMaterials?.length > 0 && (
+                        <div>
+                          <p>
+                            <strong>Precious Metals:</strong>
+                          </p>
+                          <ul className="collection-list">
+                            {item.preciousMaterials.map((material, index) => (
+                              <li key={index}>
+                                {material.karat}K {material.name} -{" "}
+                                {material.weight}g
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {item.pearls?.length > 0 && (
+                        <div>
+                          <p>
+                            <strong>Pearls:</strong>
+                          </p>
+                          <ul className="collection-list">
+                            {item.pearls.map((pearl, index) => (
+                              <li key={index}>
+                                {pearl.number}x {pearl.type} {pearl.shape}{" "}
+                                {pearl.color} Pearl - {pearl.weight}g
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {item.diamonds?.length > 0 && (
+                        <div>
+                          <p>
+                            <strong>Diamonds:</strong>
+                          </p>
+                          <ul className="collection-list">
+                            {item.diamonds.map((diamond, index) => (
+                              <li key={index}>
+                                {diamond.number}x {diamond.type} Diamond -{" "}
+                                {diamond.weight}g<br />
+                                <span>
+                                  Color: {diamond.color}, Clarity:{" "}
+                                  {diamond.clarity}, Cut: {diamond.cutGrade},
+                                  Shape: {diamond.shape}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {item.otherMaterials?.length > 0 && (
+                        <div>
+                          <p>
+                            <strong>Metals:</strong>
+                          </p>
+                          <ul className="collection-list">
+                            {item.otherMaterials.map((m, index) => (
+                              <li key={index}>
+                                {m.name} - {m.weight}g
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )} */}
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
 
@@ -134,7 +225,8 @@ const JewelerCollectionPage = () => {
           />
         </>
       )}
-  </>
+    </>
+  )
 }
 
 export default JewelerCollectionPage
