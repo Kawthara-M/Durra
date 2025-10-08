@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 
-import User from "../services/api"
 import AddNavigation from "./AddNavigation"
 import FeedbackModal from "./FeedbackModal"
+import imageSlider from "../services/imageSliders"
+import User from "../services/api"
 
 import "../../public/stylesheets/jewelery-add.css"
 
@@ -22,8 +23,15 @@ const ServicesForm = () => {
   }
 
   const [formData, setFormData] = useState(initialState)
+  const {
+    currentIndex: currentImageIndex,
+    setCurrentIndex,
+    handleNext,
+    handlePrev,
+    resetIndex,
+  } = imageSlider(formData.images)
+
   const [errors, setErrors] = useState({})
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   useEffect(() => {
     const fetchService = async () => {
@@ -80,11 +88,13 @@ const ServicesForm = () => {
       src: URL.createObjectURL(file),
       name: file.name,
     }))
+    const updatedImages = [...formData.images, ...imageObjects]
 
     setFormData((prev) => ({
       ...prev,
       images: [...prev.images, ...imageObjects],
     }))
+    setCurrentIndex(updatedImages.length - 1)
 
     setErrors((prev) => ({
       ...prev,
@@ -99,18 +109,7 @@ const ServicesForm = () => {
       ...prev,
       images: prev.images.filter((_, i) => i !== indexToRemove),
     }))
-  }
-
-  const handlePrev = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? formData.images.length - 1 : prev - 1
-    )
-  }
-
-  const handleNext = () => {
-    setCurrentImageIndex((prev) =>
-      prev === formData.images.length - 1 ? 0 : prev + 1
-    )
+    resetIndex()
   }
 
   const handleChange = (e) => {
@@ -405,11 +404,7 @@ const ServicesForm = () => {
                     <p className="error">{errors.uploadError}</p>
                   )}
                 </div>
-                <button
-                  onClick={handleSubmit}
-                  
-                  disabled={!!errors.uploadError}
-                >
+                <button onClick={handleSubmit} disabled={!!errors.uploadError}>
                   Submit
                 </button>
               </div>

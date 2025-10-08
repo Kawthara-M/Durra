@@ -8,9 +8,9 @@ import {
   calculatePreciousMaterialCost,
 } from "../services/calculator"
 
-import deleteIcon from "../assets/delete.png"
-
+import imageSlider from "../services/imageSliders"
 import User from "../services/api"
+import deleteIcon from "../assets/delete.png"
 import "../../public/stylesheets/jewelery-add.css"
 
 const JewelryForm = () => {
@@ -61,9 +61,15 @@ const JewelryForm = () => {
   }
 
   const [formData, setFormData] = useState(initialFormData)
+  const {
+    currentIndex: currentImageIndex,
+    setCurrentIndex,
+    handleNext,
+    handlePrev,
+    resetIndex,
+  } = imageSlider(formData.images)
   const [errors, setErrors] = useState({})
   const [view, setView] = useState("General")
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [metalRates, setMetalRates] = useState({})
   const isEdit = jewelryId
 
@@ -174,11 +180,12 @@ const JewelryForm = () => {
     if (imageObjects.length === 0) {
       return
     }
+    const updatedImages = [...formData.images, ...imageObjects]
 
     setFormData((prev) => {
       const updatedImages = [...prev.images, ...imageObjects]
 
-      setCurrentImageIndex(prev.images.length)
+      setCurrentIndex(updatedImages.length - 1)
 
       return {
         ...prev,
@@ -194,17 +201,6 @@ const JewelryForm = () => {
       ...prev,
       images: prev.images.filter((_, i) => i !== indexToRemove),
     }))
-  }
-  const handlePrev = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? formData.images.length - 1 : prev - 1
-    )
-  }
-
-  const handleNext = () => {
-    setCurrentImageIndex((prev) =>
-      prev === formData.images.length - 1 ? 0 : prev + 1
-    )
   }
 
   const validateMaterialWeight = (section, updatedList) => {
@@ -1124,23 +1120,23 @@ const JewelryForm = () => {
                 {formData?.certifications?.map((entry, index) => (
                   <>
                     <div key={index} className="certification-group">
-                    <span className="inline">
-                      {" "}
-                      <h4 className="diamond-group-heading">
-                        Certification {index + 1}
-                      </h4>
-                      <button
-                        type="button"
-                        className="icon-btn delete-material"
-                        onClick={() => removeEntry("certifications", index)}
-                      >
-                        <img
-                          src={deleteIcon}
-                          alt="delete icon"
-                          className="icon"
-                        />
-                      </button>
-                    </span>
+                      <span className="inline">
+                        {" "}
+                        <h4 className="diamond-group-heading">
+                          Certification {index + 1}
+                        </h4>
+                        <button
+                          type="button"
+                          className="icon-btn delete-material"
+                          onClick={() => removeEntry("certifications", index)}
+                        >
+                          <img
+                            src={deleteIcon}
+                            alt="delete icon"
+                            className="icon"
+                          />
+                        </button>
+                      </span>
                       <div className="certification-name">
                         <label htmlFor="name">
                           <span className="required">*</span> Name

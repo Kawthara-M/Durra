@@ -1,6 +1,6 @@
 .jewelry-add-form,
 .services-add-form,
-.services-edit-form {
+.services-edit-form, .collection-add-form {
   height: 100vh;
   width: 100%;
   display: flex;
@@ -38,7 +38,6 @@
 
   display: flex;
   flex-direction: column;
-  /* justify-content: space-between; */
   position: relative;
 
   overflow-x: hidden;
@@ -59,7 +58,7 @@
 }
 
 .main-content input,
-.main-content textarea,
+.main-content textarea, 
 .main-content .label-with-icon,
 .service-main-content input,
 .service-main-content textarea,
