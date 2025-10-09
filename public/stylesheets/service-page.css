@@ -100,8 +100,9 @@
   font-weight: 600;
 }
 
-#jeweler-service-description {
+.description {
   margin-bottom: 1rem;
+  max-width: 90%;
 }
 
 .jeweler-service-details {

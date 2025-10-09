@@ -67,12 +67,15 @@ const CollectionForm = () => {
 
         setFormData({
           name: data.name || "",
-          price: data.price || "",
+          price: "", 
           limitPerOrder: data.limitPerOrder || 1,
           description: data.description || "",
           images: imageObjects || [],
-          jewelry: data.jewelry || [],
+          jewelry: (data.jewelry || []).map(
+            (j) => j._id?.toString?.() || j.toString()
+          ),
         })
+
         setOriginPrice(data.originPrice || 0)
       } catch (err) {
         console.error("Failed to load collection", err)
@@ -364,7 +367,7 @@ const CollectionForm = () => {
                 <div>
                   <div className="label-with-icon">
                     <label htmlFor="price">
-                      <span className="required">*</span> Price
+                      <span className="required">*</span> Price (BHD)
                     </label>
                     <span
                       className="tooltip-icon"

@@ -3,6 +3,11 @@ import { useEffect, useState } from "react"
 
 import FeedbackModal from "../components/FeedbackModal"
 import imageSlider from "../services/imageSliders"
+import {
+  fetchMetalRates,
+  calculatePreciousMaterialCost,
+  calculateTotalCost,
+} from "../services/calculator"
 import User from "../services/api"
 
 import editIcon from "../assets/edit.png"
@@ -12,6 +17,12 @@ const JewelerCollectionPage = () => {
   const { collectionId } = useParams()
 
   const [collection, setCollection] = useState(null)
+  const [totalPrice, setTotalPrice] = useState(0)
+  const {
+    currentIndex: currentImageIndex,
+    handleNext,
+    handlePrev,
+  } = imageSlider(collection?.images)
   const [isExpanded, setIsExpanded] = useState(false)
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -19,18 +30,37 @@ const JewelerCollectionPage = () => {
 
   useEffect(() => {
     const getCollection = async () => {
-      const response = await User.get(`/collections/${collectionId}`)
-      setCollection(response.data.collection)
+      try {
+        const response = await User.get(`/collections/${collectionId}`)
+        const fetchedCollection = response.data.collection
+        setCollection(fetchedCollection)
+
+        const metalRates = await fetchMetalRates()
+
+        let jewelryTotal = 0
+
+        for (const item of fetchedCollection.jewelry) {
+          const origin = parseFloat(item.originPrice || 0)
+          const materialCost = calculatePreciousMaterialCost(
+            item.preciousMaterials,
+            metalRates
+          )
+
+          const totalForItem = calculateTotalCost(materialCost, origin)
+          jewelryTotal += totalForItem
+        }
+
+        const collectionOrigin = parseFloat(fetchedCollection.originPrice || 0)
+        const total = jewelryTotal + collectionOrigin
+
+        setTotalPrice(total.toFixed(2))
+      } catch (error) {
+        console.error("Error fetching collection or metal rates", error)
+      }
     }
+
     getCollection()
   }, [])
-  const {
-    currentIndex: currentImageIndex,
-    setCurrentIndex,
-    handleNext,
-    handlePrev,
-    resetIndex,
-  } = imageSlider(collection?.images)
 
   const deleteCollection = async () => {
     try {
@@ -83,14 +113,14 @@ const JewelerCollectionPage = () => {
                   </Link>
                 </div>{" "}
                 <h2 className="service-description">Description</h2>
-                <p id="jeweler-service-description">{collection.description}</p>
-                {/* <div className="jeweler-service-details">
-                  <h3 className="service-limit">Limit Per Order:</h3>
-                  <p>{service.limitPerOrder}</p>
-                </div> */}
+                <p className="description">{collection.description}</p>
                 <div className="jeweler-service-details">
-                  <h3 className="service-price">Price:</h3>
-                  {/* <p className="price">{service.price} BHD</p> */}
+                  <h3 className="service-limit">Limit Per Order:</h3>
+                  <p>{collection.limitPerOrder}</p>
+                </div>
+                <div className="jeweler-service-details">
+                  <h3 className="service-price">Total Estimated Price:</h3>
+                  <p className="price">{totalPrice} BHD</p>
                 </div>
               </div>
             </div>
