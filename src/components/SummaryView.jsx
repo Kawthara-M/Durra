@@ -67,7 +67,7 @@ const SummaryView = ({ formData, handleChange }) => {
         precious metals; if your piece includes any. You may adjust the price.{" "}
       </p>
 
-      <section>
+      <section className="summary-description">
         <h3>Description</h3>
         <p>
           {formData.description ||

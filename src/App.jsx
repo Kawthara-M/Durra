@@ -37,7 +37,9 @@ function App() {
             <Route path="/add-jewelry" element={<JewelryForm />} />
             <Route path="/add-services" element={<ServicesForm />} />
             <Route path="/add-collections" element={<CollectionForm />} />
+
             <Route path="/edit-jewelry/:jewelryId" element={<JewelryForm />} />
+            <Route path="/edit-collection/:collectionId" element={<CollectionForm />} />
             <Route path="/edit-service/:serviceId" element={<ServicesForm />} />
 
             <Route

@@ -2,6 +2,7 @@ import { useParams, useNavigate, Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 
 import FeedbackModal from "../components/FeedbackModal"
+import imageSlider from "../services/imageSliders"
 import User from "../services/api"
 
 import editIcon from "../assets/edit.png"
@@ -11,7 +12,6 @@ const JewelerCollectionPage = () => {
   const { collectionId } = useParams()
 
   const [collection, setCollection] = useState(null)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isExpanded, setIsExpanded] = useState(false)
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -24,18 +24,13 @@ const JewelerCollectionPage = () => {
     }
     getCollection()
   }, [])
-
-  const handlePrev = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? collection.images.length - 1 : prev - 1
-    )
-  }
-
-  const handleNext = () => {
-    setCurrentImageIndex((prev) =>
-      prev === collection.images.length - 1 ? 0 : prev + 1
-    )
-  }
+  const {
+    currentIndex: currentImageIndex,
+    setCurrentIndex,
+    handleNext,
+    handlePrev,
+    resetIndex,
+  } = imageSlider(collection?.images)
 
   const deleteCollection = async () => {
     try {
@@ -114,7 +109,7 @@ const JewelerCollectionPage = () => {
                     <h4 className="collection-item-title">{item.name}</h4>
                     <div className="collection-item-details">
                       <p>
-                        <strong>Total Weight:</strong> {item.totalWeight}g
+                        <strong>Weight:</strong> {item.totalWeight}g
                       </p>
 
                       {/* {item.preciousMaterials?.length > 0 && (
