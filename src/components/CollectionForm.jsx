@@ -19,7 +19,7 @@ const CollectionForm = () => {
   const views = ["General", "Images", "Upload"]
   const [view, setView] = useState("General")
   const [jewelry, setJewelry] = useState()
-  const [isPriceManuallyEdited, setIsPriceManuallyEdited] = useState(false)
+  const [originPrice, setOriginPrice] = useState(0) // the difference set by jeweler
   const [calculatedTotalPrice, setCalculatedTotalPrice] = useState(0)
 
   const initialState = {
@@ -73,6 +73,7 @@ const CollectionForm = () => {
           images: imageObjects || [],
           jewelry: data.jewelry || [],
         })
+        setOriginPrice(data.originPrice || 0)
       } catch (err) {
         console.error("Failed to load collection", err)
       }
@@ -106,20 +107,18 @@ const CollectionForm = () => {
         const rounded = parseFloat(total.toFixed(2))
         setCalculatedTotalPrice(rounded)
 
-        // Only update formData.price if not manually edited
-        if (!isPriceManuallyEdited) {
-          setFormData((prev) => ({
-            ...prev,
-            price: rounded,
-          }))
-        }
+        const finalPrice = parseFloat((originPrice + rounded).toFixed(2))
+        setFormData((prev) => ({
+          ...prev,
+          price: finalPrice,
+        }))
       } catch (err) {
         console.error("Failed to calculate jewelry price", err)
       }
     }
 
     updatePriceFromJewelry()
-  }, [formData.jewelry, jewelry, isPriceManuallyEdited])
+  }, [formData.jewelry, jewelry])
 
   const [feedback, setFeedback] = useState({
     show: false,
@@ -175,19 +174,18 @@ const CollectionForm = () => {
     const { name, value } = e.target
 
     if (name === "price") {
-      setIsPriceManuallyEdited(true)
       const newPrice = parseFloat(value)
-      const calculated = parseFloat(calculatedTotalPrice)
+      const preciousCost = calculatedTotalPrice
 
-      if (!isNaN(newPrice) && !isNaN(calculated) && newPrice !== calculated) {
+      if (!isNaN(newPrice) && !isNaN(preciousCost)) {
+        const newOriginPrice = newPrice - preciousCost
+        setOriginPrice(newOriginPrice)
+
         setFormData((prev) => ({
           ...prev,
           price: newPrice,
         }))
-      } else {
-        setIsPriceManuallyEdited(false)
       }
-
       return
     }
     setFormData((prev) => ({
@@ -227,13 +225,12 @@ const CollectionForm = () => {
     const data = new FormData()
 
     data.append("name", formData.name)
-    data.append("price", formData.price)
     data.append("limitPerOrder", formData.limitPerOrder)
     data.append("description", formData.description)
-    data.append("jewelry", formData.jewelry)
+    data.append("jewelry", JSON.stringify(formData.jewelry))
 
-    if (isPriceManuallyEdited && formData.price !== calculatedTotalPrice) {
-      data.append("originPrice", formData.price)
+    if (originPrice !== null) {
+      data.append("originPrice", originPrice)
     }
 
     const existingImages = formData.images
@@ -253,11 +250,12 @@ const CollectionForm = () => {
     try {
       let response
 
-      if (serviceId) {
+      if (collectionId) {
         response = await User.put(`/collections/${collectionId}`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         })
       } else {
+        console.log(data)
         response = await User.post("/collections", data, {
           headers: { "Content-Type": "multipart/form-data" },
         })
@@ -267,8 +265,8 @@ const CollectionForm = () => {
         show: true,
         type: "success",
         message: collectionId
-          ? "Service updated successfully!"
-          : "Service created successfully!",
+          ? "Collection updated successfully!"
+          : "Collection created successfully!",
       })
 
       if (!collectionId) {
@@ -364,9 +362,17 @@ const CollectionForm = () => {
                   </div>
                 )}
                 <div>
-                  <label htmlFor="price">
-                    <span className="required">*</span> Price (BHD)
-                  </label>
+                  <div className="label-with-icon">
+                    <label htmlFor="price">
+                      <span className="required">*</span> Price
+                    </label>
+                    <span
+                      className="tooltip-icon"
+                      title="The initial price of this collection, it will constantly be affected by the karat cost if it includes any precious metals"
+                    >
+                      ?
+                    </span>
+                  </div>
                   <input
                     type="number"
                     name="price"
@@ -520,7 +526,7 @@ const CollectionForm = () => {
                   onClick: handleStay,
                 },
                 {
-                  label: "View Service",
+                  label: "View Collection",
                   onClick: handleGoToCollections,
                   primary: true,
                 },
