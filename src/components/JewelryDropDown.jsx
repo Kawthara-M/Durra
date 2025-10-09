@@ -21,7 +21,7 @@ const JewelryDropdown = ({ jewelry, formData, setFormData }) => {
 
   const handleSelect = (id) => {
     setFormData((prev) => {
-      const current = new Set(prev.jewelry)
+      const current = new Set((prev.jewelry || []).map((id) => id.toString()))
       if (current.has(id)) {
         current.delete(id)
       } else {

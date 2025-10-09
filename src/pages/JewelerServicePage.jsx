@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Reviews from "../components/Reviews"
 import FeedbackModal from "../components/FeedbackModal"
 import User from "../services/api"
+import imageSlider from "../services/imageSliders"
 
 import editIcon from "../assets/edit.png"
 import deleteIcon from "../assets/delete.png"
@@ -14,7 +15,11 @@ const JewelerServicePage = () => {
   const { serviceId } = useParams()
 
   const [service, setService] = useState(null)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const {
+    currentIndex: currentImageIndex,
+    handleNext,
+    handlePrev,
+  } = imageSlider(service?.images)
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
@@ -26,18 +31,6 @@ const JewelerServicePage = () => {
     }
     getService()
   }, [])
-
-  const handlePrev = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? service.images.length - 1 : prev - 1
-    )
-  }
-
-  const handleNext = () => {
-    setCurrentImageIndex((prev) =>
-      prev === service.images.length - 1 ? 0 : prev + 1
-    )
-  }
 
   const deleteService = async () => {
     try {
@@ -91,7 +84,7 @@ const JewelerServicePage = () => {
                   </Link>
                 </div>{" "}
                 <h2 className="service-description">Description</h2>
-                <p id="jeweler-service-description">{service.description}</p>
+                <p className="description">{service.description}</p>
                 <div className="jeweler-service-details">
                   <h3 className="service-limit">Limit Per Order:</h3>
                   <p>{service.limitPerOrder}</p>
