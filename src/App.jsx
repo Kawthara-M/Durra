@@ -15,6 +15,7 @@ import JewelerServicePage from "./pages/JewelerServicePage"
 import JewelerOrderPage from "./pages/JewelerOrderPage"
 import JewelryPiecePage from "./pages/JewelryPiecePage"
 import JewelerCollectionPage from "./pages/JewelerCollectionPage"
+import JewelerRegisteration from "./components/JewelerRegisteration"
 
 import "./App.css"
 
@@ -28,6 +29,7 @@ function App() {
             <Route path="/*" element={<Home />} />
             <Route path="/auth" element={<Authentication />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/registeration" element={<JewelerRegisteration />} />
 
             <Route path="/jeweler-jewelry" element={<JewelerJewelryPage />} />
             <Route path="/jeweler-collections" element={<JewelerCollectionsPage />} />

@@ -26,6 +26,7 @@ The following figma prototypes present a visual blueprint of the application's u
 - Mobile platform
 -
 ## Attributations
+- Locations Autocomplete (front-end): [Geoapify Autocomplete](https://www.geoapify.com/)
 - Password Validator (front-end): [geeksforgeeks](https://www.geeksforgeeks.org/reactjs/create-a-password-validator-using-reactjs/)
 - Icons: [flatIcon](https://www.flaticon.com/)
 - Feedback Modal: [uiverse.io](https://uiverse.io/akshat-patel28/quick-baboon-29)

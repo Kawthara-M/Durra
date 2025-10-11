@@ -62,6 +62,7 @@ const JewelerOrderPage = () => {
     const getOrders = async () => {
       const response = await User.get(`/orders/`)
       setAllOrders(response.data.orders)
+      console.log(response.data.orders)
     }
 
     getOrders()
@@ -123,13 +124,13 @@ const JewelerOrderPage = () => {
                 <div className="order-image">
                   {order.jewelryOrder?.length > 0 ? (
                     <img
-                      src={`${order.jewelryOrder[0].jewelry.images[0]}`}
-                      alt="First Jewelry Order Image"
+                      src={`${order.jewelryOrder[0].item?.images[0]}`}
+                      alt="First Jewelry in Order Image"
                     />
                   ) : order.serviceOrder?.length > 0 ? (
                     <img
                       src={`${order.serviceOrder[0].service.images[0]}`}
-                      alt="First Service Order Image"
+                      alt="First Service in Order Image"
                     />
                   ) : null}
                 </div>

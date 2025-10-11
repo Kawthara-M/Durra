@@ -1,5 +1,5 @@
 export const STATUS_DISPLAY_MAP = {
-  submitted: "Submitted",
+  submitted: "Pending",
   accepted: "Accepted",
   rejected: "Rejected",
   processing: "Processing",

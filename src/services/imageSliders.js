@@ -25,7 +25,7 @@ const imageSlider = (images = []) => {
 
   return {
     currentIndex,
-     setCurrentIndex,
+    setCurrentIndex,
     handleNext,
     handlePrev,
     resetIndex,
