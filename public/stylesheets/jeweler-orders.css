@@ -206,6 +206,7 @@
   flex-direction: column;
   padding: 0.5rem;
   height: fit-content;
+  gap:.5rem;
 }
 
 .jewelry-in-order,

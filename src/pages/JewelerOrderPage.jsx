@@ -2,25 +2,18 @@ import { useParams, Link } from "react-router-dom"
 import { useState, useEffect } from "react"
 
 import { STATUS_DISPLAY_MAP } from "../services/statusMap"
+import imageSlider from "../services/imageSliders"
 import User from "../services/api"
 
 const JewelerOrderPage = () => {
   const { orderId } = useParams()
   const [order, setOrder] = useState(null)
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [sliderImages, setSliderImages] = useState([])
-
-  const handlePrev = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? sliderImages.length - 1 : prev - 1
-    )
-  }
-
-  const handleNext = () => {
-    setCurrentImageIndex((prev) =>
-      prev === sliderImages.length - 1 ? 0 : prev + 1
-    )
-  }
+  const {
+    currentIndex: currentImageIndex,
+    handleNext,
+    handlePrev,
+  } = imageSlider(sliderImages.length >0 ? sliderImages : [])
 
   const capitalize = (str) => {
     if (!str || typeof str !== "string") return ""
@@ -60,7 +53,7 @@ const JewelerOrderPage = () => {
         paymentStatus: capitalize(raw.paymentStatus),
       }
       const jewelryImages =
-        raw.jewelryOrder?.flatMap((item) => item.jewelry?.images[0] || []) || []
+        raw.jewelryOrder?.flatMap((i) => i.item?.images[0] || []) || []
 
       const serviceJewelryImages =
         raw.serviceOrder?.flatMap((serviceItem) =>
@@ -212,31 +205,29 @@ const JewelerOrderPage = () => {
                   <>
                     <h3>Jewelry</h3>
                     <div className="jewelry-container">
-                      {order.jewelryOrder.map((order) => {
+                      {order.jewelryOrder.map((entry) => {
                         return (
-                          <div className="jewelry-in-order">
+                          <div className="jewelry-in-order" key={entry._id}>
                             <img
-                              src={`${order.jewelry.images[0]}`}
-                              alt={`${order.jewelry.name}`}
+                              src={`${entry.item.images[0]}`}
+                              alt={`${entry.item.name}`}
                               className="image-in-order"
                             />
                             <div className="jewelry-in-order-details">
-                              <h5>{order.jewelry.name}</h5>
+                              <h5>{entry.item.name}</h5>
                               <span>
                                 {" "}
                                 <h6>Quantity:</h6>
-                                <p>{order.jewelry.quantity || 1}</p>
+                                <p>{entry.quantity || 1}</p>
                               </span>
                               <span>
                                 {" "}
                                 <h6>Total Price:</h6>
-                                <p className="price">
-                                  {order.jewelry.totalPrice} BHD
-                                </p>
+                                <p className="price">{entry.totalPrice} BHD</p>
                               </span>
                               <div>
                                 <h6>Notes</h6>
-                                <p>{order.jewelry.notes || "-"}</p>
+                                <p>{entry.notes || "-"}</p>
                               </div>
                             </div>
                           </div>

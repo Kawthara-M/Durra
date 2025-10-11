@@ -46,7 +46,6 @@ const SignUp = ({ setShowSignUp }) => {
     setErrorMessage("")
 
     try {
-      console.log(formValues)
       const payload = await SignUpUser(formValues)
       if (payload) {
         setFormValues(initialState)

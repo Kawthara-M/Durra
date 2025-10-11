@@ -3,6 +3,7 @@
   height: fit-content;
   box-sizing: border-box;
 }
+
 .wrapper {
   width: 100%;
   display: flex;
@@ -12,23 +13,26 @@
   padding: 1rem;
 }
 
-/* h1 {
-  font-weight: bold;
+.form-title {
   margin-bottom: 1.5rem;
-  color: var(--text-color);
-} */
+}
 
-.authentication-card form, .signUp-form {
+.authentication-card form,
+.signUp-form {
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
+.registeration-form {
+  width: 28vw;
+}
+
 #switch {
   font-size: 0.85rem;
   text-align: center;
-  margin-top: .1rem;
+  margin-top: 0.1rem;
 }
 
 .name-row {
@@ -56,11 +60,11 @@
   bottom: 0.5rem;
   display: flex;
   align-items: center;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #555;
   pointer-events: none;
   height: 100%;
-  font-weight: bold;
+  font-family: sans-serif;
 }
 
 .phone-input-wrapper input {
@@ -120,21 +124,65 @@
   border: 2px solid #b00000 !important;
 }
 
-.error {
-  color: #b00000;
-  font-size: 0.85rem;
-  margin-top: -0.8rem;
-  margin-bottom: 1rem;
-  display: block;
+/* jeweler registeration */
+
+.address-autocomplete-wrapper {
+  position: relative;
+  width: 100%;
 }
 
+.autocomplete-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ddd;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.autocomplete-suggestions li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.autocomplete-suggestions li:hover {
+  background: #f0f0f0;
+}
+
+@media (min-width: 1000px) {
+  .registeration-form {
+    width: 28vw;
+  }
+}
+
+@media (max-width: 1350px) {
+  .registeration-form {
+    width: 40vw;
+  }
+}
 @media (max-width: 960px) {
   .authentication-card {
     width: 45vw;
+  }
+  .registeration-form {
+    width: 50vw;
+  }
+}
+@media (max-width: 740px) {
+
+  .registeration-form {
+    width: 60vw;
   }
 }
 @media (max-width: 650px) {
   .authentication-card {
     width: 70vw;
+  }
+  .registeration-form {
+    width: 80vw;
   }
 }

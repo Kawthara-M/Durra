@@ -18,9 +18,7 @@ const Footer = () => {
     <>
       <footer>
         <div className="links">
-          <div
-            className={`container `}
-          >
+          <div className={`container `}>
             <h6>General</h6>
             <div className={`options`}>
               <p
@@ -28,29 +26,40 @@ const Footer = () => {
                   navigate("/about")
                 }}
               >
-                About Us
+                About DURRA
               </p>
               <p>Privacy Policy</p>
               <p>Terms and Conditions</p>
+              <p
+                onClick={() => {
+                  navigate("/registeration")
+                }}
+              >
+                Join as a Jeweler
+              </p>
             </div>
           </div>
 
-          {user ? user.role === "Customer" ? (
+          {user ? (
+            user.role === "Customer" ? (
+              <div className="container">
+                <h6>Customer Service</h6>
+                <div className="options">
+                  <p>Delivery</p>
+                  <p>Size Guide</p>
+                  <p>Refund Policy</p>
+                </div>
+              </div>
+            ) : null
+          ) : (
             <div className="container">
               <h6>Customer Service</h6>
               <div className="options">
                 <p>Delivery</p>
                 <p>Size Guide</p>
-                <p>Refund Policy</p>
               </div>
             </div>
-          ) : null: <div className="container">
-              <h6>Customer Service</h6>
-              <div className="options">
-                <p>Delivery</p>
-                <p>Size Guide</p>
-              </div>
-            </div>}
+          )}
         </div>
         <div className="social-media">
           <Link
