@@ -5,8 +5,6 @@ import FeedbackModal from "./FeedbackModal"
 import axios from "axios"
 import User from "../services/api"
 
-const GEOAPIFY_API_KEY = process.env.GEOAPIFY_API_KEY
-
 const JewelerRegisteration = () => {
   let navigate = useNavigate()
 
@@ -18,6 +16,7 @@ const JewelerRegisteration = () => {
     cr: "",
     role: "Jeweler",
   }
+  const GEOAPIFY_API_KEY = import.meta.env.VITE_GEOAPIFY_API_KEY
 
   const [formValues, setFormValues] = useState(initialState)
   const [addressSuggestions, setAddressSuggestions] = useState([])
@@ -82,7 +81,10 @@ const JewelerRegisteration = () => {
       setFormValues(initialState)
       setModalType("success")
       setModalMessage(
-        "Registration request submitted successfully.\nA response will be provided soon."
+        <>
+          Registration request submitted successfully.
+          <br />A response will be provided soon.
+        </>
       )
       setShowModal(true)
     } catch (error) {
