@@ -215,7 +215,7 @@ const JewelerRegisteration = () => {
             <div className="modal">
               <h2>Terms and Conditions</h2>
               <p>
-                {/* Replace this with your actual terms */}
+                {/* terms */}
                 By registering, you agree to our platform rules, privacy
                 policies, and all legal requirements associated with being a
                 jeweler on our platform.
