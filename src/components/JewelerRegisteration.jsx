@@ -5,6 +5,8 @@ import FeedbackModal from "./FeedbackModal"
 import axios from "axios"
 import User from "../services/api"
 
+import "../../public/stylesheets/terms-modal.css"
+
 const JewelerRegisteration = () => {
   let navigate = useNavigate()
 
@@ -25,6 +27,8 @@ const JewelerRegisteration = () => {
   const [showModal, setShowModal] = useState(false)
   const [modalType, setModalType] = useState("success")
   const [modalMessage, setModalMessage] = useState("")
+  const [agreed, setAgreed] = useState(false)
+  const [showTermsModal, setShowTermsModal] = useState(false)
 
   let debounceTimeout
 
@@ -65,6 +69,7 @@ const JewelerRegisteration = () => {
         fetchAddressSuggestions(e.target.value)
       }, 300)
     }
+    console.log(formValues)
   }
 
   const handleSubmit = async (e) => {
@@ -162,6 +167,27 @@ const JewelerRegisteration = () => {
               </ul>
             )}
           </div>
+          <div className="terms-checkbox">
+            <input
+              type="checkbox"
+              id="agree"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+            />
+            <label htmlFor="agree">
+              I have read and agreed to the{" "}
+              <span
+                style={{
+                  color: "blue",
+                  textDecoration: "underline",
+                  cursor: "pointer",
+                }}
+                onClick={() => setShowTermsModal(true)}
+              >
+                Terms and Conditions
+              </span>
+            </label>
+          </div>
 
           <button
             type="submit"
@@ -170,7 +196,8 @@ const JewelerRegisteration = () => {
               !formValues.email ||
               !formValues.phone ||
               !formValues.address ||
-              !formValues.cr
+              !formValues.cr ||
+              !agreed
             }
             onClick={(e) => handleSubmit(e)}
           >
@@ -183,6 +210,20 @@ const JewelerRegisteration = () => {
           message={modalMessage}
           onClose={() => setShowModal(false)}
         />
+        {showTermsModal && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h2>Terms and Conditions</h2>
+              <p>
+                {/* Replace this with your actual terms */}
+                By registering, you agree to our platform rules, privacy
+                policies, and all legal requirements associated with being a
+                jeweler on our platform.
+              </p>
+              <button onClick={() => setShowTermsModal(false)}>Close</button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   )
