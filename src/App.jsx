@@ -4,6 +4,7 @@ import Footer from "./components/Footer"
 import AboutUs from "./pages/AboutUs"
 import Authentication from "./pages/Authentication"
 import Home from "./pages/Home"
+import Profile from "./pages/Profile"
 import JewelerJewelryPage from "./pages/JewelerJewelryPage"
 import JewelerCollectionsPage from "./pages/JewelerCollectionsPage"
 import JewelerServices from "./pages/JewelerServices"
@@ -30,6 +31,7 @@ function App() {
             <Route path="/*" element={<Home />} />
             <Route path="/auth" element={<Authentication />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/registeration" element={<JewelerRegisteration />} />
             <Route path="/set-password" element={<SetPassword />} />
 
