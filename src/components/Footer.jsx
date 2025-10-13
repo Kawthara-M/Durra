@@ -30,7 +30,7 @@ const Footer = () => {
               </p>
               <p>Privacy Policy</p>
               <p>Terms and Conditions</p>
-              {user && user.role != "Jeweler" ? (
+              {user?.role != "Jeweler" ? (
                 <p
                   onClick={() => {
                     navigate("/registeration")
