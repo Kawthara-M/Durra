@@ -32,43 +32,43 @@ const JewelerRegisteration = () => {
 
   let debounceTimeout
 
-  const fetchAddressSuggestions = async (query) => {
-    if (!query) return setAddressSuggestions([])
+  // const fetchAddressSuggestions = async (query) => {
+  //   if (!query) return setAddressSuggestions([])
 
-    try {
-      const response = await axios.get(
-        `https://api.geoapify.com/v1/geocode/autocomplete`,
-        {
-          params: {
-            text: query,
-            limit: 5,
-            filter: "countrycode:bh",
-            apiKey: GEOAPIFY_API_KEY,
-          },
-        }
-      )
+  //   try {
+  //     const response = await axios.get(
+  //       `https://api.geoapify.com/v1/geocode/autocomplete`,
+  //       {
+  //         params: {
+  //           text: query,
+  //           limit: 5,
+  //           filter: "countrycode:bh",
+  //           apiKey: GEOAPIFY_API_KEY,
+  //         },
+  //       }
+  //     )
 
-      setAddressSuggestions(response.data.features || [])
-    } catch (error) {
-      console.error("Address autocomplete error:", error)
-    }
-  }
+  //     setAddressSuggestions(response.data.features || [])
+  //   } catch (error) {
+  //     console.error("Address autocomplete error:", error)
+  //   }
+  // }
 
-  const handleAddressSelect = (suggestion) => {
-    const formatted = suggestion.properties.formatted
-    setFormValues({ ...formValues, address: formatted })
-    setAddressSuggestions([])
-  }
+  // const handleAddressSelect = (suggestion) => {
+  //   const formatted = suggestion.properties.formatted
+  //   setFormValues({ ...formValues, address: formatted })
+  //   setAddressSuggestions([])
+  // }
 
   const handleChange = (e) => {
     setFormValues({ ...formValues, [e.target.name]: e.target.value })
 
-    if (e.target.name === "address") {
-      clearTimeout(debounceTimeout)
-      debounceTimeout = setTimeout(() => {
-        fetchAddressSuggestions(e.target.value)
-      }, 300)
-    }
+    // if (e.target.name === "address") {
+    //   clearTimeout(debounceTimeout)
+    //   debounceTimeout = setTimeout(() => {
+    //     fetchAddressSuggestions(e.target.value)
+    //   }, 300)
+    // }
     console.log(formValues)
   }
 
@@ -144,7 +144,7 @@ const JewelerRegisteration = () => {
             value={formValues.cr}
             required
           />
-          <div className="address-autocomplete-wrapper">
+          {/* <div className="address-autocomplete-wrapper">
             <label htmlFor="address">Address</label>
             <input
               type="text"
@@ -166,7 +166,7 @@ const JewelerRegisteration = () => {
                 ))}
               </ul>
             )}
-          </div>
+          </div> */}
           <div className="terms-checkbox">
             <input
               type="checkbox"
