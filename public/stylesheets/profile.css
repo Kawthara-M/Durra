@@ -32,7 +32,7 @@
 .profile-image {
   height: 30%;
   width: 35%;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   border-radius: 50%;
   margin-bottom: 1rem;
 }
@@ -40,7 +40,7 @@
 .profile-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 50%;
   display: block;
 }
@@ -71,13 +71,13 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .account-information textarea {
   width: 100%;
 }
 
-.update-button,
 .manual-toggle,
 .cancel-button {
   margin: 1rem 0;
@@ -176,4 +176,51 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   transition: border-color 0.2s ease-in-out;
+}
+
+.password-view {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.password-view h3 {
+  margin-bottom: 0.3rem;
+}
+
+.forgot-password {
+  font-weight: 600;
+  color: var(--accent-color);
+}
+.password,
+.update-button {
+  position: absolute;
+  bottom: 0;
+}
+
+.password {
+  width: 100%;
+}
+
+@media (max-width: 500px) {
+  .profile {
+    flex-direction: column;
+  }
+  .profile-left,
+  .profile-right {
+    width: 100%;
+  }
+  .profile-left {
+    height: 30%;
+  }
+  .profile-image {
+    height: 30%;
+    width: 80%;
+    margin-bottom: 0.3rem;
+  }
+  .jeweler-name {
+    font-size: var(--font-size-h4);
+  }
 }

@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  gap: .4rem;
+  gap: 0.4rem;
   flex-wrap: wrap;
 }
 
@@ -76,11 +76,11 @@
 }
 
 .feedback-buttons {
-  height:5vh;
+  height: 5vh;
   padding: auto;
-  font-size: .9rem;
+  font-size: 0.9rem;
   font-weight: normal;
-  color:var(--text-color);
+  color: var(--text-color);
   background-color: transparent !important;
   border: solid 1px #ccc;
 }
