@@ -195,7 +195,6 @@ const JewelerRegisteration = () => {
               !formValues.name ||
               !formValues.email ||
               !formValues.phone ||
-              !formValues.address ||
               !formValues.cr ||
               !agreed
             }

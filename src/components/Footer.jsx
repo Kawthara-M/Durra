@@ -71,12 +71,12 @@ const Footer = () => {
           >
             <img src={instaIcon} alt="Instagram icon" className="icon" />
           </Link>
-          <button onClick={toggleTheme} title="Toggle Theme" id="theme">
+          {/* <button onClick={toggleTheme} title="Toggle Theme" id="theme">
             <img src={themeIcon} alt="Theme icon" className="icon" />
           </button>
           <button onClick={() => handleLogOut()} title="Logout" id="logout">
             <img src={logoutIcon} alt="Logout icon" className="icon" />
-          </button>
+          </button> */}
           {/* theme should be part of user page, but it currently doesn't exist */}
         </div>
         <p id="durra">© 2025 DURRA</p>

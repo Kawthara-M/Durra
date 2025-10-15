@@ -82,7 +82,7 @@ const SetPassword = () => {
   return (
     <>
       <div className="wrapper">
-        <h1 className="form-title">Jeweler Account</h1>
+        <h1 className="form-title">Account Activation</h1>
         <div className="registeration-form">
           <label htmlFor="password">Password</label>
           <input
@@ -114,7 +114,7 @@ const SetPassword = () => {
             }
             onClick={(e) => handleSubmit(e)}
           >
-            Register
+            Set Password
           </button>
         </div>
         <FeedbackModal
