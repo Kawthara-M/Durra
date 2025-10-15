@@ -1,20 +1,24 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useParams } from "react-router-dom"
 import validator from "validator"
 
 import { useUser } from "../context/UserContext"
+import { ThemeContext } from "../context/ThemeContext"
 import LocationMap from "../components/LocationMap"
 import FeedbackModal from "../components/FeedbackModal"
 import User from "../services/api"
 
 import accountIcon from "../assets/account.png"
+import logout from "../assets/logout.png"
+import themeIcon from "../assets/theme.png"
 import editIcon from "../assets/edit.png"
 import deleteIcon from "../assets/delete.png"
 import "../../public/stylesheets/profile.css"
 
 const Profile = () => {
   const { userId } = useParams()
-  const { user } = useUser()
+  const { user, handleLogOut } = useUser()
+  const { toggleTheme } = useContext(ThemeContext)
 
   const [profile, setProfile] = useState()
   const [errorMessage, setErrorMessage] = useState("")
@@ -238,6 +242,7 @@ const Profile = () => {
     }
   }
 
+  // password handling
   const handlePasswordChange = (e) => {
     const { name, value } = e.target
     setPasswordValues((prevValues) => ({
@@ -262,7 +267,6 @@ const Profile = () => {
         confirmPassword: "",
       })
     } catch (error) {
-
       if (error.response) {
         const serverMessage =
           error.response.data?.msg ||
@@ -277,6 +281,23 @@ const Profile = () => {
         newPassword: "",
         confirmPassword: "",
       })
+    }
+  }
+
+  const forgetPassword = async () => {
+    try {
+      const response = await User.post("/auth/forget-password")
+      setModalMessage("A password reset link has been sent to your email.")
+      setShowModal(true)
+      setErrorMessage("")
+    } catch (error) {
+      console.error("Forget password error:", error)
+
+      const errorMsg =
+        error.response?.data?.error ||
+        error.response?.data?.msg ||
+        "Failed to send reset link."
+      setErrorMessage(errorMsg)
     }
   }
 
@@ -304,6 +325,20 @@ const Profile = () => {
               : null}
           </h2>
           {profile ? profile.user.email : null}
+          <span className="profile-icons">
+            <img
+              src={themeIcon}
+              alt="Theme Icon"
+              className="icon"
+              onClick={toggleTheme}
+            />
+            <img
+              src={logout}
+              alt="Sign out"
+              className="icon"
+              onClick={() => handleLogOut()}
+            />
+          </span>
         </div>
 
         <div className="profile-right">
@@ -717,7 +752,12 @@ const Profile = () => {
                       placeholder="Re-type new password"
                       onChange={handlePasswordChange}
                     />
-                    <a className="forgot-password">Forgot your password?</a>
+                    <a
+                      className="forgot-password"
+                      onClick={() => forgetPassword()}
+                    >
+                      Forgot your password?
+                    </a>
                   </div>
                   <div className="password">
                     {errorMessage && (
