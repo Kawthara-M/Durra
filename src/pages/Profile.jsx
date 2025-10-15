@@ -6,6 +6,7 @@ import { useUser } from "../context/UserContext"
 import { ThemeContext } from "../context/ThemeContext"
 import LocationMap from "../components/LocationMap"
 import FeedbackModal from "../components/FeedbackModal"
+import CustomerOrders from "../components/CustomerOrders"
 import User from "../services/api"
 
 import accountIcon from "../assets/account.png"
@@ -777,7 +778,11 @@ const Profile = () => {
                   </div>
                 </div>
               </>
-            )}
+            )} {
+              view === "Orders" && <>
+              <CustomerOrders />
+              </>
+            }
           </div>
         </div>
       </div>
