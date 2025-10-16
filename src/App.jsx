@@ -18,6 +18,7 @@ import JewelryPiecePage from "./pages/JewelryPiecePage"
 import JewelerCollectionPage from "./pages/JewelerCollectionPage"
 import JewelerRegisteration from "./components/JewelerRegisteration"
 import SetPassword from "./components/SetPassword"
+import Search from "./pages/Search"
 
 import "./App.css"
 
@@ -35,8 +36,13 @@ function App() {
             <Route path="/registeration" element={<JewelerRegisteration />} />
             <Route path="/set-password" element={<SetPassword />} />
 
+            <Route path="/search" element={<Search />} />
+
             <Route path="/jeweler-jewelry" element={<JewelerJewelryPage />} />
-            <Route path="/jeweler-collections" element={<JewelerCollectionsPage />} />
+            <Route
+              path="/jeweler-collections"
+              element={<JewelerCollectionsPage />}
+            />
             <Route path="/jeweler-services" element={<JewelerServices />} />
             <Route path="/jeweler-orders" element={<JewelerOrdersPage />} />
 
@@ -45,7 +51,10 @@ function App() {
             <Route path="/add-collections" element={<CollectionForm />} />
 
             <Route path="/edit-jewelry/:jewelryId" element={<JewelryForm />} />
-            <Route path="/edit-collection/:collectionId" element={<CollectionForm />} />
+            <Route
+              path="/edit-collection/:collectionId"
+              element={<CollectionForm />}
+            />
             <Route path="/edit-service/:serviceId" element={<ServicesForm />} />
 
             <Route

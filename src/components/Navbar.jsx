@@ -2,15 +2,20 @@ import { Link } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { useUser } from "../context/UserContext"
 import { useNavigate } from "react-router-dom"
+
+import User from "../services/api"
 import userIcon from "../assets/user.png"
 import cartIcon from "../assets/cart.png"
 import searchIcon from "../assets/search.png"
 import heartIcon from "../assets/heart.png"
+import closeIcon from "../assets/close.png"
 import "../../public/stylesheets/navbar.css"
 
 const Navbar = ({}) => {
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
+  const [search, setsearch] = useState("")
+  const [searchResults, setSearchResults] = useState([])
   const [showSearchInput, setShowSearchInput] = useState(false)
   const { user } = useUser()
 
@@ -37,10 +42,42 @@ const Navbar = ({}) => {
     }
   }, [])
 
+  // handling search
+
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === "Escape") {
+        if (isOpen) setIsOpen(false)
+        if (showSearchInput) setShowSearchInput(false)
+      }
+    }
+
+    window.addEventListener("keydown", handleEscKey)
+    return () => {
+      window.removeEventListener("keydown", handleEscKey)
+    }
+  }, [isOpen, showSearchInput])
+
+  const fetchResults = async () => {
+    try {
+      const response = await User.get("/search", { params: { search } })
+      setSearchResults(response.data)
+      console.log(response.data)
+      // navigate to results page
+      navigate(`/search?search=${encodeURIComponent(search)}`, {
+        state: { results: response.data },
+      })
+
+      setShowSearchInput(false)
+    } catch (err) {
+      console.error("Search error:", err)
+    }
+  }
+
   return (
     <>
       <div className="top-wrapper">
-        <nav className="topNav">
+        <nav className={`topNav ${showSearchInput ? "hide" : ""}`}>
           <div className={`topNav-left large-left`}>
             <button className="toggleBtn" onClick={toggleMenu}>
               ☰
@@ -110,20 +147,6 @@ const Navbar = ({}) => {
             )}
           </div>
 
-          {/* <div className={`topNav-center ${isOpen ? "hide-on-mobile" : ""}`}>
-            {user ? (
-              user.role === "Customer" ? (
-                <Link to="/" className="brand-logo">
-                  DURRA
-                </Link>
-              ) : null
-            ) : (
-              <Link to="/" className="brand-logo">
-                DURRA
-              </Link>
-            )}
-          </div> */}
-
           <div className="topNav-right">
             {user ? (
               <>
@@ -181,7 +204,6 @@ const Navbar = ({}) => {
                   </button>
                 </Link>
 
-                {/* Disabled Profile Icon */}
                 <span className="icon-btn" title="Sign in to view profile">
                   <img
                     src={userIcon}
@@ -196,18 +218,31 @@ const Navbar = ({}) => {
             )}
           </div>
         </nav>
-        {user ? (
-          user.role === "Customer" ? (
-            showSearchInput ? (
-              <div className="search-bar-container">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="search-input"
-                />
-              </div>
-            ) : null
-          ) : null
+        {/* show search input */}
+        {showSearchInput ? (
+          <div className="search-bar-container">
+            <span className="search-bar-span">
+              <input
+                type="text"
+                placeholder="Search . . ."
+                className="search-input"
+                value={search}
+                onChange={(e) => setsearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    fetchResults()
+                  }
+                }}
+              />
+              <img
+                src={closeIcon}
+                alt="close search bar"
+                className="icon close-search"
+                onClick={() => setShowSearchInput(!showSearchInput)}
+              />
+            </span>
+            <span className="search-options">Hit Enter or ESC to Close</span>
+          </div>
         ) : null}
 
         <div className={`sideNav ${isOpen ? "open" : ""}`}>

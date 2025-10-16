@@ -13,7 +13,7 @@ const JewelerJewelryPage = () => {
     const getJewelry = async () => {
       try {
         const response = await User.get("/jewelry")
-        console.log(response.data.jewelry)
+        // console.log(response.data.jewelry)
         setJewelry(response.data.jewelry)
       } catch (err) {
         console.error("Failed to fetch jewelry", err)

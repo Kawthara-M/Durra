@@ -58,5 +58,6 @@ footer p {
   .options {
     flex-direction: column;
     gap: 0;
+    margin-bottom: .5rem;
   }
 }
