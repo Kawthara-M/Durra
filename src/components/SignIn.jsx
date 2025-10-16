@@ -36,7 +36,7 @@ const SignIn = ({ setShowSignUp }) => {
   return (
     <div className="wrapper">
       <h1>Sign In</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="sign-in-form">
         <div>
           <label htmlFor="email">Email</label>
           <input
@@ -65,6 +65,9 @@ const SignIn = ({ setShowSignUp }) => {
             required
           />
         </div>
+        <a className="forgot-password" onClick={() => forgetPassword()}>
+          Forgot your password?
+        </a>
         <div>
           {errorMessage && <span className="error">{errorMessage}</span>}
           <button disabled={!formValues.email || !formValues.password}>

@@ -26,9 +26,11 @@ body.light {
   --bg-color: #f2ead3; /*the background color of content between navbar and footer*/
   --footer-bg: #efe7ce;
   --text-color: rgb(39, 38, 38);
+  --text-contrast-color: #f1f1f1;
   --nav-bg: #efe7ce;
   --btn-bg: #6f0101;
   --btn-color: #f1f1f1;
+  --btn-contrast-color: rgb(39, 38, 38);
   --accent-color: #6f0101;
   --a-hover-color: #5f0f0f;
   --card-bg-color: #fff0dd;
@@ -194,7 +196,7 @@ textarea {
 .error {
   color: #b00000;
   font-size: 0.85rem;
-  margin-top: -0.8rem;
+  /* margin-top: -0.8rem; */
   margin-bottom: 1rem;
   display: block;
 }

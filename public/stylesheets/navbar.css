@@ -9,7 +9,9 @@
 .top-wrapper {
   top: 0;
   width: 100%;
+  height: 10%;
   margin: 0;
+  /* padding: 0; */
 }
 
 .topNav {
@@ -19,6 +21,10 @@
   padding: 1rem 1rem 0.25rem 2rem;
   position: relative;
   border: none;
+}
+
+.hide {
+  display: none !important;
 }
 
 .topNav-right,
@@ -35,6 +41,20 @@
   flex: 1;
   justify-content: flex-end;
   gap: 0.4rem;
+  padding-right: 0.5rem;
+}
+
+.guest-sign-in {
+  width: 18%;
+  background-color: transparent !important;
+  border: 2px solid var(--accent-color);
+  color: var(--accent-color);
+}
+
+.guest-sign-in:hover {
+  background-color: var(--accent-color) !important;
+  border: 2px solid var(--accent-color);
+  color: var(--btn-color);
 }
 
 .topNav-center {
@@ -51,6 +71,8 @@
   padding: 0 1rem;
   cursor: pointer;
 }
+
+/* the logo showing inside the bar menu */
 .brand-logo-mobile {
   text-align: center;
   padding: 0;
@@ -72,9 +94,11 @@
   padding: 0.5rem 0.1rem 0.5 0.1rem;
   text-align: center;
 }
+
 .toggleBtn:hover {
   background-color: transparent !important;
 }
+
 .sideNav {
   position: fixed;
   top: 0;
@@ -118,21 +142,45 @@
 }
 
 .search-bar-container {
-  padding: 1rem 1rem;
+  padding: 0.5rem 1rem;
   width: 100%;
-  text-align: center;
+  height: 100%;
+  margin: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+}
+
+.search-bar-span {
+  margin: 0.5rem 0;
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #1f1f1f;
+}
+
+.close-search:hover {
+  height: 1.2rem;
+  width: 1.2rem;
 }
 
 .search-input {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  font-size: 1.6rem;
+  font-family: "Playfair", serif;
+  margin: 0;
+}
+.search-input:focus {
+  outline: none;
+}
+
+.search-options {
   padding: 0 1rem;
-  width: 80%;
-  height: 2.5rem;
-  max-width: 630px;
-  margin-bottom: 0;
-  border: 1px solid #ccc;
-  border-radius: 30px;
+  font-size: 1rem;
+  opacity: 0.9;
 }
 
 .jeweler-options {
@@ -151,7 +199,7 @@
 }
 
 .desktop-only {
-  margin: 0 .5rem;
+  margin: 0 0.5rem;
 }
 /* media queries are the one's responsible for showing the nav as a hidden menu for smaller screens*/
 
@@ -172,5 +220,8 @@
   }
   .desktop-only {
     display: none;
+  }
+  .large-left {
+    margin-bottom: 0;
   }
 }
