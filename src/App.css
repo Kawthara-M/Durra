@@ -23,7 +23,7 @@
 }
 
 body.light {
-  --bg-color: #f2ead3; /*the background color of content between navbar and footer*/
+  --bg-color: #f2ead3; /*the background color of the main content*/
   --footer-bg: #efe7ce;
   --text-color: rgb(39, 38, 38);
   --text-contrast-color: #f1f1f1;
