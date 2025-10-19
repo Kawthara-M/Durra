@@ -25,6 +25,13 @@ const Footer = () => {
               </p>
               <p>Privacy Policy</p>
               <p>Terms and Conditions</p>
+              <p
+                onClick={() => {
+                  navigate("/live-prices")
+                }}
+              >
+                Live Prices
+              </p>
               {!user ? (
                 <p
                   onClick={() => {
@@ -45,6 +52,7 @@ const Footer = () => {
                   <p>Delivery</p>
                   <p>Size Guide</p>
                   <p>Refund Policy</p>
+                  {/* do we have refund? */}
                 </div>
               </div>
             ) : null
