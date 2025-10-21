@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import PricesChart from "../components/PricesChart"
 import {
   fetchMetalRates,
   getKaratAdjustedPricePerGram,
@@ -17,6 +18,7 @@ const LivePrices = () => {
     silver: "925",
     platinum: "950",
   })
+  const [selectedMetal, setSelectedMetal] = useState("gold")
 
   useEffect(() => {
     let isMounted = true
@@ -52,7 +54,7 @@ const LivePrices = () => {
         }
         return updated
       })
-    }, 8000)
+    }, 10000)
 
     return () => clearInterval(interval)
   }, [])
@@ -75,6 +77,11 @@ const LivePrices = () => {
     return price.toFixed(2)
   }
 
+  const handleMetalClick = (metal) => {
+    setSelectedMetal(metal)
+    handleKaratChange(metal) 
+  }
+
   return (
     <div className="live-prices-page">
       <div className="live-prices-title">
@@ -85,27 +92,42 @@ const LivePrices = () => {
       <div className="precious-metals-prices">
         <div
           className="silver-prices"
-          onClick={() => handleKaratChange("silver")}
+          onClick={() => handleMetalClick("silver")}
         >
           <h2>Silver</h2>
           <p>{karats.silver} Karat</p>
           <p>{getPrice("silver")} BHD</p>
         </div>
 
-        <div className="gold-prices" onClick={() => handleKaratChange("gold")}>
+        <div className="gold-prices" onClick={() => handleMetalClick("gold")}>
           <h2>Gold</h2>
           <p>{karats.gold} Karat</p>
           <p>{getPrice("gold")} BHD</p>
         </div>
 
-        <div
-          className="platinium-prices"
-          onClick={() => handleKaratChange("platinum")}
-        >
-          <h2>Platinium</h2> <p>{karats.platinum} Karat</p>
+        <div className="platinium-prices">
+          <h2>Platinium</h2>
+          <p>{karats.platinum} Karat</p>
           <p>{getPrice("platinum")} BHD</p>
         </div>
       </div>
+      <PricesChart
+        selectedMetal={selectedMetal}
+        selectedKarat={karats[selectedMetal]}
+      />
+      <p
+        style={{
+          textAlign: "center",
+          fontSize: ".9rem",
+          color: "#666",
+        }}
+      >
+        Last updated on{" "}
+        {new Date().toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "long",
+        })}
+      </p>
     </div>
   )
 }
