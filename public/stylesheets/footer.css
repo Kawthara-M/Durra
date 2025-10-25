@@ -49,15 +49,14 @@ footer p {
 }
 .options {
   display: flex;
-  flex-direction: row;
-  gap: 0.8rem;
-  padding-bottom: 0.3rem;
+  flex-direction: column;
+  padding-bottom: 0.5rem;
 }
 
 @media (max-width: 525px) {
-  .options {
+  /* .options {
     flex-direction: column;
     gap: 0;
     margin-bottom: .5rem;
-  }
+  } */
 }

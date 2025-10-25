@@ -46,6 +46,8 @@
   flex-direction: column;
   gap: 0.5rem;
   height: 100%;
+  min-height: 45vh;
+  min-width:20vw;
   font-size: 0.95rem;
   justify-self: center;
 }

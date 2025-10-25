@@ -15,21 +15,22 @@ const Search = () => {
   // there will be no location.state.results, so we have to fetch
   useEffect(() => {
     const fetchResults = async () => {
-      const query = searchParams.get("search")
-      if (!results && query) {
-        try {
-          const response = await User.get("/search", {
-            params: { search: query },
-          })
-          setResults(response.data)
-        } catch (err) {
-          console.error("Search fetch error:", err)
-        }
+      if (!query) return
+
+      setResults(null) // clear old results
+      try {
+        const response = await User.get("/search", {
+          params: { search: query },
+        })
+        setResults(response.data)
+      } catch (err) {
+        console.error("Search fetch error:", err)
+        setResults(null)
       }
     }
 
     fetchResults()
-  }, [searchParams])
+  }, [query])
 
   return (
     <div className="search-results-page">
@@ -45,8 +46,12 @@ const Search = () => {
           <div className="search-grid">
             {results.shops?.map((shop) => (
               <div key={shop._id} className="search-card">
-                <h4>Shop</h4>
-                <p>{shop.name}</p>
+                {/* add logo image */}
+                <h3 className="service-card__title">{shop.name}</h3>
+                <p className="service-card__content">{shop.description}</p>
+                <div className="service-card__arrow" title="Show Jeweler Page">
+                  →
+                </div>
               </div>
             ))}
 
