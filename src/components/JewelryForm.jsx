@@ -66,7 +66,6 @@ const JewelryForm = () => {
     setCurrentIndex,
     handleNext,
     handlePrev,
-    resetIndex,
   } = imageSlider(formData.images)
   const [errors, setErrors] = useState({})
   const [view, setView] = useState("General")
