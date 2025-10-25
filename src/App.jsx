@@ -20,6 +20,7 @@ import JewelerRegisteration from "./components/JewelerRegisteration"
 import SetPassword from "./components/SetPassword"
 import Search from "./pages/Search"
 import LivePrices from "./pages/LivePrices"
+import SizeGuide from "./pages/SizeGuide"
 
 import "./App.css"
 
@@ -33,6 +34,7 @@ function App() {
             <Route path="/*" element={<Home />} />
             <Route path="/auth" element={<Authentication />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/SizeGuide" element={<SizeGuide />} />
             <Route path="/live-prices" element={<LivePrices />} />
             <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/registeration" element={<JewelerRegisteration />} />
