@@ -21,7 +21,7 @@ import SetPassword from "./components/SetPassword"
 import Search from "./pages/Search"
 import LivePrices from "./pages/LivePrices"
 import SizeGuide from "./pages/SizeGuide"
-import ScrollToTop from "./components/ScrollToTop";
+import ScrollToTop from "./components/ScrollToTop"
 
 import "./App.css"
 
