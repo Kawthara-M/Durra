@@ -1,9 +1,9 @@
 .profile {
   width: 100vw;
-  min-height: 100vh; 
+  min-height: 100vh;
   display: flex;
   gap: 1rem;
-  align-items: stretch; 
+  align-items: stretch;
   padding: 2rem;
 }
 
@@ -15,8 +15,9 @@
 
 .profile-left {
   height: 100vh;
-  width: 25%;
+  width: 28%;
   padding: 1rem;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -27,11 +28,13 @@
 
 .profile-right {
   width: 70%;
+  height: 100vh;
+
   display: flex;
   flex-direction: column;
 }
 
-.profile-image {
+/* .profile-image {
   height: 20%;
   width: 25%;
   border-radius: 50%;
@@ -44,7 +47,7 @@
   object-fit: contain;
   border-radius: 50%;
   display: block;
-}
+} */
 
 .profile-icons {
   display: flex;
@@ -55,28 +58,30 @@
 }
 
 .profile-navbar {
-  height: 10%;
+  height: 8%;
   width: 100%;
   border-bottom: 1px solid rgb(72, 72, 72);
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
+  padding: 0 1rem;
 }
 
 .profile-details {
   flex: 1;
   padding: 1rem;
   position: relative;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .account-information,
 .address-view,
 .orders-view {
-  height: 100%;
   position: relative;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   overflow-x: hidden;
+  height: 100%;
   /* padding: 1rem; */
 }
 
@@ -184,6 +189,12 @@
   transition: border-color 0.2s ease-in-out;
 }
 
+.account-information {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .password-view {
   height: 100%;
   display: flex;
@@ -200,8 +211,7 @@
   font-weight: 600;
   color: var(--accent-color);
 }
-.password,
-.update-button {
+.password {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -239,31 +249,84 @@
   font-size: var(--font-size-text-ss);
 }
 
-@media (max-width: 900px) {
-  .profile-image {
-    height: 25vh;
-    width: 50%;
-    margin-bottom: 0;
-  }
+.profile-image-wrapper {
+  position: relative;
+  width: 30%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.upload-btn {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  background-color: var(--bg-color);
+  color: black;
+  border-radius: 50%;
+  width: 1.2em;
+  height: 1.2em;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+}
+
+.upload-btn:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 1200px) {
   .jeweler-name {
     font-size: var(--font-size-h4);
   }
+  .profile-image-wrapper {
+    width: 40%;
+  }
+  .upload-btn {
+    bottom: 0;
+    right: 0;
+  }
 }
+@media (max-width: 1100px) {
 
-/* @media (min-width: 761px) {
-  .update-button {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
+  .upload-btn {
+    bottom: 2px;
+    right: 1px;
   }
 }
 
-@media (max-width: 760px) {
-  .update-button {
-    position: relative;
-    margin-top: 1rem;
+@media (max-width: 900px) {
+
+  .profile-image-wrapper {
+    width: 45%;
   }
-} */
+  .upload-btn {
+    bottom: 0;
+    right: 0;
+  }
+}
+@media (max-width: 800px) {
+
+  .profile-image-wrapper {
+    width: 48%;
+  }
+  .upload-btn {
+    bottom: 0;
+    right: 0;
+  }
+}
+
 
 @media (max-width: 760px) {
   .profile {
@@ -276,12 +339,23 @@
   .profile-left {
     height: 30%;
   }
-  /* .profile-right {
-    height: auto;
-  } */
-  .profile-image {
-    height: 20%;
-    width: 20%;
-    /* margin-bottom: 0.3rem; */
+  .profile-navbar {
+    height: 10%;
+    padding: 1rem;
+  }
+  .profile-image-wrapper {
+    width: 18%;
+  }
+}
+@media (max-width: 750px) {
+  .upload-btn {
+    bottom: 2px;
+    right: 1px;
+  }
+}
+@media (max-width: 550px) {
+  .upload-btn {
+    bottom: 0;
+    right: 0;
   }
 }
