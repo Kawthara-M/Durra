@@ -73,7 +73,7 @@
   font-family: 'Times New Roman', Times, serif;
   font-style: italic;
   margin-top: 15px;
-  position: center;
+  text-align: center;
 }
 
 .hp-hero-dots {
