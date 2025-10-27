@@ -22,6 +22,7 @@ const Profile = () => {
   const { toggleTheme } = useContext(ThemeContext)
 
   const [profile, setProfile] = useState()
+  const [logoFile, setLogoFile] = useState(null)
   const [errorMessage, setErrorMessage] = useState("")
   const validate = (value) => {
     if (
@@ -130,13 +131,50 @@ const Profile = () => {
 
   const handleUpdate = async () => {
     try {
+      // Update user info
       await User.put("/profile/", userInfo)
 
+      // Update shop info
       if (user.role === "Jeweler" && profile?.shop?._id) {
-        await User.put(`/shops/${profile.shop._id}`, shopInfo)
+        // If a logo file was selected, use FormData
+        if (logoFile) {
+          const formData = new FormData()
+          formData.append("name", shopInfo.name)
+          formData.append("cr", shopInfo.cr)
+          formData.append("description", shopInfo.description)
+          formData.append("image", logoFile)
+
+          await User.put(`/shops/${profile.shop._id}`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+        } else {
+          // No new logo
+          await User.put(`/shops/${profile.shop._id}`, shopInfo)
+        }
       }
+
+      setModalMessage("Profile updated successfully.")
+      setShowModal(true)
     } catch (error) {
       console.error("Update failed:", error)
+      setModalMessage("Update failed. Please try again.")
+      setShowModal(true)
+    }
+  }
+
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setLogoFile(file)
+      // Optional: show live preview
+      const reader = new FileReader()
+      reader.onload = (ev) => {
+        setProfile((prev) => ({
+          ...prev,
+          shop: { ...prev.shop, logo: ev.target.result },
+        }))
+      }
+      reader.readAsDataURL(file)
     }
   }
 
@@ -306,18 +344,35 @@ const Profile = () => {
     <>
       <div className="profile">
         <div className="profile-left">
-          <div className="profile-image">
+          <div className="profile-image-wrapper">
             <img
-              src={accountIcon}
+              src={profile?.shop?.logo ? profile.shop.logo : accountIcon}
               alt={
                 profile
                   ? user.role === "Jeweler"
                     ? profile.shop.name
-                    : profile.user.fName + " " + profile.user.lName
+                    : `${profile.user.fName} ${profile.user.lName}`
                   : "User Logo"
               }
+              className="profile-image"
             />
+
+            {user.role === "Jeweler" && (
+              <>
+                <label htmlFor="profile-upload" className="upload-btn">
+                  +
+                </label>
+                <input
+                  type="file"
+                  id="profile-upload"
+                  accept="image/*"
+                  hidden
+                  onChange={handleLogoChange}
+                />
+              </>
+            )}
           </div>
+
           <h2 className="jeweler-name">
             {profile
               ? user.role === "Jeweler"
@@ -373,6 +428,7 @@ const Profile = () => {
           <div className="profile-details">
             {view === "Account Information" && (
               <div className="account-information">
+                <div className="account-information-inputs">
                 {user?.role === "Jeweler" ? (
                   <>
                     <label>Business Name</label>
@@ -445,14 +501,13 @@ const Profile = () => {
                       }
                     ></textarea>
                   </>
-                )}
+                )}</div>
 
                 <button className="update-button" onClick={handleUpdate}>
                   Update
                 </button>
               </div>
             )}
-
             {view === "Address" && user.role === "Jeweler" && (
               <div className="address-view">
                 <h3 className="address-view-title">Location</h3>
@@ -533,7 +588,6 @@ const Profile = () => {
                 </button>
               </div>
             )}
-
             {view === "Addresses" && user.role === "Customer" && (
               <div>
                 <h3>Addresses</h3>
@@ -778,11 +832,12 @@ const Profile = () => {
                   </div>
                 </div>
               </>
-            )} {
-              view === "Orders" && <>
-              <CustomerOrders />
+            )}{" "}
+            {view === "Orders" && (
+              <>
+                <CustomerOrders />
               </>
-            }
+            )}
           </div>
         </div>
       </div>
