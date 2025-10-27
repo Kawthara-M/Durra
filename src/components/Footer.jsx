@@ -50,7 +50,7 @@ const Footer = () => {
                 <h6>Customer Service</h6>
                 <div className="options">
                   <p>Delivery</p>
-                  <p>Size Guide</p>
+                  <p onClick={()=>{navigate("/SizeGuide")}}>Size Guide</p>
                   <p>Refund Policy</p>
                   {/* do we have refund? */}
                 </div>
@@ -61,7 +61,7 @@ const Footer = () => {
               <h6>Customer Service</h6>
               <div className="options">
                 <p>Delivery</p>
-                <p>Size Guide</p>
+                <p onClick={()=>{navigate("/SizeGuide")}}>Size Guide</p>
               </div>
             </div>
           )}
