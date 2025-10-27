@@ -47,7 +47,7 @@
   gap: 0.5rem;
   height: 100%;
   min-height: 45vh;
-  min-width:20vw;
+  width: 18vw;
   font-size: 0.95rem;
   justify-self: center;
 }
@@ -60,14 +60,24 @@
   margin-bottom: 1rem;
 }
 
-@media (max-width: 60rem) {
-  .search-grid {
-    grid-template-columns: repeat(auto-fit, minmax(40%, 1fr));
+.shop-logo {
+  border-radius: 50%;
+  width:80%;
+  border: 1px solid black;
+  margin:0 auto;
+}
+
+@media (max-width: 800px) {
+  .search-card {
+    width: 32vw;
   }
 }
 
 @media (max-width: 40rem) {
   .search-grid {
     grid-template-columns: 1fr;
+  }
+  .search-card {
+    width: 42vw;
   }
 }
