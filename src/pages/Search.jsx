@@ -47,6 +47,11 @@ const Search = () => {
             {results.shops?.map((shop) => (
               <div key={shop._id} className="search-card">
                 {/* add logo image */}
+                  <img
+                  src={shop.logo || placeholder}
+                  alt={shop.name}
+                  className="service-card__image shop-logo"
+                />
                 <h3 className="service-card__title">{shop.name}</h3>
                 <p className="service-card__content">{shop.description}</p>
                 <div className="service-card__arrow" title="Show Jeweler Page">

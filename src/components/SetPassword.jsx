@@ -82,7 +82,7 @@ const SetPassword = () => {
   return (
     <>
       <div className="wrapper">
-        <h1 className="form-title">Account Activation</h1>
+        <h1 className="form-title">Password Setup</h1>
         <div className="registeration-form">
           <label htmlFor="password">Password</label>
           <input
