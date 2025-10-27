@@ -15,7 +15,7 @@ const Footer = () => {
         <div className="links">
           <div className={`container `}>
             <h6>General</h6>
-            <div className={`options`}>
+            <div className={`options ${user?.role === "Jeweler" ? "row" :null}`}>
               <p
                 onClick={() => {
                   navigate("/about")

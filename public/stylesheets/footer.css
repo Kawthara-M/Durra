@@ -52,6 +52,11 @@ footer p {
   flex-direction: column;
   padding-bottom: 0.5rem;
 }
+.row {
+  display: flex;
+  flex-direction: row;
+  gap:.5rem;
+}
 
 @media (max-width: 525px) {
   /* .options {
