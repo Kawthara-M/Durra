@@ -33,7 +33,6 @@ const PricesChart = ({ selectedMetal, selectedKarat }) => {
     const fetchData = async () => {
       try {
         const res = await User.get("/metal-prices")
-        console.log(res)
 
         const gold = Array.isArray(res.data.gold)
           ? res.data.gold.map((entry) => ({
@@ -69,13 +68,26 @@ const PricesChart = ({ selectedMetal, selectedKarat }) => {
             })
           : []
 
-        setPriceHistory({ gold, silver })
+        const priceData = { gold, silver }
+
+        // Save fetched data and today's date to localStorage
+        localStorage.setItem("metalPriceData", JSON.stringify(priceData))
+        localStorage.setItem("metalPriceDataDate", new Date().toDateString())
+
+        setPriceHistory(priceData)
       } catch (err) {
         console.error("Error fetching price data from backend:", err)
       }
     }
 
-    fetchData()
+    const cachedDate = localStorage.getItem("metalPriceDataDate")
+    const cachedData = localStorage.getItem("metalPriceData")
+
+    if (cachedDate === new Date().toDateString() && cachedData) {
+      setPriceHistory(JSON.parse(cachedData))
+    } else {
+      fetchData()
+    }
   }, [])
 
   const adjustPrices = (data, karat) => {

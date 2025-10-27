@@ -308,7 +308,7 @@ const Profile = () => {
         <div className="profile-left">
           <div className="profile-image">
             <img
-              src={user?.role === "Customer" ? accountIcon : ""}
+              src={accountIcon}
               alt={
                 profile
                   ? user.role === "Jeweler"
