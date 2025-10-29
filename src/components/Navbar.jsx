@@ -62,7 +62,6 @@ const Navbar = ({}) => {
     try {
       const response = await User.get("/search", { params: { search } })
       setSearchResults(response.data)
-      console.log(response.data)
       // navigate to results page
       navigate(`/search?search=${encodeURIComponent(search)}`, {
         state: { results: response.data },
@@ -139,6 +138,9 @@ const Navbar = ({}) => {
 
                 <Link to="/jewelry" className="guest-link desktop-only">
                   Jewelry
+                </Link>
+                <Link to="/shops" className="guest-link desktop-only">
+                  Shops
                 </Link>
                 <Link to="/services" className="guest-link desktop-only">
                   Services
