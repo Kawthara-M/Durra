@@ -24,6 +24,9 @@ import SizeGuide from "./pages/SizeGuide"
 import ScrollToTop from "./components/ScrollToTop"
 import TermsAndConditions from "./pages/TermsAndConditions"
 import Shops from "./pages/Shops"
+import Jewelry from "./pages/Jewelry"
+import Services from "./pages/Services"
+import Collections from "./pages/Collections"
 
 import "./App.css"
 
@@ -47,6 +50,9 @@ function App() {
 
             <Route path="/search" element={<Search />} />
             <Route path="/shops" element={<Shops />} />
+            <Route path="/jewelry" element={<Jewelry />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/collections" element={<Collections />} />
 
             <Route path="/jeweler-jewelry" element={<JewelerJewelryPage />} />
             <Route
