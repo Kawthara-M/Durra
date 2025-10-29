@@ -1,18 +1,195 @@
-.about-durra {
-  max-width: 700px;
-  margin: 2rem auto;
-  line-height: 1.6;
+
+.durra-about {
+  background: inherit;
+  padding: 2rem 2rem;
+  display: flex;
+  justify-content: center;
 }
 
-.about-durra h1 {
+.durra-container {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6rem;
+}
+
+.durra-hero {
+  text-align: center;
+}
+
+.durra-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 4rem;
+  color: var(--primary-maroon);
   margin-bottom: 1rem;
 }
 
-.about-durra h2 {
-  margin-top: 2rem;
+.durra-hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-light);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-align: center;
 }
 
-.about-durra ul {
-  padding-left: 1.5rem;
-  margin-top: 1rem;
+.durra-story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.durra-story-text p {
+  font-size: 1.2rem; 
+  line-height: 1.8;
+  color: var(--text-dark);
+  text-align: justify;
+  margin-bottom: 1.5rem;
+}
+
+.durra-story-text strong {
+  color: var(--primary-maroon);
+}
+
+.durra-story-image img {
+  width: 500px;          
+  height: 250px;         
+  max-height: 250px;    
+  object-fit: cover;     
+  border-radius: 16px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+}
+
+
+.durra-values {
+  text-align: center;
+}
+
+.durra-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: var(--primary-maroon);
+  margin-bottom: 2.5rem;
+}
+
+.durra-values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+}
+
+.durra-value-card {
+  background: var(--surface);
+  padding: 2rem;
+  border-radius: 14px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.durra-value-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+}
+
+.durra-value-card h3 {
+  font-family: 'Playfair Display', serif;
+  color: var(--primary-maroon);
+  font-size: 1.3rem;
+  margin-bottom: 0.8rem;
+}
+
+.durra-value-card p {
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+.durra-team {
+  text-align: center;
+}
+
+.durra-team-grid {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.durra-team-card {
+  width: 220px;
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.durra-team-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+}
+
+.durra-team-card img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.durra-team-card h3 {
+  font-size: 1.1rem;
+  font-family: 'Playfair Display', serif;
+  color: var(--primary-maroon);
+  margin-bottom: 0.3rem;
+}
+
+.durra-team-card p {
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+/* ===== Closing Section ===== */
+.durra-closing {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.durra-closing p {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  font-style: italic;
+  color: var(--text-light);
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+  .durra-story {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .durra-values-grid {
+    grid-template-columns: 1fr;
+  }
+  .durra-team-grid {
+    flex-direction: column;
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .durra-hero-title {
+    font-size: 3rem;
+  }
+  .durra-section-title {
+    font-size: 1.5rem;
+  }
+  .durra-team-card img {
+    width: 100px;
+    height: 100px;
+  }
 }

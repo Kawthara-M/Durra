@@ -23,11 +23,14 @@
 }
 
 body.light {
-  --bg-color: #f2ead3; /*the background color of the main content*/
-  --footer-bg: #efe7ce;
+  --bg-color:  rgb(
+    244,
+    236,
+    236); /*the background color of the main content*/
+  --footer-bg: rgb(243, 230, 230);
   --text-color: rgb(39, 38, 38);
   --text-contrast-color: #f1f1f1;
-  --nav-bg: #efe7ce;
+  --nav-bg:rgb(243, 230, 230);
   --btn-bg: #6f0101;
   --btn-color: #f1f1f1;
   --btn-contrast-color: rgb(39, 38, 38);

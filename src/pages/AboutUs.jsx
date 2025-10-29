@@ -1,35 +1,69 @@
-import '../../public/stylesheets/AboutUs.css'
+import "../../public/stylesheets/AboutUs.css";
 
 const AboutUs = () => (
-  <div className="about-durra">
-    <h1>Our Story</h1>
-    <p>
-      Durra was born from a vision to bring elegance, trust, and local craftsmanship into one seamless experience.
-      We understand the frustrations of navigating countless jewelry stores, comparing prices and authenticity,
-      and the inconvenience of post-sale errands. That’s why we created a platform that centers on your needs as a buyer.
-    </p>
+  <section className="durra-about">
+    <div className="durra-container">
 
-    <h2>Our Commitment</h2>
-    <ul>
-      <li>
-        <strong>Local Support:</strong> We highlight Bahraini gold and pearl artisans, helping you discover
-        authentic pieces while supporting your community.
-      </li>
-      <li>
-        <strong>Transparent Shopping:</strong> Navigate with confidence—search and compare in one place,
-        with clear details and trust backed by institutions like DANAT and GIA.
-      </li>
-      <li>
-        <strong>Convenience & Care:</strong> Secure, Shariah-compliant payments, safe delivery, and hassle-free post-sale
-        services—no chasing after stores for alterations or returns.
-      </li>
-    </ul>
+      <header className="durra-hero">
+        <h1 className="durra-hero-title">Durra</h1>
+        <p className="durra-hero-subtitle">Arabian Luxury, Modern Elegance</p>
+      </header>
 
-    <p>
-      Thank you for joining us on this journey. Durra isn't just another jewelry platform—it’s
-      a community where stories are shared, trust is built, and decisions are made with heart.
-    </p>
-  </div>
-)
+      <section className="durra-story">
+        <div className="durra-story-text">
+          <p><strong>Durra</strong> emerges from Bahrain as a modern interpretation of Arabian luxury, blending centuries of jewelry craftsmanship with contemporary digital excellence.</p>
+          <p>We connect discerning clients with master artisans, offering certified pieces that honor tradition while embracing innovation.</p>
+        </div>
+        {/* <div className="durra-story-image">
+          <img src="src\assets\bg2.jpeg" alt="Artisan Jewelry" />
+        </div> */}
+      </section>
 
-export default AboutUs
+      <section className="durra-values">
+        <h2 className="durra-section-title">Our Values</h2>
+        <div className="durra-values-grid">
+          <div className="durra-value-card">
+            <h3>Local Legacy</h3>
+            <p>Celebrating Bahrain's golden heritage through artisans preserving traditional techniques.</p>
+          </div>
+          <div className="durra-value-card">
+            <h3>Transparent Trust</h3>
+            <p>DANAT and GIA certified pieces ensuring complete transparency and confidence.</p>
+          </div>
+          <div className="durra-value-card">
+            <h3>Effortless Experience</h3>
+            <p>Seamless journey with Shariah-compliant services and personalized care.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="durra-team">
+        <h2 className="durra-section-title">Meet Our Team</h2>
+        <div className="durra-team-grid">
+          <div className="durra-team-card">
+            <img src="src\assets\user(1).png" alt="K" />
+            <h3>Kawthar Mohammad</h3>
+            <p>Project Manager & Developer</p>
+          </div>
+          <div className="durra-team-card">
+            <img src="src\assets\user(1).png" alt="G" />
+            <h3>Ghadeer Abdulla</h3>
+            <p>Developer</p>
+          </div>
+          <div className="durra-team-card">
+            <img src="src\assets\user(1).png" alt="R" />
+            <h3>Raghad Abdulla</h3>
+            <p>UI/UX Designer</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="durra-closing">
+        <p>Durra represents the perfect harmony of Bahrain's jewelry legacy and contemporary sophistication.</p>
+      </section>
+
+    </div>
+  </section>
+);
+
+export default AboutUs;
