@@ -53,7 +53,6 @@ const Footer = () => {
                 <div className="options">
                   <p>Delivery</p>
                   <p onClick={()=>{navigate("/SizeGuide")}}>Size Guide</p>
-                  <p>Refund Policy</p>
                   {/* do we have refund? */}
                 </div>
               </div>
