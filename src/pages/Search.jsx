@@ -47,7 +47,7 @@ const Search = () => {
             {results.shops?.map((shop) => (
               <div key={shop._id} className="search-card">
                 {/* add logo image */}
-                  <img
+                <img
                   src={shop.logo || placeholder}
                   alt={shop.name}
                   className="service-card__image shop-logo"
@@ -80,10 +80,12 @@ const Search = () => {
                 <img
                   src={service.images?.[0] || placeholder}
                   alt={service.name}
-                  className="service-card__image"
+                  className="search-card-image"
                 />
                 <h3 className="service-card__title">{service.name}</h3>
-                <p className="service-card__content">{service.description}</p>
+                <p className="service-card__content price">
+                  {service.price?.toFixed(2)} BD
+                </p>{" "}
                 <div className="service-card__arrow" title="Show Servie Page">
                   →
                 </div>

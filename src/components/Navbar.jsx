@@ -90,13 +90,16 @@ const Navbar = ({}) => {
             {user ? (
               user?.role === "Customer" ? (
                 <>
-                  <Link to="/" className="desktop-only">
+                  <Link to="/shops" className="desktop-only">
+                    Shops
+                  </Link>
+                  <Link to="/jewelry" className="desktop-only">
                     Jewelry
                   </Link>
-                  <Link to="/" className="desktop-only">
+                  <Link to="/collections" className="desktop-only">
                     Collections
                   </Link>
-                  <Link to="/" className="desktop-only">
+                  <Link to="/services" className="desktop-only">
                     Services
                   </Link>
                 </>
