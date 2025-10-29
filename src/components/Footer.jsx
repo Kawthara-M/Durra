@@ -24,7 +24,9 @@ const Footer = () => {
                 About DURRA
               </p>
               <p>Privacy Policy</p>
-              <p>Terms and Conditions</p>
+              <p onClick={() => {
+                  navigate("/terms-and-conditions")
+                }}>Terms and Conditions</p>
               <p
                 onClick={() => {
                   navigate("/live-prices")

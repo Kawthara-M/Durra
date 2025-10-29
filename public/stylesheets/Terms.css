@@ -1,0 +1,131 @@
+/* ===== Page ===== */
+.tc-page {
+  font-family: 'Inter', sans-serif;
+  background-color: inherit;
+  color: #333;
+  padding: 4rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.tc-container {
+  max-width: 900px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  
+}
+
+/* ===== Hero ===== */
+.tc-hero {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.tc-hero-title {
+  font-family: 'Merriweather', serif;
+  font-size: 3rem;
+  color: #800020;
+  margin-bottom: 0.5rem;
+}
+
+.tc-hero-subtitle {
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+/* ===== Timeline Sections ===== */
+.tc-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+}
+
+.tc-timeline::before {
+  content: '';
+  position: absolute;
+  left: 2rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #e0e0e0;
+}
+
+.tc-timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  position: relative;
+}
+
+.tc-timeline-number {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: #800020;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  z-index: 1;
+  margin-left: -1rem; /* overlap timeline line */
+}
+
+.tc-timeline-content {
+  background-color: #fff;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  width: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tc-timeline-item:hover .tc-timeline-content {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+.tc-timeline-content h2 {
+  font-family: 'Merriweather', serif;
+  font-size: 1.5rem;
+  margin-bottom: 0.6rem;
+  color: #222;
+}
+
+.tc-timeline-content p {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.7;
+}
+
+/* ===== Highlight Partner Section ===== */
+.highlight .tc-timeline-content {
+  border-left: 4px solid #800020; /* maroon highlight instead of gold */
+  background-color: #fff; 
+}
+
+/* ===== Links ===== */
+.tc-link {
+  color: #800020;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.tc-link:hover {
+  color: #aa3049;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .tc-hero-title { font-size: 2.2rem; }
+  .tc-timeline::before { left: 1.5rem; }
+  .tc-timeline-number { width: 1.6rem; height: 1.6rem; font-size: 0.9rem; margin-left: -0.8rem; }
+  .tc-timeline-content { padding: 1rem 1.5rem; }
+  .tc-timeline-content h2 { font-size: 1.3rem; }
+}

@@ -22,6 +22,7 @@ import Search from "./pages/Search"
 import LivePrices from "./pages/LivePrices"
 import SizeGuide from "./pages/SizeGuide"
 import ScrollToTop from "./components/ScrollToTop"
+import TermsAndConditions from "./pages/TermsAndConditions"
 
 import "./App.css"
 
@@ -38,6 +39,7 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/SizeGuide" element={<SizeGuide />} />
             <Route path="/live-prices" element={<LivePrices />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
             <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/registeration" element={<JewelerRegisteration />} />
             <Route path="/set-password" element={<SetPassword />} />
