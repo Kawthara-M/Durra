@@ -5,7 +5,7 @@ const Filter = ({ filters, onApply, fields }) => {
   const [localFilters, setLocalFilters] = useState(filters)
 
   useEffect(() => {
-    setLocalFilters(filters) // keep in sync when parent changes
+    setLocalFilters(filters) 
   }, [filters])
 
   const handleCheckboxChange = (e) => {
