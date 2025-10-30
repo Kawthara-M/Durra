@@ -4,7 +4,12 @@ import { Link } from "react-router-dom"
 import ProductCard from "../components/ProductCard"
 import Filter from "../components/Filter.jsx"
 import User from "../services/api"
-import { fetchMetalRates, calculatePreciousMaterialCost, calculateTotalCost, calculateCollectionPrice } from "../services/calculator.js"
+import {
+  fetchMetalRates,
+  calculatePreciousMaterialCost,
+  calculateTotalCost,
+  calculateCollectionPrice,
+} from "../services/calculator.js"
 
 import "../../public/stylesheets/jewelry-page.css"
 
@@ -221,7 +226,11 @@ const Jewelry = () => {
             ))}
 
             {filteredJewelry.length === 0 &&
-              filteredCollections.length === 0 && <p>No Products Available</p>}
+              filteredCollections.length === 0 && (
+                <div className="empty-wrapper">
+                  <p className="empty">No Jewelry Available</p>
+                </div>
+              )}
           </div>
         </div>
       )}
