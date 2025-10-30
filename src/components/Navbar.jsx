@@ -96,9 +96,6 @@ const Navbar = ({}) => {
                   <Link to="/jewelry" className="desktop-only">
                     Jewelry
                   </Link>
-                  <Link to="/collections" className="desktop-only">
-                    Collections
-                  </Link>
                   <Link to="/services" className="desktop-only">
                     Services
                   </Link>

@@ -16,8 +16,8 @@
 //   }
 // }
 
-  // to save api req available
-  export const fetchMetalRates = async () => {
+// to save api req available
+export const fetchMetalRates = async () => {
   return {
     gold: 50,
     silver: 0.7,
@@ -46,23 +46,16 @@ export const getKaratAdjustedPricePerGram = (
   return pureMetalPrice * karatMultiplier
 }
 
-export const calculatePreciousMaterialCost = (
-  preciousMaterials = [],
-  metalRates = {}
-) => {
-  return preciousMaterials.reduce((total, material) => {
-    const metalName = material.name.toLowerCase()
-    let metalKey = metalName
+export const calculatePreciousMaterialCost = (materials, metalRates) => {
+  if (!materials || !metalRates) return 0
 
-    if (metalName === "platinium") metalKey = "platinum"
+  let total = 0
+  for (const mat of materials) {
+    const rate = metalRates[mat.metalType] || 0
+    total += rate * mat.weight
+  }
 
-    const pureMetalPrice = metalRates[metalKey] || 0
-    const karatMultiplier = getKaratMultiplier(material.karat)
-    const costPerGram = pureMetalPrice * karatMultiplier
-    const weight = parseFloat(material.weight || 0)
-
-    return total + costPerGram * weight
-  }, 0)
+  return total
 }
 
 // Total cost = precious materials + origin
@@ -71,4 +64,25 @@ export const calculateTotalCost = (
   originCost = 0
 ) => {
   return parseFloat(preciousMaterialCost) + parseFloat(originCost)
+}
+
+export const calculateCollectionPrice =  (collection, metalRates) => {
+  if (!metalRates || !collection?.jewelry?.length) return null
+  console.log("metal rates", metalRates)
+  let jewelryCostSum = 0
+
+  for (const jewel of collection.jewelry) {
+    const metalCost = calculatePreciousMaterialCost(
+      jewel.preciousMaterials,
+      metalRates
+    )
+    console.log(metalCost)
+
+    const jewelPrice = calculateTotalCost(metalCost, jewel.originPrice)
+    jewelryCostSum += jewelPrice
+  }
+
+  const final = jewelryCostSum + collection.originPrice
+
+  return Math.max(final, 0)
 }

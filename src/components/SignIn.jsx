@@ -88,6 +88,7 @@ const SignIn = ({ setShowSignUp }) => {
               placeholder="Enter your password"
               value={formValues.password}
               required
+              
             />
           </div>
           <a

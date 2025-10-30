@@ -1,35 +1,143 @@
+import { useEffect, useState } from "react"
 import placeholder from "../assets/placeholder.png"
 import { useUser } from "../context/UserContext"
-import { useCart } from "../context/CartContext.jsx"
+import { useOrder } from "../context/OrderContext"
 import {
   calculatePreciousMaterialCost,
   calculateTotalCost,
+  calculateCollectionPrice,
 } from "../services/calculator.js"
+import { createOrder, updateOrder } from "../services/order.js"
 
-const ProductCard = ({ item, type, metalRates, onAddToCart }) => {
+const ProductCard = ({ item, type, metalRates }) => {
   const { user } = useUser()
-  const { addToCart } = useCart()
+  const { order, addJewelryToOrder, addServiceToOrder, setOrderId } = useOrder()
+  const [collectionPrice, setCollectionPrice] = useState(null)
 
-  const getPrice = () => {
-    if (type === "jewelry") {
-      if (!metalRates) return "—"
-
-      const metalCost = calculatePreciousMaterialCost(
-        item.preciousMaterials,
-        metalRates
-      )
-      const total = calculateTotalCost(metalCost, item.originPrice)
-
-      return `${total.toFixed(2)} BD`
+  useEffect(() => {
+    if (type === "collection" && metalRates) {
+      const price = calculateCollectionPrice(item, metalRates)
+      setCollectionPrice(Number(price.toFixed(2)))
     }
+  }, [type, item, metalRates])
 
+  const getJewelryPrice = () => {
+    if (!metalRates) return null
+    const metalCost = calculatePreciousMaterialCost(
+      item.preciousMaterials,
+      metalRates
+    )
+    const total = calculateTotalCost(metalCost, item.originPrice)
+    return Number(total.toFixed(2))
+  }
+
+  const displayPrice = () => {
+    if (type === "jewelry") return `${getJewelryPrice()} BD`
     if (type === "service") return `${item.price?.toFixed(2)} BD`
-
+    if (type === "collection")
+      return collectionPrice !== null ? `${collectionPrice} BD` : "—"
     return null
   }
 
+  const handleAdd = async () => {
+    if (!user) return
+
+    const currentOrder = order
+    const currentOrderId = order.orderId
+
+    let price = 0
+    let newItem = {}
+
+    if (type === "jewelry") {
+      price = getJewelryPrice()
+      newItem = {
+        item: item._id,
+        itemModel: "Jewelry",
+        quantity: 1,
+        totalPrice: price,
+        notes: "",
+      }
+    }
+
+    if (type === "collection") {
+      price = collectionPrice
+      newItem = {
+        item: item._id,
+        itemModel: "Collection",
+        quantity: 1,
+        totalPrice: price,
+        notes: "",
+      }
+    }
+
+    if (type === "service") {
+      price = item.price
+      newItem = {
+        service: item._id,
+        jewelry: [],
+        totalPrice: price,
+        notes: "",
+      }
+    }
+
+    try {
+      let finalOrderId = currentOrderId
+
+      if (!currentOrderId) {
+        const payload =
+          type === "service"
+            ? {
+                jewelryOrder: [],
+                serviceOrder: [newItem],
+                totalPrice: price,
+                collectionMethod: "delivery",
+              }
+            : {
+                jewelryOrder: [newItem],
+                serviceOrder: [],
+                totalPrice: price,
+                collectionMethod: "delivery",
+              }
+
+        const res = await createOrder({
+          ...payload,
+          collectionMethod: "delivery",
+        })
+        finalOrderId = res._id
+        setOrderId(finalOrderId)
+
+        finalOrderId = res.data.order._id
+        setOrderId(finalOrderId)
+
+        if (type === "service") addServiceToOrder(newItem)
+        else addJewelryToOrder(newItem)
+
+        return
+      }
+
+      let updatedJewelryOrder = [...currentOrder.jewelryOrder]
+      let updatedServiceOrder = [...currentOrder.serviceOrder]
+
+      if (type === "service") {
+        updatedServiceOrder.push(newItem)
+      } else {
+        updatedJewelryOrder.push(newItem)
+      }
+
+      await updateOrder(currentOrderId, {
+        jewelryOrder: updatedJewelryOrder,
+        serviceOrder: updatedServiceOrder,
+      })
+
+      if (type === "service") addServiceToOrder(newItem)
+      else addJewelryToOrder(newItem)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return (
-    <div key={item._id} className="search-card">
+    <div className="search-card">
       <div className="search-image-wrapper">
         <img
           src={item.images?.[0] || placeholder}
@@ -40,9 +148,11 @@ const ProductCard = ({ item, type, metalRates, onAddToCart }) => {
           <h6
             className={!user ? "disabled-link" : null}
             title={!user ? "Sign in to add to Cart" : "Add to Cart"}
-      onClick={() => user && addToCart(item)}          >
+            onClick={() => user && handleAdd()}
+          >
             Add to Cart
           </h6>
+
           <h6
             className={!user ? "disabled-link" : null}
             title={!user ? "Sign in to add to Wishlist" : "Add to Wishlist"}
@@ -54,7 +164,7 @@ const ProductCard = ({ item, type, metalRates, onAddToCart }) => {
 
       <div className="card-info">
         <h3 className="service-card__title">{item.name}</h3>
-        <p className="service-card__content price">{getPrice()}</p>
+        <p className="service-card__content price">{displayPrice()}</p>
       </div>
     </div>
   )

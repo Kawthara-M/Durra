@@ -101,9 +101,10 @@ const SetPassword = () => {
             name="confirmPassword"
             onChange={handleChange}
             value={formValues.confirmPassword}
+            className="confirm-password"
             required
           />
-          {errorMessage && <p className="error-message">{errorMessage}</p>}
+          {errorMessage && <p className="error">{errorMessage}</p>}
 
           <button
             type="submit"

@@ -1,42 +1,27 @@
 import { useState, useEffect } from "react"
 import { useLocation, useSearchParams } from "react-router-dom"
-import { useUser } from "../context/UserContext"
 
-import User from "../services/api"
 import ProductCard from "../components/ProductCard"
+import User from "../services/api"
 
+import { fetchMetalRates } from "../services/calculator.js"
 import placeholder from "../assets/placeholder.png"
 import "../../public/stylesheets/search.css"
 
 const Search = () => {
   const location = useLocation()
-  const { user } = useUser()
+
   const [searchParams] = useSearchParams()
   const query = searchParams.get("search")
+
   const [results, setResults] = useState(location.state?.results || null)
-  const [metalRates, setMetalRates] = useState({})
+  const [metalRates, setMetalRates] = useState(null)
 
-  const [order, setOrder] = useState()
-
-  const getJewelryPrice = (item) => {
-    if (!metalRates) return null
-
-    const metalCost = calculatePreciousMaterialCost(
-      item.preciousMaterials,
-      metalRates
-    )
-    const total = calculateTotalCost(metalCost, item.originPrice)
-
-    return total.toFixed(2)
-  }
-
-  // if user accessed this page through link and not by searching first
-  // there will be no location.state.results, so we have to fetch
   useEffect(() => {
     const fetchResults = async () => {
       if (!query) return
+      setResults(null)
 
-      setResults(null) // clear old results
       try {
         const response = await User.get("/search", {
           params: { search: query },
@@ -44,7 +29,7 @@ const Search = () => {
         setResults(response.data)
       } catch (err) {
         console.error("Search fetch error:", err)
-        setResults(null)
+        setResults([])
       }
     }
 
@@ -57,22 +42,6 @@ const Search = () => {
     loadRates()
   }, [query])
 
-  const addToCart = async () => {
-    if (!user) return
-    // check if cart has pending order for this customer
-    const customerOrders = await User.get("/orders/")
-    const orderInCart = customerOrders.map((o) => {
-      return o.status === "pending"
-    })
-
-    // if no, call post
-    if (orderInCart.length > 0) {
-      const newOrder = await User.post("/orders/")
-    }
-
-    // if yes call put
-  }
-
   return (
     <div className="search-results-page">
       <span className="search-title">
@@ -81,13 +50,12 @@ const Search = () => {
       </span>
 
       {!results ? (
-        <p>No results found.</p>
+        <p>Loading results...</p>
       ) : (
         <div className="search-results">
           <div className="search-grid">
             {results.shops?.map((shop) => (
               <div key={shop._id} className="search-card shop">
-                {/* add logo image */}
                 <img
                   src={shop.logo || placeholder}
                   alt={shop.name}
@@ -96,29 +64,34 @@ const Search = () => {
                 <div className="card-info">
                   <h3 className="service-card__title">{shop.name}</h3>
                 </div>
-                {/* <p className="service-card__content">{shop.description}</p> */}
               </div>
             ))}
 
-          {results.jewelry?.map((item) => (
-  <ProductCard
-    key={item._id}
-    item={item}
-    type="jewelry"
-    metalRates={metalRates}
-    onAddToCart={addToCart}
-  />
-))}
+            {results.jewelry?.map((item) => (
+              <ProductCard
+                key={item._id}
+                item={item}
+                type="jewelry"
+                metalRates={metalRates}
+              />
+            ))}
 
-{results.services?.map((service) => (
-  <ProductCard
-    key={service._id}
-    item={service}
-    type="service"
-    onAddToCart={addToCart}
-  />
-))}
+            {results.collections?.map((collection) => (
+              <ProductCard
+                key={collection._id}
+                item={collection}
+                type="collection"
+                metalRates={metalRates}
+              />
+            ))}
 
+            {results.services?.map((service) => (
+              <ProductCard
+                key={service._id}
+                item={service}
+                type="service"
+              />
+            ))}
           </div>
         </div>
       )}
