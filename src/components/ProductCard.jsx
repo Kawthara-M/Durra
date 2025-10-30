@@ -157,7 +157,7 @@ const ProductCard = ({ item, type, metalRates }) => {
             className={!user ? "disabled-link" : null}
             title={!user ? "Sign in to add to Wishlist" : "Add to Wishlist"}
           >
-            Favourite
+            Wishlist
           </h6>
         </div>
       </div>

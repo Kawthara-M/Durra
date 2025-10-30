@@ -15,18 +15,16 @@ const Footer = () => {
         <div className="links">
           <div className={`container `}>
             <h6>General</h6>
-            <div className={`options ${user?.role === "Jeweler" ? "row" :null}`}>
+            <div
+              className={`options ${user?.role === "Jeweler" ? "row" : null}`}
+            >
               <p
                 onClick={() => {
                   navigate("/about")
                 }}
               >
-                About DURRA
+                About Us
               </p>
-              <p>Privacy Policy</p>
-              <p onClick={() => {
-                  navigate("/terms-and-conditions")
-                }}>Terms and Conditions</p>
               <p
                 onClick={() => {
                   navigate("/live-prices")
@@ -45,6 +43,21 @@ const Footer = () => {
               ) : null}
             </div>
           </div>
+          <div className={`container `}>
+            <h6>Legal</h6>
+            <div
+              className={`options ${user?.role === "Jeweler" ? "row" : null}`}
+            >
+              <p>Privacy Policy</p>
+              <p
+                onClick={() => {
+                  navigate("/terms-and-conditions")
+                }}
+              >
+                Terms and Conditions
+              </p>
+            </div>
+          </div>
 
           {user ? (
             user.role === "Customer" ? (
@@ -52,8 +65,13 @@ const Footer = () => {
                 <h6>Customer Service</h6>
                 <div className="options">
                   <p>Delivery</p>
-                  <p onClick={()=>{navigate("/SizeGuide")}}>Size Guide</p>
-                  {/* do we have refund? */}
+                  <p
+                    onClick={() => {
+                      navigate("/SizeGuide")
+                    }}
+                  >
+                    Size Guide
+                  </p>
                 </div>
               </div>
             ) : null
@@ -62,12 +80,19 @@ const Footer = () => {
               <h6>Customer Service</h6>
               <div className="options">
                 <p>Delivery</p>
-                <p onClick={()=>{navigate("/SizeGuide")}}>Size Guide</p>
+                <p
+                  onClick={() => {
+                    navigate("/SizeGuide")
+                  }}
+                >
+                  Size Guide
+                </p>
               </div>
             </div>
           )}
-        </div>
-        <div className="social-media">
+
+          <div className={`container `}>
+            <h6>Social Media</h6>
           <Link
             to={`/social-media/instagram`} // replace with insta link
             className="icon-btn"
@@ -75,7 +100,17 @@ const Footer = () => {
           >
             <img src={instaIcon} alt="Instagram icon" className="icon" />
           </Link>
+          </div>
         </div>
+        {/* <div className="social-media">
+          <Link
+            to={`/social-media/instagram`} // replace with insta link
+            className="icon-btn"
+            title="Durra Instagram"
+          >
+            <img src={instaIcon} alt="Instagram icon" className="icon" />
+          </Link>
+        </div> */}
         <p id="durra">© 2025 DURRA</p>
       </footer>
     </>

@@ -36,9 +36,9 @@
 
 .filter-sidebar {
   position: absolute;
-  top: 80px;
+  top: 60px;
   right: 0;
-  width: 30vw; 
+  width: 30vw;
   height: calc(100vh - 80px);
   background-color: var(--bg-color);
   border-left: 1px solid #ccc;
@@ -50,8 +50,7 @@
 }
 
 .filter-title {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .filter-group {
@@ -61,26 +60,61 @@
   gap: 0.5rem;
 }
 
+.select-group {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .filter-group label {
   font-weight: 500;
   display: block;
-  margin-bottom: 5px;
 }
 
 .filter-group select,
 .filter-group input[type="checkbox"] {
   width: 50%;
   padding: 6px;
+  margin-bottom: 0 !important;
+}
+
+.filter-group input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #8a8a8a;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background: #fff;
+}
+
+.filter-group input[type="checkbox"]:checked {
+  border-color: var(--btn-bg);
+  background: var(--btn-bg);
+}
+
+.filter-group input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: -2px;
+  left: 3.5px;
+  font-size: 12px;
+  color: #fff;
+  font-weight: bold;
 }
 
 .filter-group select {
   background-color: transparent;
   border: solid 1px #ccc;
   border-radius: 6px;
+  width: 75% !important;
 }
 
 .apply-filter-btn {
-  width: 80%;
+  width: 95%;
   background-color: var(--btn-bg);
   color: var(--btn-color);
   border: none;
@@ -88,10 +122,19 @@
   cursor: pointer;
   transition: background 0.2s ease;
   position: absolute;
-  bottom: 1rem;
-  margin: 0 1rem;
+  bottom: 0;
+ 
+  margin: 0 auto;
 }
 
 .apply-filter-btn:hover {
   background-color: #111;
 }
+
+/* price slider styles */
+
+.MuiBox-root {
+  margin: 0 auto;
+}
+
+
