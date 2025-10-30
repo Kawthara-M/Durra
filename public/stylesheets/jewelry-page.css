@@ -1,5 +1,6 @@
 .jewelry-page {
   width: 100%;
+  height: 100%;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -29,21 +30,111 @@
 
 .jewelry-page-overview p:nth-of-type(2) {
   width: 25%;
+  cursor: pointer;
+}
+.jewelry-page-overview p:nth-of-type(2):hover {
+  text-decoration: underline;
 }
 
 .jewelry-page-main {
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: row;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* .filter-side {
-  width: 10%;
-} */
-
 .jewelry-grid {
-  padding: 0 1.5rem;
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* max 4 per row */
+  grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
+}
+
+.jewelry-grid .search-card {
+  width: 20vw;
+}
+
+.jewelry-filter-sidebar {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 35vw !important;
+  height: 100vh;
+  background: var(--bg-color);
+  z-index: 2000;
+  padding: 1rem;
+  transition: right 0.3s ease-in-out;
+}
+
+.jewelry-filter-sidebar .filter-sidebar {
+  width: 35vw !important;
+  box-shadow: none;
+}
+
+.jewelry-filter-sidebar.open {
+  right: 0;
+}
+
+.jewelry-filter-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1500;
+}
+
+.jewelry-filter-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  margin-bottom: 0 !important;
+  cursor: pointer;
+  text-align: left;
+  color: var(--tect-color);
+}
+
+.empty {
+  margin: 0 auto;
+}
+
+.jewelry-page .select-input {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+@media (max-width: 1200px) {
+  .jewelry-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 1100px) {
+  .jewelry-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 800px) {
+  .jewelry-filter-sidebar.open {
+    width: 50vw !important;
+  }
+  .jewelry-filter-sidebar .filter-sidebar {
+    width: 50vw !important;
+  }
+}
+
+@media (max-width: 40rem) {
+  .jewelry-grid {
+    grid-template-columns: 1fr;
+  }
+  .search-card {
+    margin: 0 auto;
+    width: 55vw !important;
+  }
+
+  .jewelry-filter-sidebar.open {
+    width: 45vw !important;
+  }
+  .jewelry-filter-sidebar .filter-sidebar {
+    width: 45vw !important;
+  }
 }
