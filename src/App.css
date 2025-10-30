@@ -189,6 +189,7 @@ textarea {
 .disabled-link {
   opacity: 0.8;
   cursor: not-allowed !important;
+  text-decoration: none !important;
 }
 
 .required {
