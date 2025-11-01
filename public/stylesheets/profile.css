@@ -9,7 +9,8 @@
 
 .profile-left,
 .profile-right {
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  /* box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15); */
+  border: 2px solid  rgb(241, 231, 231);
   border-radius: 4px;
 }
 
@@ -45,7 +46,7 @@
 .profile-navbar {
   height: 8%;
   width: 100%;
-  border-bottom: 1px solid rgb(72, 72, 72);
+  border-bottom: 3px solid rgb(241, 231, 231);
   display: flex;
   align-items: center;
   gap: 1rem;

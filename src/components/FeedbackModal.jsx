@@ -1,5 +1,5 @@
+import { FaCheck, FaTimes, FaTimesCircle } from "react-icons/fa"
 import "../../public/stylesheets/feedback-modal.css"
-import { FaCheck, FaTimes } from "react-icons/fa"
 
 const FeedbackModal = ({
   show,
@@ -20,18 +20,17 @@ const FeedbackModal = ({
         }
       case "error":
         return {
-          icon: <FaTimes className="icon" />,
+          icon: <FaTimesCircle className="icon" />,
           color: "#d10000",
           title: "Error",
         }
+
       case "confirm":
         return {
           icon: <FaTimes className="icon" />,
           color: "#d8af09ff",
           title: "Confirmation",
         }
-        break
-        return { icon: null, color: "#000", title: "" }
     }
   }
 
@@ -40,10 +39,11 @@ const FeedbackModal = ({
   return (
     <div className="feedback-modal-overlay">
       <div className="card">
-        {/* Icon */}
+        <span className="modal-close-btn" onClick={onClose}>
+          <FaTimes />
+        </span>
         <div className="icon-container">{icon}</div>
 
-        {/* Message Text */}
         <div className="message-text-container">
           <p className="message-text" style={{ color }}>
             {title}
@@ -62,11 +62,6 @@ const FeedbackModal = ({
               {action.label}
             </button>
           ))}
-          {!actions.length && (
-            <button onClick={onClose} className="feedback-buttons">
-              Close
-            </button>
-          )}
         </div>
       </div>
     </div>

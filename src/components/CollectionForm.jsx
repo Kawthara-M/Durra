@@ -258,7 +258,6 @@ const CollectionForm = () => {
           headers: { "Content-Type": "multipart/form-data" },
         })
       } else {
-        console.log(data)
         response = await User.post("/collections", data, {
           headers: { "Content-Type": "multipart/form-data" },
         })

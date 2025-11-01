@@ -39,11 +39,9 @@ const SignIn = ({ setShowSignUp }) => {
 
   const forgetPassword = async () => {
     try {
-      console.log("here")
       const response = await User.post("/auth/forgetPassword", {
         email: formValues.email,
       })
-      console.log("meow")
 
       setModalMessage("A password reset link has been sent to your email.")
       setShowModal(true)
@@ -53,7 +51,8 @@ const SignIn = ({ setShowSignUp }) => {
         error.response?.data?.error ||
         error.response?.data?.msg ||
         "Failed to send reset link."
-      setErrorMessage(errorMsg)
+      setModalMessage(errorMsg)
+      setShowModal(true)
     }
   }
 
@@ -88,14 +87,13 @@ const SignIn = ({ setShowSignUp }) => {
               placeholder="Enter your password"
               value={formValues.password}
               required
-              
             />
           </div>
           <a
             className={`forget-password ${
               !formValues.email ? "disabled-link" : null
             }`}
-            title="Enter Email First"
+            title="Please Enter your Email"
             onClick={() => {
               if (!formValues.email) return
               forgetPassword()
