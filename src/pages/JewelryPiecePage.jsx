@@ -34,7 +34,6 @@ const JewelryPiecePage = () => {
     const getJewelry = async () => {
       const response = await User.get(`/jewelry/${jewelryId}`)
       setJewelry(response.data.jewelry)
-      console.log(response.data.jewelry)
     }
     getJewelry()
   }, [])

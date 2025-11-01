@@ -98,7 +98,6 @@ const Profile = () => {
       const response = await User.get(`/profile/`)
       const data = response.data
       setProfile(data)
-      console.log(data)
 
       setUserInfo({
         fName: data.user.fName || "",
@@ -380,7 +379,7 @@ const Profile = () => {
                 : profile.user.fName + " " + profile.user.lName
               : null}
           </h2>
-          {profile ? profile.user.email : null}
+          {/* {profile ? profile.user.email : null} */}
           <span className="profile-icons">
             <img
               src={themeIcon}
@@ -429,79 +428,80 @@ const Profile = () => {
             {view === "Account Information" && (
               <div className="account-information">
                 <div className="account-information-inputs">
-                {user?.role === "Jeweler" ? (
-                  <>
-                    <label>Business Name</label>
-                    <input
-                      type="text"
-                      value={shopInfo.name}
-                      onChange={(e) =>
-                        setShopInfo({ ...shopInfo, name: e.target.value })
-                      }
-                    />
-                  </>
-                ) : (
-                  <>
-                    <label>First Name</label>
-                    <input
-                      type="text"
-                      value={userInfo.fName}
-                      onChange={(e) =>
-                        setUserInfo({ ...userInfo, fName: e.target.value })
-                      }
-                    />
-                    <label>Last Name</label>
-                    <input
-                      type="text"
-                      value={userInfo.lName}
-                      onChange={(e) =>
-                        setUserInfo({ ...userInfo, lName: e.target.value })
-                      }
-                    />
-                  </>
-                )}
+                  {user?.role === "Jeweler" ? (
+                    <>
+                      <label>Business Name</label>
+                      <input
+                        type="text"
+                        value={shopInfo.name}
+                        onChange={(e) =>
+                          setShopInfo({ ...shopInfo, name: e.target.value })
+                        }
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <label>First Name</label>
+                      <input
+                        type="text"
+                        value={userInfo.fName}
+                        onChange={(e) =>
+                          setUserInfo({ ...userInfo, fName: e.target.value })
+                        }
+                      />
+                      <label>Last Name</label>
+                      <input
+                        type="text"
+                        value={userInfo.lName}
+                        onChange={(e) =>
+                          setUserInfo({ ...userInfo, lName: e.target.value })
+                        }
+                      />
+                    </>
+                  )}
 
-                <label>Email</label>
-                <input
-                  type="email"
-                  value={userInfo.email}
-                  onChange={(e) =>
-                    setUserInfo({ ...userInfo, email: e.target.value })
-                  }
-                />
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    value={userInfo.email}
+                    onChange={(e) =>
+                      setUserInfo({ ...userInfo, email: e.target.value })
+                    }
+                  />
 
-                <label>Phone</label>
-                <input
-                  type="text"
-                  value={userInfo.phone}
-                  onChange={(e) =>
-                    setUserInfo({ ...userInfo, phone: e.target.value })
-                  }
-                />
+                  <label>Phone</label>
+                  <input
+                    type="text"
+                    value={userInfo.phone}
+                    onChange={(e) =>
+                      setUserInfo({ ...userInfo, phone: e.target.value })
+                    }
+                  />
 
-                {user?.role === "Jeweler" && (
-                  <>
-                    <label>Commercial Record (C.R)</label>
-                    <input
-                      type="text"
-                      value={shopInfo.cr}
-                      onChange={(e) =>
-                        setShopInfo({ ...shopInfo, cr: e.target.value })
-                      }
-                    />
-                    <label>Description</label>
-                    <textarea
-                      rows="6"
-                      value={shopInfo.description}
-                      onChange={(e) =>
-                        setShopInfo({
-                          ...shopInfo,
-                          description: e.target.value,
-                        })
-                      }
-                    ></textarea>
-                  </>
-                )}</div>
+                  {user?.role === "Jeweler" && (
+                    <>
+                      <label>Commercial Record (C.R)</label>
+                      <input
+                        type="text"
+                        value={shopInfo.cr}
+                        onChange={(e) =>
+                          setShopInfo({ ...shopInfo, cr: e.target.value })
+                        }
+                      />
+                      <label>Description</label>
+                      <textarea
+                        rows="6"
+                        value={shopInfo.description}
+                        onChange={(e) =>
+                          setShopInfo({
+                            ...shopInfo,
+                            description: e.target.value,
+                          })
+                        }
+                      ></textarea>
+                    </>
+                  )}
+                </div>
 
                 <button className="update-button" onClick={handleUpdate}>
                   Update
@@ -593,15 +593,6 @@ const Profile = () => {
                 <h3>Addresses</h3>
                 <div className="customer-addresses">
                   {addresses.map((a, index) => {
-                    console.log(
-                      "Default address:",
-                      profile?.user?.defaultAddress
-                    )
-                    console.log(
-                      "Addresses list:",
-                      addresses.map((a) => a._id)
-                    )
-
                     return (
                       <div key={a._id}>
                         <span className="inline">
