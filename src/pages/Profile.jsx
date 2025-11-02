@@ -21,7 +21,7 @@ const Profile = () => {
   const { user, handleLogOut } = useUser()
   const { toggleTheme } = useContext(ThemeContext)
 
-  const [profile, setProfile] = useState()
+  let [profile, setProfile] = useState()
   const [logoFile, setLogoFile] = useState(null)
   const [errorMessage, setErrorMessage] = useState("")
   const validate = (value) => {
@@ -112,21 +112,27 @@ const Profile = () => {
         description: data.shop?.description || "",
       })
 
-      const address = data.user.addresses?.[0]
+      const address = await User.get("/addresses/")
+      const jewelerAddress = address.data.addresses[0]
       setJewelerAddress({
-        governante: address?.governante || "",
-        area: address?.area || "",
-        road: address?.road || "",
-        building: address?.building || "",
-        latitude: address?.coordinates?.[0] || null,
-        longitude: address?.coordinates?.[1] || null,
+        governante: jewelerAddress?.governante || "",
+        area: jewelerAddress?.area || "",
+        road: jewelerAddress?.road || "",
+        building: jewelerAddress?.building || "",
+        latitude: jewelerAddress?.coordinates?.[0] || null,
+        longitude: jewelerAddress?.coordinates?.[1] || null,
       })
 
-      setAddresses(data.user.addresses || [])
+      setAddresses(address.data.addresses || [])
     }
 
     getProfile()
   }, [userId])
+
+  const triggerSuccessModal = (msg) => {
+    setModalMessage(msg)
+    setShowModal(true)
+  }
 
   const handleUpdate = async () => {
     try {
@@ -165,7 +171,6 @@ const Profile = () => {
     const file = e.target.files[0]
     if (file) {
       setLogoFile(file)
-      // Optional: show live preview
       const reader = new FileReader()
       reader.onload = (ev) => {
         setProfile((prev) => ({
@@ -182,7 +187,7 @@ const Profile = () => {
   const handleAddressUpdate = async () => {
     try {
       const addressPayload = {
-        name: "Main Address",
+        name: `${profile.shop.name} Address`,
         road: jewelerAddress.road,
         building: jewelerAddress.building,
         governante: jewelerAddress.governante,
@@ -194,8 +199,10 @@ const Profile = () => {
       const defaultAddressId = profile?.user?.defaultAddress
       if (!defaultAddressId) {
         await User.post("/addresses/", addressPayload)
+        profile = await User.get(`/profile/`)
       } else {
         await User.put(`/addresses/${defaultAddressId}`, addressPayload)
+        triggerSuccessModal("Your address has been updated successfully.")
       }
     } catch (error) {
       console.error("Address update failed:", error)
@@ -248,10 +255,12 @@ const Profile = () => {
         await User.post("/addresses/", payload)
       }
 
-      const response = await User.get(`/profile/`)
-      setAddresses(response.data.user.addresses)
+      const response = await User.get(`/addresses/`)
+      setAddresses(response.data.addresses)
       setShowAddressForm(false)
       setActiveAddress(null)
+
+      triggerSuccessModal("Your addresses have been updated successfully.")
     } catch (err) {
       console.error("Address update failed:", err)
     }
@@ -263,9 +272,10 @@ const Profile = () => {
         setDefault: true,
       })
 
-      const response = await User.get(`/profile/`)
-      setProfile(response.data)
-      setAddresses(response.data.user.addresses)
+      const response = await User.get(`/addresses/`)
+      const profileres = await User.get("/profile/")
+      setProfile(profileres.data)
+      setAddresses(response.data.addresses)
     } catch (error) {
       console.error("Failed to set default address:", error)
     }
@@ -304,6 +314,8 @@ const Profile = () => {
         newPassword: "",
         confirmPassword: "",
       })
+
+      triggerSuccessModal("Your password has been updated successfully.")
     } catch (error) {
       if (error.response) {
         const serverMessage =
@@ -348,15 +360,15 @@ const Profile = () => {
               src={profile?.shop?.logo ? profile.shop.logo : accountIcon}
               alt={
                 profile
-                  ? user.role === "Jeweler"
+                  ? user?.role === "Jeweler"
                     ? profile.shop.name
-                    : `${profile.user.fName} ${profile.user.lName}`
+                    : `${profile?.user?.fName} ${profile?.user?.lName}`
                   : "User Logo"
               }
               className="profile-image"
             />
 
-            {user.role === "Jeweler" && (
+            {user?.role === "Jeweler" && (
               <>
                 <label htmlFor="profile-upload" className="upload-btn">
                   +
@@ -376,7 +388,7 @@ const Profile = () => {
             {profile
               ? user.role === "Jeweler"
                 ? profile.shop.name
-                : profile.user.fName + " " + profile.user.lName
+                : profile?.user?.fName + " " + profile?.user?.lName
               : null}
           </h2>
           {/* {profile ? profile.user.email : null} */}
@@ -537,8 +549,7 @@ const Profile = () => {
                 {showManual && (
                   <div className="manual-address">
                     <label>Governante</label>
-                    <input
-                      type="text"
+                    <select
                       value={jewelerAddress.governante}
                       onChange={(e) =>
                         setJewelerAddress({
@@ -546,7 +557,14 @@ const Profile = () => {
                           governante: e.target.value,
                         })
                       }
-                    />
+                      className="governante-select"
+                    >
+                      <option value="">Select Governate</option>
+                      <option value="Capital">Capital</option>
+                      <option value="Muharraq">Muharraq</option>
+                      <option value="Northern">Northern</option>
+                      <option value="Southern">Southern</option>
+                    </select>
                     <label>Area</label>
                     <input
                       type="text"
@@ -612,8 +630,7 @@ const Profile = () => {
                           />
 
                           <span className="default-action">
-                            {String(profile.user.defaultAddress?._id) ===
-                            String(a._id) ? (
+                            {profile?.user?.defaultAddress === a._id ? (
                               <button className="default-label">Default</button>
                             ) : (
                               <button

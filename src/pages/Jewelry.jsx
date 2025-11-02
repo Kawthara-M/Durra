@@ -210,7 +210,9 @@ const Jewelry = () => {
 
           <div className="jewelry-grid">
             {filteredJewelry.map((j) => (
-              <Link key={j._id} to={`/jewelry/${j._id}`}>
+              <Link key={j._id}
+              //  to={`/jewelry/${j._id}`}
+               >
                 <ProductCard item={j} type="jewelry" metalRates={metalRates} />
               </Link>
             ))}

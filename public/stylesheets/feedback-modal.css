@@ -12,7 +12,8 @@
 }
 
 .card {
-  width: fit-content;
+  /* width: fit-content; */
+  min-width:30vw;
   height: fit-content;
   border-radius: 8px;
   box-sizing: border-box;
@@ -99,5 +100,17 @@
 .modal-close-btn:hover {
   color: #000;
   transform: scale(1.1);
+}
+
+@media (max-width:1200px){
+  .card {
+    min-width: 45vw;
+  }
+}
+
+@media (max-width:700px){
+  .card {
+    min-width: 60vw;
+  }
 }
 
