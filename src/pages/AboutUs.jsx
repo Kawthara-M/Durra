@@ -6,9 +6,11 @@ const AboutUs = () => (
       <header className="durra-hero">
         <h1 className="durra-hero-title">Durra</h1>
         <p className="durra-hero-subtitle">Arabian Luxury, Modern Elegance</p>
+        <div className="durra-hero-line"></div>
       </header>
 
       <section className="durra-story">
+        <h2 className="durra-section-title">Who Are We?</h2>
         <div className="durra-story-text">
           <p>
             <strong>Durra</strong> emerges from Bahrain as a modern
@@ -16,13 +18,11 @@ const AboutUs = () => (
             craftsmanship with contemporary digital excellence.
           </p>
           <p>
-            We connect discerning clients with master artisans, offering
-            certified pieces that honor tradition while embracing innovation.
+            It connects discerning clients with master artisans, offering
+            certified pieces that honor tradition while embracing innovation and
+            technology.
           </p>
         </div>
-        {/* <div className="durra-story-image">
-          <img src="src\assets\bg2.jpeg" alt="Artisan Jewelry" />
-        </div> */}
       </section>
 
       <section className="durra-values">
@@ -46,7 +46,7 @@ const AboutUs = () => (
             <h3>Effortless Experience</h3>
             <p>
               Seamless journey with Shariah-compliant services and personalized
-              care.
+              care for every client.
             </p>
           </div>
         </div>
@@ -56,19 +56,37 @@ const AboutUs = () => (
         <h2 className="durra-section-title">Meet Our Team</h2>
         <div className="durra-team-grid">
           <div className="durra-team-card">
-            <img src="src\assets\user(1).png" alt="K" />
+            <img src="src/assets/user(1).png" alt="K" />
             <h3>Kawthar Mohammad</h3>
             <p>Project Manager & Developer</p>
           </div>
           <div className="durra-team-card">
-            <img src="src\assets\user(1).png" alt="G" />
+            <img src="src/assets/user(1).png" alt="G" />
             <h3>Ghadeer Abdulla</h3>
             <p>Developer</p>
           </div>
           <div className="durra-team-card">
-            <img src="src\assets\user(1).png" alt="R" />
+            <img src="src/assets/user(1).png" alt="R" />
             <h3>Raghad Abdulla</h3>
             <p>UI/UX Designer</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="durra-testimonials">
+        <h2 className="durra-section-title">Client Testimonials</h2>
+        <div className="durra-testimonials-grid">
+          <div className="durra-testimonial-card">
+            <p>
+              ""
+            </p>
+            <h4>– Fatima H.</h4>
+          </div>
+          <div className="durra-testimonial-card">
+            <p>
+              ""
+            </p>
+            <h4>– Ahmed B.</h4>
           </div>
         </div>
       </section>
@@ -76,7 +94,8 @@ const AboutUs = () => (
       <section className="durra-closing">
         <p>
           Durra represents the perfect harmony of Bahrain's jewelry legacy and
-          contemporary sophistication.
+          contemporary sophistication, a symbol of heritage, trust, and
+          innovation.
         </p>
       </section>
     </div>
