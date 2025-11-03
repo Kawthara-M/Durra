@@ -20,12 +20,11 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
       const price = calculateCollectionPrice(item, metalRates)
       setCollectionPrice(Number(price.toFixed(2)))
     }
-    console.log("item", item)
-    console.log("type", type)
   }, [type, item, metalRates])
 
   const getJewelryPrice = () => {
-    if (!metalRates) return null
+    const basePrice = item.originPrice || 0
+    if (!metalRates) return Number(basePrice.toFixed(2))
     const metalCost = calculatePreciousMaterialCost(
       item.preciousMaterials,
       metalRates
@@ -60,9 +59,7 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
         totalPrice: price,
         notes: "",
       }
-    }
-
-    if (type === "collection") {
+    } else if (type === "collection") {
       price = collectionPrice
       newItem = {
         item: item._id,
@@ -71,9 +68,7 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
         totalPrice: price,
         notes: "",
       }
-    }
-
-    if (type === "service") {
+    } else if (type === "service") {
       price = item.price
       newItem = {
         service: item._id,
@@ -89,32 +84,15 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
       if (!currentOrderId) {
         const payload =
           type === "service"
-            ? {
-                jewelryOrder: [],
-                serviceOrder: [newItem],
-                totalPrice: price,
-                collectionMethod: "delivery",
-              }
-            : {
-                jewelryOrder: [newItem],
-                serviceOrder: [],
-                totalPrice: price,
-                collectionMethod: "delivery",
-              }
+            ? { jewelryOrder: [], serviceOrder: [newItem], totalPrice: price, collectionMethod: "delivery" }
+            : { jewelryOrder: [newItem], serviceOrder: [], totalPrice: price, collectionMethod: "delivery" }
 
-        const res = await createOrder({
-          ...payload,
-          collectionMethod: "delivery",
-        })
-        finalOrderId = res._id
-        setOrderId(finalOrderId)
-
-        finalOrderId = res.data.order._id
+        const res = await createOrder(payload)
+        finalOrderId = res._id || res.data?.order?._id
         setOrderId(finalOrderId)
 
         if (type === "service") addServiceToOrder(newItem)
         else addJewelryToOrder(newItem)
-
         return
       }
 
@@ -145,11 +123,7 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
     const newEntry = {
       favouritedItem: item._id,
       favouritedItemType:
-        type === "jewelry"
-          ? "Jewelry"
-          : type === "service"
-          ? "Service"
-          : "Collection",
+        type === "jewelry" ? "Jewelry" : type === "service" ? "Service" : "Collection",
     }
 
     try {
@@ -158,9 +132,7 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
 
       const exists = wishlist.items.some(
         (it) =>
-          (typeof it.favouritedItem === "string"
-            ? it.favouritedItem
-            : it.favouritedItem._id) === item._id
+          (typeof it.favouritedItem === "string" ? it.favouritedItem : it.favouritedItem._id) === item._id
       )
 
       let updatedItems
@@ -168,28 +140,20 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
       if (exists) {
         updatedItems = wishlist.items.filter(
           (it) =>
-            (typeof it.favouritedItem === "string"
-              ? it.favouritedItem
-              : it.favouritedItem._id) !== item._id
+            (typeof it.favouritedItem === "string" ? it.favouritedItem : it.favouritedItem._id) !== item._id
         )
-
         if (typeof onRemove === "function") onRemove(item._id)
       } else {
         updatedItems = [
           ...wishlist.items.map((it) => ({
-            favouritedItem:
-              typeof it.favouritedItem === "string"
-                ? it.favouritedItem
-                : it.favouritedItem._id,
+            favouritedItem: typeof it.favouritedItem === "string" ? it.favouritedItem : it.favouritedItem._id,
             favouritedItemType: it.favouritedItemType,
           })),
           newEntry,
         ]
       }
 
-      await User.put(`/wishlist/${wishlist._id}`, {
-        items: updatedItems,
-      })
+      await User.put(`/wishlist/${wishlist._id}`, { items: updatedItems })
     } catch (err) {
       if (err.response?.status === 404) {
         await User.post("/wishlist", { items: [newEntry] })
@@ -202,11 +166,7 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
   return (
     <div className="search-card">
       <div className="search-image-wrapper">
-        <img
-          src={item.images?.[0] || placeholder}
-          alt={item.name}
-          className="search-card-image"
-        />
+        <img src={item.images?.[0] || placeholder} alt={item.name} className="search-card-image" />
         <div className="add-actions">
           <h6
             className={!user ? "disabled-link" : null}
@@ -218,13 +178,7 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
 
           <h6
             className={!user ? "disabled-link" : null}
-            title={
-              !user
-                ? "Sign in to manage Wishlist"
-                : inWishlistPage
-                ? "Remove from Wishlist"
-                : "Add to Wishlist"
-            }
+            title={!user ? "Sign in to manage Wishlist" : inWishlistPage ? "Remove from Wishlist" : "Add to Wishlist"}
             onClick={() => user && handleWishlist()}
           >
             {inWishlistPage ? "Remove" : "Wishlist"}
@@ -234,7 +188,7 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
 
       <div className="card-info">
         <h3 className="service-card__title">{item.name}</h3>
-        <p className="service-card__content price">{displayPrice()}</p>
+        <p className="price">{displayPrice()}</p>
       </div>
     </div>
   )

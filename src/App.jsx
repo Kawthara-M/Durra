@@ -27,6 +27,7 @@ import Shops from "./pages/Shops"
 import Jewelry from "./pages/Jewelry"
 import Services from "./pages/Services"
 import Wishlist from "./pages/Wishlist"
+import ShopDetails from "./pages/ShopDetails" 
 
 import "./App.css"
 
@@ -86,6 +87,7 @@ function App() {
               element={<JewelerServicePage />}
             />
             <Route path="/show-order/:orderId" element={<JewelerOrderPage />} />
+            <Route path="/shop/:shopId" element={<ShopDetails />} />
           </Routes>
         </main>
         <Footer />
