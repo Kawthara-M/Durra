@@ -26,7 +26,7 @@ import TermsAndConditions from "./pages/TermsAndConditions"
 import Shops from "./pages/Shops"
 import Jewelry from "./pages/Jewelry"
 import Services from "./pages/Services"
-import Collections from "./pages/Collections"
+import Wishlist from "./pages/Wishlist"
 
 import "./App.css"
 
@@ -45,6 +45,7 @@ function App() {
             <Route path="/live-prices" element={<LivePrices />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
             <Route path="/profile/:userId" element={<Profile />} />
+            <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/registeration" element={<JewelerRegisteration />} />
             <Route path="/set-password" element={<SetPassword />} />
 
@@ -52,7 +53,6 @@ function App() {
             <Route path="/shops" element={<Shops />} />
             <Route path="/jewelry" element={<Jewelry />} />
             <Route path="/services" element={<Services />} />
-            <Route path="/collections" element={<Collections />} />
 
             <Route path="/jeweler-jewelry" element={<JewelerJewelryPage />} />
             <Route

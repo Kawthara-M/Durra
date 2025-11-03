@@ -210,15 +210,19 @@ const Jewelry = () => {
 
           <div className="jewelry-grid">
             {filteredJewelry.map((j) => (
-              <Link key={j._id}
-              //  to={`/jewelry/${j._id}`}
-               >
+              <Link
+                key={j._id}
+                //  to={`/jewelry/${j._id}`} //link still doesn't exist
+              >
                 <ProductCard item={j} type="jewelry" metalRates={metalRates} />
               </Link>
             ))}
 
             {filteredCollections.map((c) => (
-              <Link key={c._id} to={`/collections/${c._id}`}>
+              <Link
+                key={c._id}
+                // to={`/collections/${c._id}`} //link still doesn't exist
+              >
                 <ProductCard
                   item={c}
                   type="collection"

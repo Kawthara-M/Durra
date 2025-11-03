@@ -8,8 +8,9 @@ import {
   calculateCollectionPrice,
 } from "../services/calculator.js"
 import { createOrder, updateOrder } from "../services/order.js"
+import User from "../services/api.js"
 
-const ProductCard = ({ item, type, metalRates }) => {
+const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
   const { user } = useUser()
   const { order, addJewelryToOrder, addServiceToOrder, setOrderId } = useOrder()
   const [collectionPrice, setCollectionPrice] = useState(null)
@@ -19,6 +20,8 @@ const ProductCard = ({ item, type, metalRates }) => {
       const price = calculateCollectionPrice(item, metalRates)
       setCollectionPrice(Number(price.toFixed(2)))
     }
+    console.log("item", item)
+    console.log("type", type)
   }, [type, item, metalRates])
 
   const getJewelryPrice = () => {
@@ -136,6 +139,66 @@ const ProductCard = ({ item, type, metalRates }) => {
     }
   }
 
+  const handleWishlist = async () => {
+    if (!user) return
+
+    const newEntry = {
+      favouritedItem: item._id,
+      favouritedItemType:
+        type === "jewelry"
+          ? "Jewelry"
+          : type === "service"
+          ? "Service"
+          : "Collection",
+    }
+
+    try {
+      const response = await User.get("/wishlist")
+      const wishlist = response.data.wishlist
+
+      const exists = wishlist.items.some(
+        (it) =>
+          (typeof it.favouritedItem === "string"
+            ? it.favouritedItem
+            : it.favouritedItem._id) === item._id
+      )
+
+      let updatedItems
+
+      if (exists) {
+        updatedItems = wishlist.items.filter(
+          (it) =>
+            (typeof it.favouritedItem === "string"
+              ? it.favouritedItem
+              : it.favouritedItem._id) !== item._id
+        )
+
+        if (typeof onRemove === "function") onRemove(item._id)
+      } else {
+        updatedItems = [
+          ...wishlist.items.map((it) => ({
+            favouritedItem:
+              typeof it.favouritedItem === "string"
+                ? it.favouritedItem
+                : it.favouritedItem._id,
+            favouritedItemType: it.favouritedItemType,
+          })),
+          newEntry,
+        ]
+      }
+
+      await User.put(`/wishlist/${wishlist._id}`, {
+        items: updatedItems,
+      })
+    } catch (err) {
+      if (err.response?.status === 404) {
+        await User.post("/wishlist", { items: [newEntry] })
+      } else {
+        console.error(err)
+      }
+    }
+  }
+
   return (
     <div className="search-card">
       <div className="search-image-wrapper">
@@ -155,9 +218,16 @@ const ProductCard = ({ item, type, metalRates }) => {
 
           <h6
             className={!user ? "disabled-link" : null}
-            title={!user ? "Sign in to add to Wishlist" : "Add to Wishlist"}
+            title={
+              !user
+                ? "Sign in to manage Wishlist"
+                : inWishlistPage
+                ? "Remove from Wishlist"
+                : "Add to Wishlist"
+            }
+            onClick={() => user && handleWishlist()}
           >
-            Wishlist
+            {inWishlistPage ? "Remove" : "Wishlist"}
           </h6>
         </div>
       </div>

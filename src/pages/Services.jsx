@@ -111,7 +111,9 @@ const Services = () => {
 
           <div className="jewelry-grid">
             {filteredServices.map((s) => (
-              <Link key={s._id} to={`/service/${s._id}`}>
+              <Link key={s._id} 
+              // to={`/service/${s._id}`} //link still doesn't exist
+              >
                 <ProductCard item={s} type="service" />
               </Link>
             ))}

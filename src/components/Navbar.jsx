@@ -173,9 +173,9 @@ const Navbar = ({}) => {
                     {/* Favourites Icon  */}
 
                     <Link
-                      to={`/favourites/${user.id}`}
+                      to={`/wishlist`}
                       className="icon-btn"
-                      title="Favourites"
+                      title="Wishlist"
                     >
                       <img
                         src={heartIcon}
