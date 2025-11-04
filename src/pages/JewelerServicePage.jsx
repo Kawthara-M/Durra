@@ -83,15 +83,19 @@ const JewelerServicePage = () => {
                     />
                   </Link>
                 </div>{" "}
-                <h2 className="service-description">Description</h2>
-                <p className="description">{service.description}</p>
+                <div>
+                  <h2 className="service-description">Description</h2>
+                  <p className="description">{service.description}</p>
+                </div>
+                <div className="service-details">
                 <div className="jeweler-service-details">
-                  <h3 className="service-limit">Limit Per Order:</h3>
-                  <p>{service.limitPerOrder}</p>
+                  <h3 className="service-limit">Limit Per Order</h3>
+                  <p>{service.limitPerOrder} jewelry</p>
                 </div>
                 <div className="jeweler-service-details">
-                  <h3 className="service-price">Price:</h3>
-                  <p className="price">{service.price} BHD</p>
+                  <h3 className="service-price">Price</h3>
+                  <p >{service.price} BHD</p>
+                </div>
                 </div>
               </div>
             </div>
