@@ -1,7 +1,19 @@
-.jewelry-details-wrapper, .collection-details-wrapper {
+.jewelry-details-wrapper,
+.collection-details-wrapper {
   border-top: 1px solid var(--text-color);
   border-bottom: 1px solid var(--text-color);
   margin: 1rem 0;
+}
+
+.heading-and-editor {
+  max-width: 80%;
+  line-height: 2.2rem;
+}
+
+.jewelry-overview-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .jewelry-details {
@@ -12,7 +24,8 @@
   cursor: pointer;
 }
 
-.jewelry-details-heading, .collection-toggle-title {
+.jewelry-details-heading,
+.collection-toggle-title {
   font-size: var(--font-size-h5);
   font-weight: 600;
 }
@@ -33,5 +46,9 @@
   padding: 0 1.4rem;
 }
 
-
-
+@media (max-width: 900px) {
+  .jewelry-overview-wrapper {
+    flex-direction: row;
+    gap: 2rem;
+  }
+}

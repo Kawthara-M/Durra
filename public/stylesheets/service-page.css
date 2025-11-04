@@ -134,17 +134,23 @@
   letter-spacing: 0.3px;
 }
 
+.service-details {
+  display: flex;
+  flex-direction: column;
+  gap:.5rem;
+}
+
 .jeweler-service-details {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.0;
   color: #444;
   font-size: 1rem;
   line-height: 1.6;
 }
 
 .jeweler-service-details h3 {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 600;
   color: var(--accent-color);
 }
@@ -157,15 +163,13 @@
 }
 
 .service-description {
-  font-weight: 600;
-  font-size: 1.1rem;
   color: #222;
+  line-height: 2rem;
 }
 
 .description {
   color: #555;
-  line-height: 1.7;
-  font-size: 1rem;
+  line-height: 1.6;
   max-width: 90%;
 }
 
@@ -204,5 +208,15 @@
     width: 40px;
     height: 40px;
     font-size: 1.3rem;
+  }
+
+  .service-details {
+    flex-direction: row;
+    gap:2rem;
+  }
+  .jeweler-service-details {
+    flex-direction: row;
+    align-items: center;
+    gap:.5rem;
   }
 }

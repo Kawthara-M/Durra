@@ -46,10 +46,7 @@ const JewelryPiecePage = () => {
           jewelry.preciousMaterials,
           rates
         )
-        const total = calculateTotalCost(
-          preciousCost,
-          jewelry.originPrice
-        )
+        const total = calculateTotalCost(preciousCost, jewelry.originPrice)
 
         setPreciousMaterialCost(preciousCost.toFixed(2))
         setTotalPrice(total.toFixed(2))
@@ -124,15 +121,21 @@ const JewelryPiecePage = () => {
                     />
                   </Link>
                 </div>{" "}
-                <h2 className="service-description">Description</h2>
-                <p id="jeweler-service-description">{jewelry.description}</p>
-                <div className="jeweler-service-details">
-                  <h3 className="service-limit">Limit Per Order:</h3>
-                  <p>{jewelry.limitPerOrder}</p>
+                <div>
+                  <h2 className="service-description">Description</h2>
+                  <p id="jeweler-service-description">
+                    {jewelry.description}
+                  </p>{" "}
                 </div>
-                <div className="jeweler-service-details">
-                  <h3 className="service-price">Price:</h3>
-                  <p>{totalPrice} BHD</p>
+                <div className="jewelry-overview-wrapper">
+                  <div className="jeweler-service-details">
+                    <h3 className="service-limit">Limit Per Order</h3>
+                    <p>{jewelry.limitPerOrder} Unit</p>
+                  </div>
+                  <div className="jeweler-service-details">
+                    <h3 className="service-price">Price</h3>
+                    <p>{totalPrice} BHD</p>
+                  </div>
                 </div>
               </div>
             </div>
