@@ -13,6 +13,10 @@
   padding: 1rem;
 }
 
+.sign-in-title {
+  margin-bottom: 1.5rem;
+}
+
 .form-title {
   margin-bottom: 1.5rem;
 }
@@ -180,6 +184,9 @@
 @media (max-width: 1350px) {
   .registeration-form {
     width: 40vw;
+  }
+  .authentication-card {
+    width: 42vw;
   }
 }
 @media (max-width: 960px) {

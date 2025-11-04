@@ -59,7 +59,7 @@ const SignIn = ({ setShowSignUp }) => {
   return (
     <>
       <div className="wrapper">
-        <h1>Sign In</h1>
+        <h1 className="sign-in-title">Sign In</h1>
         <form onSubmit={handleSubmit} className="sign-in-form">
           <div>
             <label htmlFor="email">Email</label>
