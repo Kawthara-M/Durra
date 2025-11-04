@@ -9,8 +9,8 @@
 
 .profile-left,
 .profile-right {
-  /* box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15); */
-  border: 2px solid  rgb(241, 231, 231);
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  /* border: 2px solid  rgb(241, 231, 231); */
   border-radius: 4px;
 }
 

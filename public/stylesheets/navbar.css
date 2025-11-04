@@ -40,7 +40,7 @@
 .topNav-right {
   flex: 1;
   justify-content: flex-end;
-  gap: 0.4rem;
+  gap: 0.5rem;
   padding-right: 0.5rem;
 }
 
@@ -141,6 +141,10 @@
   padding: 0;
 }
 
+#search {
+  width:4%;
+}
+
 .search-bar-container {
   padding: 0.5rem 1rem;
   width: 100%;
@@ -166,10 +170,10 @@
 .search-input {
   width: 100%;
   height: 100%;
-  background-color: transparent;
-  border: none;
+  background-color: transparent !important;
+  border: none !important;
   border-radius: 0;
-  font-size: 1.6rem;
+  font-size: 1.5rem !important;
   font-family: "Playfair", serif;
   margin: 0;
 }
@@ -201,6 +205,79 @@
 .desktop-only {
   margin: 0 0.5rem;
 }
+
+.icon-btn {
+  position: relative;
+  display: inline-block;
+}
+
+.icon-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: rgb(184, 15, 15);
+  font-family: "Times New Roman", Times, serif;
+  color: white;
+  width: 0.5rem;
+  height: 0.5rem;
+  font-size: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2px;
+}
+
+.profile-menu {
+  position: absolute;
+  right: 1rem;
+  top: 4rem;
+  background: var(--nav-bg);
+  border: 1px solid var(--accent-color);
+  border-radius: 6px;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  z-index: 2000;
+  min-width: 150px;
+  padding-bottom: 0.4rem;
+  padding-top: 0.4rem;
+}
+
+.menu-item-wrapper {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.pro {
+  gap: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+.menu-item-wrapper img {
+  height: 0.8rem !important;
+  width: 0.6rem !important;
+}
+
+.menu-btn {
+  text-decoration: none;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-menu a:hover,
+.menu-btn:hover {
+  color: var(--a-hover-color);
+  font-weight: bold;
+}
+
 /* media queries are the one's responsible for showing the nav as a hidden menu for smaller screens*/
 
 @media (min-width: 616px) {

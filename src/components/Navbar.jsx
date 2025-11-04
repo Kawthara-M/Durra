@@ -1,227 +1,223 @@
-import { Link } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { useState, useEffect, useContext } from "react"
 import { useUser } from "../context/UserContext"
-import { useNavigate } from "react-router-dom"
-
+import { useOrder } from "../context/OrderContext"
 import User from "../services/api"
+import { ThemeContext } from "../context/ThemeContext"
+
+// Icons
 import userIcon from "../assets/user.png"
 import cartIcon from "../assets/cart.png"
 import searchIcon from "../assets/search.png"
 import heartIcon from "../assets/heart.png"
+import themeIcon from "../assets/theme.png"
+import logoutIcon from "../assets/logout.png"
 import closeIcon from "../assets/close.png"
+
 import "../../public/stylesheets/navbar.css"
 
-const Navbar = ({}) => {
+const Navbar = () => {
   const navigate = useNavigate()
+  const { user, handleLogOut } = useUser()
+  const { order } = useOrder()
+  const { toggleTheme } = useContext(ThemeContext)
+
   const [isOpen, setIsOpen] = useState(false)
-  const [search, setsearch] = useState("")
-  const [searchResults, setSearchResults] = useState([])
+  const [search, setSearch] = useState("")
   const [showSearchInput, setShowSearchInput] = useState(false)
-  const { user } = useUser()
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen)
-  }
+  const [wishlistCount, setWishlistCount] = useState(0)
+  const [showMenu, setShowMenu] = useState(false)
 
-  const closeMenu = () => {
-    setIsOpen(false)
-  }
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 615) {
-        setIsOpen(false)
-      }
-    }
-
-    window.addEventListener("resize", handleResize)
-
-    handleResize()
-    return () => {
-      window.removeEventListener("resize", handleResize)
-    }
-  }, [])
-
-  // handling search
-
-  useEffect(() => {
-    const handleEscKey = (event) => {
-      if (event.key === "Escape") {
-        if (isOpen) setIsOpen(false)
-        if (showSearchInput) setShowSearchInput(false)
-      }
-    }
-
-    window.addEventListener("keydown", handleEscKey)
-    return () => {
-      window.removeEventListener("keydown", handleEscKey)
-    }
-  }, [isOpen, showSearchInput])
+  const toggleMenu = () => setIsOpen(!isOpen)
+  const closeMenu = () => setIsOpen(false)
+  const handleProfileClick = () => setShowMenu((prev) => !prev)
 
   const fetchResults = async () => {
     try {
       const response = await User.get("/search", { params: { search } })
-      setSearchResults(response.data)
-      // navigate to results page
       navigate(`/search?search=${encodeURIComponent(search)}`, {
         state: { results: response.data },
       })
-
       setShowSearchInput(false)
     } catch (err) {
       console.error("Search error:", err)
     }
   }
 
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      if (!user) return setWishlistCount(0)
+      try {
+        const res = await User.get("/wishlist")
+        setWishlistCount(res.data?.wishlist?.items?.length || 0)
+      } catch {
+        setWishlistCount(0)
+      }
+    }
+    fetchWishlist()
+  }, [user])
+
+  useEffect(() => {
+    const handleResize = () => window.innerWidth > 615 && setIsOpen(false)
+    window.addEventListener("resize", handleResize)
+    handleResize()
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false)
+        setShowSearchInput(false)
+        setShowMenu(false)
+      }
+    }
+    window.addEventListener("keydown", handleEsc)
+    return () => window.removeEventListener("keydown", handleEsc)
+  }, [])
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    const clickOutside = (e) => {
+      if (
+        !e.target.closest(".profile-menu") &&
+        !e.target.closest(".profile-icon")
+      ) {
+        setShowMenu(false)
+      }
+    }
+    document.addEventListener("click", clickOutside)
+    return () => document.removeEventListener("click", clickOutside)
+  }, [])
+
   return (
     <>
       <div className="top-wrapper">
         <nav className={`topNav ${showSearchInput ? "hide" : ""}`}>
-          <div className={`topNav-left large-left`}>
+          {/* LEFT NAV */}
+          <div className="topNav-left large-left">
             <button className="toggleBtn" onClick={toggleMenu}>
               ☰
             </button>
-            <Link
-              to="/"
-              className={`brand-logo ${isOpen ? "hide-on-mobile" : ""}`}
-            >
+            <Link to="/" className="brand-logo">
               DURRA
             </Link>
-            {user ? (
-              user?.role === "Customer" ? (
-                <>
-                  <Link to="/shops" className="desktop-only">
-                    Shops
-                  </Link>
-                  <Link to="/jewelry" className="desktop-only">
-                    Jewelry
-                  </Link>
-                  <Link to="/services" className="desktop-only">
-                    Services
-                  </Link>
-                </>
-              ) : user?.role === "Jeweler" ? (
-                <>
-                  <Link
-                    to="/jeweler-jewelry"
-                    className="jeweler-options desktop-only"
-                  >
-                    Jewelry
-                  </Link>
-                  <Link
-                    to="/jeweler-collections"
-                    className="jeweler-options desktop-only"
-                  >
-                    Collections
-                  </Link>
-                  <Link
-                    to="/jeweler-services"
-                    className="jeweler-options desktop-only"
-                  >
-                    Services
-                  </Link>
-                  <Link
-                    to="/jeweler-orders"
-                    className="jeweler-options desktop-only"
-                  >
-                    Orders
-                  </Link>
-                </>
-              ) : (
-                <Link to="/" className="brand-logo">
-                  DURRA
-                </Link>
-              )
-            ) : (
-              <>
-                {/* for guests */}
 
-                <Link to="/jewelry" className="guest-link desktop-only">
-                  Jewelry
-                </Link>
-                <Link to="/shops" className="guest-link desktop-only">
+            {/* Links for Users & Guests */}
+            {user?.role === "Customer" || !user ? (
+              <>
+                <Link to="/shops" className="desktop-only">
                   Shops
                 </Link>
-                <Link to="/services" className="guest-link desktop-only">
+                <Link to="/jewelry" className="desktop-only">
+                  Jewelry
+                </Link>
+                <Link to="/services" className="desktop-only">
                   Services
                 </Link>
               </>
-            )}
+            ) : user?.role === "Jeweler" ? (
+              <>
+                <Link to="/jeweler-jewelry" className="desktop-only">
+                  Jewelry
+                </Link>
+                <Link to="/jeweler-collections" className="desktop-only">
+                  Collections
+                </Link>
+                <Link to="/jeweler-services" className="desktop-only">
+                  Services
+                </Link>
+                <Link to="/jeweler-orders" className="desktop-only">
+                  Orders
+                </Link>
+              </>
+            ) : null}
           </div>
 
           <div className="topNav-right">
-            {user ? (
+            <button
+              onClick={() => setShowSearchInput(!showSearchInput)}
+              id="search"
+            >
+              <img src={searchIcon} alt="search" className="icon" />
+            </button>
+
+            {user?.role === "Customer" && (
               <>
-                {user.role === "Customer" && (
+                <Link to="/cart" className="icon-btn cart-btn">
+                  <img src={cartIcon} alt="cart" className="icon" />
+                  {(order?.jewelryOrder?.length ||
+                    order?.serviceOrder?.length) > 0 && (
+                    <span className="icon-badge"></span>
+                  )}
+                </Link>
+
+                <Link to="/wishlist" className="icon-btn wish-btn">
+                  <img src={heartIcon} alt="wishlist" className="icon" />
+                  {wishlistCount > 0 && <span className="icon-badge"></span>}
+                </Link>
+              </>
+            )}
+
+            <div
+              className="icon-btn profile-icon"
+              title="User"
+              onClick={handleProfileClick}
+            >
+              <img src={userIcon} alt="user" className="icon" />
+            </div>
+
+            {showMenu && (
+              <div className="profile-menu">
+                {user ? (
                   <>
-                    <Link to="#">
-                      <button
-                        onClick={() => setShowSearchInput(!showSearchInput)}
-                        id="search"
-                      >
-                        <img
-                          src={searchIcon}
-                          alt="search icon"
-                          className="icon"
-                        />
-                      </button>
-                    </Link>
-                    <Link to="/cart" title="Cart">
-                      <img src={cartIcon} alt="cart icon" className="icon" />
-                    </Link>
-
-                    {/* Favourites Icon  */}
-
                     <Link
-                      to={`/wishlist`}
-                      className="icon-btn"
-                      title="Wishlist"
+                      to={`/profile/${user.id}`}
+                      onClick={() => setShowMenu(false)}
                     >
-                      <img
-                        src={heartIcon}
-                        alt="favourite icon"
-                        className="icon"
-                      />
+                      <span className="menu-item-wrapper">
+                        <img src={userIcon} className="icon" /> Profile
+                      </span>
                     </Link>
+
+                    <span className="menu-item-wrapper">
+                      <img src={themeIcon} className="icon" />
+                      <button className="menu-btn" onClick={toggleTheme}>
+                        Theme
+                      </button>
+                    </span>
+
+                    <span className="menu-item-wrapper">
+                      <img src={logoutIcon} className="icon" />
+                      <button className="menu-btn" onClick={handleLogOut}>
+                        Sign Out
+                      </button>
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="menu-item-wrapper">
+                      <img src={logoutIcon} className="icon" />
+                      <button className="menu-btn" onClick={handleLogOut}>
+                        Sign In
+                      </button>
+                    </span>
+
+                    <span className="menu-item-wrapper">
+                      <img src={themeIcon} className="icon" />
+                      <button className="menu-btn" onClick={toggleTheme}>
+                        Theme
+                      </button>
+                    </span>
                   </>
                 )}
-
-                {/* Profile Icon */}
-                <Link
-                  to={`/profile/${user.id}`}
-                  className="icon-btn"
-                  title="User"
-                >
-                  <img src={userIcon} alt="user icon" className="icon" />
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link to="#">
-                  <button
-                    onClick={() => setShowSearchInput(!showSearchInput)}
-                    id="search"
-                  >
-                    <img src={searchIcon} alt="search icon" className="icon" />
-                  </button>
-                </Link>
-
-                <span className="icon-btn" title="Sign in to view profile">
-                  <img
-                    src={userIcon}
-                    alt="user icon"
-                    className="icon"
-                    onClick={() => {
-                      navigate("/auth")
-                    }}
-                  />
-                </span>
-              </>
+              </div>
             )}
           </div>
         </nav>
-        {/* show search input */}
-        {showSearchInput ? (
+
+        {showSearchInput && (
           <div className="search-bar-container">
             <span className="search-bar-span">
               <input
@@ -229,23 +225,19 @@ const Navbar = ({}) => {
                 placeholder="Search . . ."
                 className="search-input"
                 value={search}
-                onChange={(e) => setsearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    fetchResults()
-                  }
-                }}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && fetchResults()}
               />
               <img
                 src={closeIcon}
-                alt="close search bar"
+                alt="close"
                 className="icon close-search"
-                onClick={() => setShowSearchInput(!showSearchInput)}
+                onClick={() => setShowSearchInput(false)}
               />
             </span>
             <span className="search-options">Hit Enter or ESC to Close</span>
           </div>
-        ) : null}
+        )}
 
         <div className={`sideNav ${isOpen ? "open" : ""}`}>
           <div className="sidebar-logo">
@@ -253,6 +245,7 @@ const Navbar = ({}) => {
               DURRA
             </span>
           </div>
+
           <nav className="pages-navbar side-navbar-links">
             {user?.role === "Customer" || !user ? (
               <>
@@ -275,12 +268,12 @@ const Navbar = ({}) => {
                   Services
                 </Link>
               </>
-            ) : user?.role === "Jeweler" ? (
+            ) : (
               <>
                 <Link to="/jeweler-jewelry" onClick={closeMenu}>
                   Jewelry
                 </Link>
-                <Link to="/jeweler-jewelry" onClick={closeMenu}>
+                <Link to="/jeweler-collections" onClick={closeMenu}>
                   Collections
                 </Link>
                 <Link to="/jeweler-services" onClick={closeMenu}>
@@ -290,10 +283,8 @@ const Navbar = ({}) => {
                   Orders
                 </Link>
               </>
-            ) : null}
+            )}
           </nav>
-
-          <div></div>
         </div>
       </div>
     </>

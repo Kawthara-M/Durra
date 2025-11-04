@@ -47,6 +47,11 @@
   color: var(--accent-color);
   font-weight: bold;
 }
+.wishlist-empty-container button:hover {
+  background-color: var(--accent-color);
+  border: 2px solid var(--accent-color);
+  color: #f1f1f1;
+}
 
 @media (max-width: 1200px) {
   .wishlist-grid {

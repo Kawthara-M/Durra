@@ -81,7 +81,7 @@ const Wishlist = () => {
         </div>
       ) : (
         <div className="wishlist-empty-container">
-          <p>No items in wishlist.</p>
+          <p>No items in your wishlist.</p>
           <button onClick={() => navigate("/Home")}>Add</button>
         </div>
       )}
