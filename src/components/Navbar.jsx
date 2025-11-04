@@ -77,7 +77,6 @@ const Navbar = () => {
     return () => window.removeEventListener("keydown", handleEsc)
   }, [])
 
-  // Close profile menu when clicking outside
   useEffect(() => {
     const clickOutside = (e) => {
       if (
@@ -95,7 +94,6 @@ const Navbar = () => {
     <>
       <div className="top-wrapper">
         <nav className={`topNav ${showSearchInput ? "hide" : ""}`}>
-          {/* LEFT NAV */}
           <div className="topNav-left large-left">
             <button className="toggleBtn" onClick={toggleMenu}>
               ☰
@@ -104,7 +102,6 @@ const Navbar = () => {
               DURRA
             </Link>
 
-            {/* Links for Users & Guests */}
             {user?.role === "Customer" || !user ? (
               <>
                 <Link to="/shops" className="desktop-only">
@@ -176,7 +173,7 @@ const Navbar = () => {
                       to={`/profile/${user.id}`}
                       onClick={() => setShowMenu(false)}
                     >
-                      <span className="menu-item-wrapper">
+                      <span className="menu-item-wrapper pro">
                         <img src={userIcon} className="icon" /> Profile
                       </span>
                     </Link>
