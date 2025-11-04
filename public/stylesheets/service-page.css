@@ -1,140 +1,208 @@
-.service-page, .order-page {
-  position: relative;
+.service-page,
+.order-page {
   width: 100vw;
-  height: 100vh;
-  padding: 2rem;
-
-  overflow-y: auto;
-  overflow-x: hidden;
-  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 4rem 6rem;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 1rem;
+  gap: 3rem;
+  box-sizing: border-box;
 }
 
 .service-page-heading {
-  display: block;
-  width: 100vw;
-  color: var(--accent-color)
+  text-align: center;
+  color: var(--accent-color);
+  font-size: 2.3rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  margin-bottom: 1rem;
 }
 
-.service-page-content, .order-page-content {
+.service-page-content,
+.order-page-content {
   display: flex;
-  justify-content: space-between;
-  flex: 1;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4rem;
+  flex-wrap: wrap;
   width: 100%;
-  margin: 0 0 1rem 0;
-  gap:1.5rem;
-  align-items: stretch;
+  position: relative;
 }
 
 .service-images {
-  width: 40%;
+  flex: 1;
+  min-width: 400px;
+  max-width: 520px;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08); 
+  transition: transform 0.3s ease;
 }
+
+.service-images:hover {
+  transform: translateY(-2px);
+}
+
 .service-image-slider {
   position: relative;
   width: 100%;
-  height: 100%; 
+  height: 480px;
   overflow: hidden;
 }
 
 .image-box {
   width: 100%;
   height: 100%;
-  position: relative;
 }
 
 .box-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.box-image:hover {
+  transform: scale(1.04);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
 }
 
 .left-arrow,
 .right-arrow {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 10%;
-  height: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: #222;
+  font-size: 1.5rem;
+  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: transparent;
-  border: none;
-  color: var(--text-color);
-  opacity: .9;
-  font-size: 1.2rem;
-  cursor: pointer;
-  z-index: 2;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
 .left-arrow:hover,
 .right-arrow:hover {
-  background-color: rgba(255, 255, 255, 0.6); /
+  background: var(--accent-color);
+  color: #fff;
+  transform: translateY(-50%) scale(1.1);
 }
 
 .left-arrow {
-  left: 0;
+  left: 18px;
 }
 
 .right-arrow {
-  right: 0;
+  right: 18px;
 }
 
-.service-information, .order-information {
+.service-image-slider::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(0,0,0,0.05), rgba(0,0,0,0));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.service-information,
+.order-information {
   flex: 1;
-}
-.heading-and-editor {
+  min-width: 420px;
+  max-width: 600px;
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
-  gap: 1rem;
-  align-items: center;
+  gap: 1.5rem;
 }
 
-.reviews-heading, .service-description  {
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-
-.description {
-  margin-bottom: 1rem;
-  max-width: 90%;
+.service-information h2 {
+  color: #111;
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 }
 
 .jeweler-service-details {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.6rem;
+  color: #444;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .jeweler-service-details h3 {
-  font-size:var(--font-size-h5);
-  font-weight: 500;
-}
-
-.jeweler-service-details p {
-  font-size:var(--font-size-text-l);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--accent-color);
 }
 
 .price {
-  font-size: var(--font-size-text-m) !important;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-top: 0.6rem;
+}
+
+.service-description {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.description {
+  color: #555;
+  line-height: 1.7;
+  font-size: 1rem;
+  max-width: 90%;
 }
 
 .service-reviews {
-  display: flex;
-  flex-direction: column;
-  width:100vw;
+  width: 100%;
+  border-top: 1px solid #eee;
+  padding-top: 2rem;
+  margin-top: 2rem;
 }
 
-@media (max-width:700px){
-  .service-page-content{
-    flex-direction: column;
+@media (max-width: 900px) {
+  .service-page {
+    padding: 2rem;
   }
-  .service-images{
+
+  .service-page-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .service-images {
     width: 100%;
+  }
+
+  .service-image-slider {
+    height: 360px;
+  }
+
+  .service-information {
+    width: 100%;
+  }
+
+  .left-arrow,
+  .right-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
   }
 }
