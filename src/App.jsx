@@ -26,8 +26,11 @@ import TermsAndConditions from "./pages/TermsAndConditions"
 import Shops from "./pages/Shops"
 import Jewelry from "./pages/Jewelry"
 import Services from "./pages/Services"
+import JewelryPage from "./pages/JewelryPage"
+import CollectionPage from "./pages/CollectionPage"
+import ServicePage from "./pages/ServicePage"
 import Wishlist from "./pages/Wishlist"
-import ShopDetails from "./pages/ShopDetails" 
+import ShopDetails from "./pages/ShopDetails"
 
 import "./App.css"
 
@@ -44,7 +47,10 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/SizeGuide" element={<SizeGuide />} />
             <Route path="/live-prices" element={<LivePrices />} />
-            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route
+              path="/terms-and-conditions"
+              element={<TermsAndConditions />}
+            />
             <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/registeration" element={<JewelerRegisteration />} />
@@ -54,6 +60,9 @@ function App() {
             <Route path="/shops" element={<Shops />} />
             <Route path="/jewelry" element={<Jewelry />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/jewelry/:jewelryId" element={<JewelryPage />} />
+            <Route path="/services/:serviceId" element={<ServicePage />} />
+            <Route path="/collections/:collectionId" element={<CollectionPage />} />
 
             <Route path="/jeweler-jewelry" element={<JewelerJewelryPage />} />
             <Route
