@@ -1,0 +1,43 @@
+.customer-jewelry-page {
+  width: 100%;
+  padding: 2.5rem;
+  min-height: 100vh; 
+  display: flex;
+  flex-direction: column;
+}
+
+.customer-jewelry-page .service-page-content {
+  flex: 1;
+  margin-bottom: 1rem;
+}
+
+.customer-jewelry-page .service-images {
+  width: 70vw !important;
+  height: 80vh;
+}
+
+.customer-jewelry-page .service-image-slider {
+  height: 100%;
+}
+
+.customer-jewelry-page .jeweler-service-details {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.customer-jewelry-page .jeweler-service-details p {
+  font-size: 1rem !important;
+  font-family: "sans-serif";
+}
+
+.customer-jewelry-page h4 {
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+  margin-top: .5rem;
+}
+
+.customer-jewelry-page .reviews-heading {
+  margin-top: 1rem;
+}

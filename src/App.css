@@ -23,14 +23,11 @@
 }
 
 body.light {
-  --bg-color:  rgb(
-    244,
-    236,
-    236); /*the background color of the main content*/
+  --bg-color: rgb(244, 236, 236); /*the background color of the main content*/
   --footer-bg: rgb(243, 230, 230);
   --text-color: rgb(39, 38, 38);
   --text-contrast-color: #f1f1f1;
-  --nav-bg:rgb(243, 230, 230);
+  --nav-bg: rgb(243, 230, 230);
   --btn-bg: #6f0101;
   --btn-color: #f1f1f1;
   --btn-contrast-color: rgb(39, 38, 38);
@@ -56,6 +53,7 @@ body {
   font-family: "Playfair", serif; /* change to what's suitable if not okay*/
   font-weight: 300;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
 .app-container {
@@ -200,7 +198,7 @@ textarea {
 .error {
   color: #b00000;
   font-size: 0.9rem;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   /* display: block; */
 }
 
@@ -215,8 +213,8 @@ textarea {
 }
 
 .empty-wrapper {
-  height:100vh;
-  width:100vw;
+  height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
