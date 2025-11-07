@@ -144,73 +144,7 @@ const JewelerCollectionPage = () => {
                         <strong>Weight:</strong> {item.totalWeight}g
                       </p>
 
-                      {/* {item.preciousMaterials?.length > 0 && (
-                        <div>
-                          <p>
-                            <strong>Precious Metals:</strong>
-                          </p>
-                          <ul className="collection-list">
-                            {item.preciousMaterials.map((material, index) => (
-                              <li key={index}>
-                                {material.karat}K {material.name} -{" "}
-                                {material.weight}g
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {item.pearls?.length > 0 && (
-                        <div>
-                          <p>
-                            <strong>Pearls:</strong>
-                          </p>
-                          <ul className="collection-list">
-                            {item.pearls.map((pearl, index) => (
-                              <li key={index}>
-                                {pearl.number}x {pearl.type} {pearl.shape}{" "}
-                                {pearl.color} Pearl - {pearl.weight}g
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {item.diamonds?.length > 0 && (
-                        <div>
-                          <p>
-                            <strong>Diamonds:</strong>
-                          </p>
-                          <ul className="collection-list">
-                            {item.diamonds.map((diamond, index) => (
-                              <li key={index}>
-                                {diamond.number}x {diamond.type} Diamond -{" "}
-                                {diamond.weight}g<br />
-                                <span>
-                                  Color: {diamond.color}, Clarity:{" "}
-                                  {diamond.clarity}, Cut: {diamond.cutGrade},
-                                  Shape: {diamond.shape}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-
-                      {item.otherMaterials?.length > 0 && (
-                        <div>
-                          <p>
-                            <strong>Metals:</strong>
-                          </p>
-                          <ul className="collection-list">
-                            {item.otherMaterials.map((m, index) => (
-                              <li key={index}>
-                                {m.name} - {m.weight}g
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )} */}
+           
                     </div>
                   </div>
                 ))}
