@@ -1,138 +1,138 @@
 .jeweler-services,
-.orders-page,
 .jeweler-collections {
-  position: relative;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   padding: 2.5rem;
-
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-  gap: 1rem;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
-  align-items: stretch;
+  position: relative;
 }
+
 .services-heading,
-.collections-heading,
-#orders-page-heading {
-  grid-column: 1 / -1;
-  margin-bottom: 0;
-  text-align: left;
+.collections-heading {
+  font-weight: 600;
+  margin-bottom: 2rem;
+  text-align: center;
   color: var(--accent-color);
 }
 
-.service-card {
-  --border-radius: 0.75rem;
-  --primary-color: var(--btn-bg);
-
-  padding: 1.5rem;
-  cursor: pointer;
-  border-radius: var(--border-radius);
-  background: var(--card-bg-color);
-  box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 3%);
-  position: relative;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 45vh;
-  height: 100%;
-}
-
-.service-card > * + * {
-  margin-top: 1.1em;
-}
-
-.service-card__content {
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  -webkit-box-orient: vertical;
-
-  overflow: hidden;
-  font-size: 0.86rem;
-  line-height: 1.2rem;
-}
-
-.service-card__title {
-  padding: 0;
-  font-size: 1.3rem;
-  font-weight: bold;
-}
-
-.service-card__image {
+.jeweler-services .grid,
+.jeweler-collections .grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-content: center;
+  align-items: start;
+  gap: 2rem;
   width: 100%;
-  height: 25vh;
-  border-radius: 0.5rem;
-  object-fit: cover;
+  box-sizing: border-box;
 }
 
-.service-card__date,
-.order-card__date {
-  opacity: 0.7;
-  font-size: 0.8rem;
+.jeweler-services .search-card h3,
+.jeweler-collections .search-card h3 {
+  font-size: 1.5rem;
 }
-
-.service-card__arrow,
-.order-card__arrow {
-  position: absolute;
-  background: var(--primary-color);
-  color:#f1f1f1;
-  padding: 0.4rem;
-  border-top-left-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
-  bottom: 0;
-  right: 0;
-  transition: 0.2s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.service-card__arrow span {
-  transition: 0.2s;
-  color: white;
-}
-
-.service-card:hover .service-card__title {
-  color: var(--primary-color);
-  text-decoration: none !important;
-}
-
-.service-card:hover .service-card__arrow {
-  background: #111;
-}
-
-.service-card:hover .service-card__arrow span {
-  transform: translateX(2px);
-}
-
-.add-service {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  background-color: #eee;
-  color: var(--text-color);
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  text-align: center;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  margin-left: 95%;
-  z-index: 2;
-}
-
 .jeweler-services a:hover,
-.order-link:hover,
 .jeweler-collections a:hover {
   text-decoration: none;
-  color: var(--text-color);
 }
 
+.add-to-jewelry-list,
+.add-to-collections-list {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--accent-color, #000);
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-to-jewelry-list:hover,
+.add-to-collections-list:hover {
+  background-color: var(--primary-hover, #333);
+}
+
+@media (max-width: 1200px) {
+  .jeweler-services .grid,
+  .jeweler-collections .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .jeweler-services .search-card,
+  .jeweler-collections .search-card {
+    width: 28vw !important;
+    max-width: 28vw !important;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .jeweler-services .grid,
+  .jeweler-collections .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .jeweler-services .search-card,
+  .jeweler-collections .search-card {
+    width: 40vw !important;
+    max-width: 40vw !important;
+    margin: 0 auto;
+  }
+}
+@media (max-width: 800px) {
+  .jeweler-services .grid,
+  .jeweler-collections .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .jeweler-services .search-card,
+  .jeweler-collections .search-card {
+    width: 43vw !important;
+    max-width: 43vw !important;
+  }
+}
+@media (max-width: 700px) {
+  .jeweler-services .grid,
+  .jeweler-collections .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .jeweler-services .search-card,
+  .jeweler-collections .search-card {
+    width: 43vw !important;
+    max-width: 43vw !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .jeweler-services .grid,
+  .jeweler-collections .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .jeweler-services .search-card,
+  .jeweler-collections .search-card {
+    width: 56vw !important;
+    max-width: 56vw !important;
+    margin: 0 auto;
+  }
+
+  .add-to-jewelry-list,
+  .add-to-collections-list {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.3rem;
+  }
+}

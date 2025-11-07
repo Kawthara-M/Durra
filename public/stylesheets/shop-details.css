@@ -159,7 +159,7 @@
   }
 }
 
-@media (max-width: 40rem) {
+/* @media (max-width: 40rem) {
   .jewelry-grid {
     grid-template-columns: 1fr;
   }
@@ -168,4 +168,4 @@
     margin: 0 auto;
     width: 55vw !important;
   }
-}
+} */

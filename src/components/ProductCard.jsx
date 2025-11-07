@@ -10,7 +10,14 @@ import {
 import { createOrder, updateOrder } from "../services/order.js"
 import User from "../services/api.js"
 
-const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
+const ProductCard = ({
+  item,
+  type,
+  metalRates,
+  inWishlistPage,
+  onRemove,
+  showActions,
+}) => {
   const { user } = useUser()
   const { order, addJewelryToOrder, addServiceToOrder, setOrderId } = useOrder()
   const [collectionPrice, setCollectionPrice] = useState(null)
@@ -30,14 +37,14 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
       metalRates
     )
     const total = calculateTotalCost(metalCost, item.originPrice)
-    return Number(total.toFixed(2))
+    return total.toFixed(2)
   }
 
   const displayPrice = () => {
     if (type === "jewelry") return `${getJewelryPrice()} BD`
     if (type === "service") return `${item.price?.toFixed(2)} BD`
     if (type === "collection")
-      return collectionPrice !== null ? `${collectionPrice} BD` : "—"
+      return collectionPrice !== null ? `${collectionPrice.toFixed(2)} BD` : "—"
     return null
   }
 
@@ -194,29 +201,49 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
           alt={item.name}
           className="search-card-image"
         />
-        <div className="add-actions">
-          <h6
-            className={!user ? "disabled-link" : null}
-            title={!user ? "Sign in to add to Cart" : "Add to Cart"}
-            onClick={() => user && handleAdd()}
-          >
-            Add to Cart
-          </h6>
+        {showActions && (
+          <div className="add-actions">
+            <h6
+              className={!user ? "disabled-link" : null}
+              title={!user ? "Sign in to add to Cart" : "Add to Cart"}
+              onClick={(e) => {
+                if (!user) return
 
-          <h6
-            className={!user ? "disabled-link" : null}
-            title={
-              !user
-                ? "Sign in to manage Wishlist"
-                : inWishlistPage
-                ? "Remove from Wishlist"
-                : "Add to Wishlist"
-            }
-            onClick={() => user && handleWishlist()}
-          >
-            {inWishlistPage ? "Remove" : "Wishlist"}
-          </h6>
-        </div>
+                e.preventDefault()
+                e.stopPropagation()
+
+                handleAdd()
+              }}
+            >
+              Add to Cart
+            </h6>
+
+            <h6
+              className={!user ? "disabled-link" : null}
+              title={
+                !user
+                  ? "Sign in to manage Wishlist"
+                  : inWishlistPage
+                  ? "Remove from Wishlist"
+                  : "Add to Wishlist"
+              }
+              onClick={(e) => {
+                if (!user) return
+
+                e.preventDefault()
+                e.stopPropagation()
+
+                handleWishlist()
+
+                if (inWishlistPage && typeof onRemove === "function") {
+                  onRemove(item._id)
+                }
+              }}
+            >
+              {inWishlistPage ? "Remove" : "Wishlist"}
+            </h6>
+          </div>
+        )}
       </div>
 
       <div className="card-info">
@@ -225,6 +252,12 @@ const ProductCard = ({ item, type, metalRates, inWishlistPage, onRemove }) => {
       </div>
     </div>
   )
+}
+
+ProductCard.defaultProps = {
+  showActions: true, 
+  inWishlistPage: false,
+  onRemove: null,
 }
 
 export default ProductCard

@@ -114,13 +114,15 @@ const JewelerCollectionPage = () => {
                 </div>{" "}
                 <h2 className="service-description">Description</h2>
                 <p className="description">{collection.description}</p>
+                <div className="service-details">
                 <div className="jeweler-service-details">
-                  <h3 className="service-limit">Limit Per Order:</h3>
-                  <p>{collection.limitPerOrder}</p>
+                  <h3 className="service-limit">Limit Per Order</h3>
+                  <p>{collection.limitPerOrder} Unit</p>
                 </div>
                 <div className="jeweler-service-details">
-                  <h3 className="service-price">Total Estimated Price:</h3>
-                  <p className="price">{totalPrice} BHD</p>
+                  <h3 className="service-price">Price</h3>
+                  <p >{totalPrice} BHD</p>
+                </div>
                 </div>
               </div>
             </div>

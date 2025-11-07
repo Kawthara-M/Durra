@@ -52,15 +52,22 @@
   gap: 2rem;
 }
 
+.jewelry-grid a:hover {
+  text-decoration: none;
+}
+
 .jewelry-grid .search-card {
   width: 20vw;
 }
+.jewelry-grid .search-card h3  {
+  font-size: 1.5rem;
+}
+
 .search-card {
   background-color:#fff6f6;
   text-align: center;
-  
-
 }
+
 .search-card p {
 text-align: center;
 }
@@ -112,6 +119,7 @@ text-align: center;
   align-items: flex-start;
 }
 
+
 @media (max-width: 1200px) {
   .jewelry-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -129,22 +137,35 @@ text-align: center;
   .jewelry-filter-sidebar .filter-sidebar {
     width: 50vw !important;
   }
+
+  .jewelry-page .search-card {
+    width:42vw !important;
+    max-width:42vw !important;
+  }
 }
 
-@media (max-width: 40rem) {
-  .jewelry-grid {
-    grid-template-columns: 1fr;
+@media(max-width:700px){
+    .jewelry-page .search-card {
+    width:50vw !important;
+    max-width:50vw !important;
   }
-  .search-card {
-    margin: 0 auto;
-    width: 55vw !important;
+}
+
+@media (max-width: 600px) {
+  .jewelry-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .jewelry-page .search-card {
+    /* margin: 0 auto; */
+    width: 64vw !important;
+    max-width: 64vw !important;
   }
 
   .jewelry-filter-sidebar.open {
-    width: 45vw !important;
+    width: 48vw !important;
   }
   .jewelry-filter-sidebar .filter-sidebar {
-    width: 45vw !important;
+    width: 48vw !important;
   }
 }
 /* Search Styles */

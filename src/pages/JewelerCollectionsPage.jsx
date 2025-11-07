@@ -1,69 +1,70 @@
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
-
-
+import ProductCard from "../components/ProductCard.jsx"
 import User from "../services/api"
-import placeholder from "../assets/placeholder.png"
+import { fetchMetalRates } from "../services/calculator.js"
 import "../../public/stylesheets/jeweler-services.css"
 
 const JewelerCollectionsPage = () => {
   const navigate = useNavigate()
-  const [collections, setCollections] = useState(null)
+  const [collections, setCollections] = useState([])
+  const [metalRates, setMetalRates] = useState()
 
   useEffect(() => {
     const getCollections = async () => {
-      const response = await User.get(`/collections/`)
-      setCollections(response.data.collections)
+      try {
+        const response = await User.get("/collections/")
+        setCollections(response.data.collections)
+      } catch (err) {
+        console.error("Failed to fetch collections", err)
+      }
     }
+    const loadRates = async () => {
+      try {
+        const rates = await fetchMetalRates()
+        setMetalRates(rates)
+      } catch (err) {
+        console.error("Failed to fetch metal rates", err)
+      }
+    }
+
+    loadRates()
     getCollections()
   }, [])
 
   return (
-    <>
-      <div className="jeweler-collections">
-        <h1 className="collections-heading">Jewelry Collections</h1>
-        {collections?.length === 0 ? (
-          <p>No collections found.</p>
-        ) : (
-          collections?.map((collection) => (
-            <Link to={`/show-collection/${collection._id}`}>
-              <div className="service-card" key={collection._id}>
-                <h3 className="service-card__title">{collection.name}</h3>
+    <div className="jeweler-collections">
+      <h1 className="collections-heading">Jewelry Collections</h1>
 
-                <img
-                  src={collection.jewelry[0].images?.[0] || placeholder}
-                  alt={collection.name}
-                  className="service-card__image"
-                />
-
-                <p className="service-card__content">
-                  {collection.description}
-                </p>
-                <div>
-                  <div className="service-card__date">
-                    Created on{" "}
-                    {new Date(collection.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-
-                <div className="service-card__arrow" title="Show Service Page">
-                  <span> →</span>
-                </div>
-              </div>
+      {collections?.length === 0 ? (
+        <p>No collections found.</p>
+      ) : (
+        <div className="grid">
+          {collections.map((collection) => (
+            <Link
+              to={`/show-collection/${collection._id}`}
+              key={collection._id}
+            >
+              <ProductCard
+                item={collection}
+                type="collection"
+                metalRates={metalRates}
+                showActions={false}
+              />
             </Link>
-          ))
-        )}
+          ))}
+        </div>
+      )}
 
-        <button
-          type="button"
-          className="add-service"
-          title="Add Collection"
-          onClick={() => navigate("/add-collections")}
-        >
-          +
-        </button>
-      </div>
-    </>
+      <button
+        type="button"
+        className="add-to-jewelry-list"
+        title="Add Collection"
+        onClick={() => navigate("/add-collections")}
+      >
+        +
+      </button>
+    </div>
   )
 }
 

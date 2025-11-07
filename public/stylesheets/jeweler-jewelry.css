@@ -24,6 +24,16 @@
   cursor: pointer;
 }
 
+.jewelry-extra-details span {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.jewelry-extra-details h5 {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
 .jewelry-details-heading,
 .collection-toggle-title {
   font-size: var(--font-size-h5);
@@ -34,6 +44,7 @@
   padding: 0 1rem 1rem 1.3rem;
   font-size: var(--font-size-text-s);
   line-height: 1.5rem;
+  margin-top: 0;
 }
 
 .jewelry-details p {

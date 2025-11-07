@@ -9,11 +9,13 @@ const JewelerOrderPage = () => {
   const { orderId } = useParams()
   const [order, setOrder] = useState(null)
   const [sliderImages, setSliderImages] = useState([])
+  const [isExpanded, setIsExpanded] = useState(false)
+
   const {
     currentIndex: currentImageIndex,
     handleNext,
     handlePrev,
-  } = imageSlider(sliderImages.length >0 ? sliderImages : [])
+  } = imageSlider(sliderImages.length > 0 ? sliderImages : [])
 
   const capitalize = (str) => {
     if (!str || typeof str !== "string") return ""
@@ -75,67 +77,7 @@ const JewelerOrderPage = () => {
       {order && (
         <>
           <div className="order-page">
-            <div className="order-page-heading">
-              <div>
-                <h1>Order </h1>
-                <p>#{order._id}</p>
-              </div>
-              {order._status === "submitted" && (
-                <div className="update-status">
-                  <p
-                    id="accept"
-                    title="Accept Order"
-                    onClick={() => updateOrder("accepted")}
-                  >
-                    ✓
-                  </p>
-                  <p
-                    id="reject"
-                    title="Reject Order"
-                    onClick={() => updateOrder("rejected")}
-                  >
-                    ✗
-                  </p>
-                </div>
-              )}
-              {order._status === "accepted" && (
-                <div className="update-status">
-                  <button
-                    title={`Update Order Status to Processing`}
-                    onClick={() => updateOrder("processing")}
-                  >
-                    Start Processing
-                  </button>
-                </div>
-              )}
-              {order._status === "processing" && (
-                <div className="update-status">
-                  <button onClick={() => updateOrder("pickup")}>
-                    Ready for Pickup
-                  </button>
-                  <button onClick={() => updateOrder("ready")}>
-                    Ready for Delivery
-                  </button>
-                </div>
-              )}
-              {order._status === "ready" && (
-                <div className="update-status">
-                  <button onClick={() => updateOrder("out")}>
-                    Out for Delivery
-                  </button>
-                </div>
-              )}
-              {order._status === "pickup" && (
-                <div className="update-status">
-                  <button
-                    onClick={() => updateOrder("picked-up")}
-                    title="Mark as Picked Up"
-                  >
-                    Picked Up
-                  </button>
-                </div>
-              )}
-            </div>{" "}
+            {" "}
             <div className="order-page-content">
               <div className="service-images">
                 {sliderImages.length > 0 && (
@@ -161,7 +103,67 @@ const JewelerOrderPage = () => {
                 )}
               </div>
               <div className="order-general">
-                <h3 className="order-general-heading">Summary</h3>
+                <div className="order-page-heading">
+                  <div>
+                    <h1>Order </h1>
+                    <p>#{order._id}</p>
+                  </div>
+                  {order._status === "submitted" && (
+                    <div className="update-status">
+                      <p
+                        id="accept"
+                        title="Accept Order"
+                        onClick={() => updateOrder("accepted")}
+                      >
+                        ✓
+                      </p>
+                      <p
+                        id="reject"
+                        title="Reject Order"
+                        onClick={() => updateOrder("rejected")}
+                      >
+                        ✗
+                      </p>
+                    </div>
+                  )}
+                  {order._status === "accepted" && (
+                    <div className="update-status">
+                      <button
+                        title={`Update Order Status to Processing`}
+                        onClick={() => updateOrder("processing")}
+                      >
+                        Start Processing
+                      </button>
+                    </div>
+                  )}
+                  {order._status === "processing" && (
+                    <div className="update-status">
+                      <button onClick={() => updateOrder("pickup")}>
+                        Ready for Pickup
+                      </button>
+                      <button onClick={() => updateOrder("ready")}>
+                        Ready for Delivery
+                      </button>
+                    </div>
+                  )}
+                  {order._status === "ready" && (
+                    <div className="update-status">
+                      <button onClick={() => updateOrder("out")}>
+                        Out for Delivery
+                      </button>
+                    </div>
+                  )}
+                  {order._status === "pickup" && (
+                    <div className="update-status">
+                      <button
+                        onClick={() => updateOrder("picked-up")}
+                        title="Mark as Picked Up"
+                      >
+                        Picked Up
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <div className="order-details">
                   <div>
                     <h4>Customer </h4>
@@ -193,129 +195,86 @@ const JewelerOrderPage = () => {
                     <h4>Total Price </h4>
                     <p className="price" id="order-price">
                       {" "}
-                      {order.totalPrice} BHD
+                      {order.totalPrice.toFixed(2)} BHD
                     </p>
                   </div>
                 </div>
               </div>
             </div>
             <div className="order-information">
-              <div className="order-information-details">
-                {order.jewelryOrder?.length > 0 ? (
-                  <>
-                    <h3>Jewelry</h3>
-                    <div className="jewelry-container">
-                      {order.jewelryOrder.map((entry) => {
-                        return (
-                          <div className="jewelry-in-order" key={entry._id}>
-                            <img
-                              src={`${entry.item.images[0]}`}
-                              alt={`${entry.item.name}`}
-                              className="image-in-order"
-                            />
-                            <div className="jewelry-in-order-details">
-                              <h5>{entry.item.name}</h5>
-                              <span>
-                                {" "}
-                                <h6>Quantity:</h6>
-                                <p>{entry.quantity || 1}</p>
-                              </span>
-                              <span>
-                                {" "}
-                                <h6>Total Price:</h6>
-                                <p className="price">{entry.totalPrice} BHD</p>
-                              </span>
-                              <div>
-                                <h6>Notes</h6>
-                                <p>{entry.notes || "-"}</p>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>{" "}
-                  </>
-                ) : null}
-                {order.serviceOrder?.length > 0 ? (
-                  <>
-                    {" "}
-                    <span id="services-span">
-                      <h3>Service</h3> (s)
-                    </span>
-                    <div className="service-container">
-                      {order.serviceOrder.map((serviceItem, serviceIndex) => {
-                        let imageStartIndex = order.jewelryImageCount
-
-                        for (let i = 0; i < serviceIndex; i++) {
-                          const prevJewelry =
-                            order.serviceOrder[i].jewelry || []
-                          const prevCount = prevJewelry.reduce(
-                            (sum, j) => sum + (j.images?.length || 0),
-                            0
-                          )
-                          imageStartIndex += prevCount
-                        }
-
-                        let currentImageIndex = imageStartIndex
-
-                        return (
-                          <div
-                            className="service-in-order"
-                            key={serviceItem._id}
-                          >
-                            <img
-                              src={serviceItem.service.images[0]}
-                              alt={serviceItem.service.name}
-                              className="image-in-order"
-                            />
-                            <div className="jewelry-in-order-details">
-                              <h5>{serviceItem.service.name}</h5>
-                              <div>
-                                <h6>Jewelry:</h6>
-                                <div className="jewelry-array-in-service">
-                                  {serviceItem.jewelry.map(
-                                    (jewelryItem, jIndex) => {
-                                      const imageCount =
-                                        jewelryItem.images?.length || 0
-                                      const start = currentImageIndex + 1
-                                      const end = currentImageIndex + imageCount
-                                      currentImageIndex = end
-
-                                      return (
-                                        <p key={jIndex}>
-                                          {jewelryItem.name}: Image
-                                          {imageCount > 1 ? "s" : ""}{" "}
-                                          {imageCount === 1
-                                            ? start
-                                            : `${start}-${end}`}
-                                        </p>
-                                      )
-                                    }
-                                  )}
-                                </div>
-                              </div>
-                              <span>
-                                <h6>Quantity:</h6>
-                                <p>{serviceItem.jewelry.length || 1}</p>
-                              </span>
-                              <span>
-                                <h6>Total Price:</h6>
-                                <p className="price">
-                                  {serviceItem.totalPrice} BHD
-                                </p>
-                              </span>
-                              <div>
-                                <h6>Notes</h6>
-                                <p>{serviceItem.notes || "-"}</p>
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </>
-                ) : null}
+              <div
+                className="contents-toggle-header"
+                onClick={() => setIsExpanded((prev) => !prev)}
+              >
+                <h3>Contents</h3>
+                <p>{isExpanded ? "-" : "+"}</p>
               </div>
+
+              {isExpanded && (
+                <div className="order-information-details">
+                  {order.jewelryOrder?.length > 0 && (
+                    <>
+                      <h4>Jewelry</h4>
+                      {order.jewelryOrder.map((entry) => (
+                        <div key={entry._id} className="contents-item">
+                          <h5>{entry.item.name}</h5>
+                          <p>Quantity: {entry.quantity || 1}</p>
+                          <p>
+                            Total Price:{" "}
+                            {Number(entry.totalPrice).toLocaleString("en-US", {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}{" "}
+                            BHD
+                          </p>
+                          <p>Notes: {entry.notes || "-"}</p>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {/* Services details */}
+                  {order.serviceOrder?.length > 0 && (
+                    <>
+                      <h4>Services</h4>
+                      {order.serviceOrder.map((serviceItem) => (
+                        <div key={serviceItem._id} className="contents-item">
+                          <h5>{serviceItem.service.name}</h5>
+
+                          <div>
+                            <strong>Jewelry included:</strong>
+                            <ul className="order-service-list">
+                              {serviceItem.jewelry.length > 0 ? (
+                                serviceItem.jewelry.map((jewelryItem) => (
+                                  <li key={jewelryItem._id}>
+                                    {jewelryItem.name}
+                                  </li>
+                                ))
+                              ) : (
+                                <li>-</li>
+                              )}
+                            </ul>
+                          </div>
+
+                          <p>Quantity: {serviceItem.jewelry.length || 1}</p>
+                          <p>
+                            Total Price:{" "}
+                            {Number(serviceItem.totalPrice).toLocaleString(
+                              "en-US",
+                              {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              }
+                            )}{" "}
+                            BHD
+                          </p>
+                          <p>Notes: {serviceItem.notes || "-"}</p>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 

@@ -5,7 +5,6 @@ import { useOrder } from "../context/OrderContext"
 import User from "../services/api"
 import { ThemeContext } from "../context/ThemeContext"
 
-// Icons
 import userIcon from "../assets/user.png"
 import cartIcon from "../assets/cart.png"
 import searchIcon from "../assets/search.png"
@@ -45,17 +44,24 @@ const Navbar = () => {
     }
   }
 
-  useEffect(() => {
-    const fetchWishlist = async () => {
-      if (!user) return setWishlistCount(0)
-      try {
-        const res = await User.get("/wishlist")
-        setWishlistCount(res.data?.wishlist?.items?.length || 0)
-      } catch {
-        setWishlistCount(0)
-      }
+  const fetchWishlistCount = async () => {
+    if (!user) return setWishlistCount(0)
+    try {
+      const res = await User.get("/wishlist")
+      setWishlistCount(res.data?.wishlist?.items?.length || 0)
+    } catch {
+      setWishlistCount(0)
     }
-    fetchWishlist()
+  }
+
+  useEffect(() => {
+    fetchWishlistCount()
+
+    const handleWishlistUpdate = () => fetchWishlistCount()
+    window.addEventListener("wishlist-updated", handleWishlistUpdate)
+
+    return () =>
+      window.removeEventListener("wishlist-updated", handleWishlistUpdate)
   }, [user])
 
   useEffect(() => {
@@ -152,7 +158,9 @@ const Navbar = () => {
 
                 <Link to="/wishlist" className="icon-btn wish-btn">
                   <img src={heartIcon} alt="wishlist" className="icon" />
-                  {wishlistCount > 0 && <span className="icon-badge"></span>}
+                  {wishlistCount > 0 && (
+                    <span className="icon-badge"></span>
+                  )}
                 </Link>
               </>
             )}
