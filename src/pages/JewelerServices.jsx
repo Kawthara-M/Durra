@@ -33,7 +33,7 @@ const JewelerServices = () => {
               <ProductCard
                 item={service}
                 type="service"
-                showActions={false} // hides add to cart/wishlist
+                showActions={false} 
               />
             </Link>
           ))}

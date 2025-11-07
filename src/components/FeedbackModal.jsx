@@ -51,7 +51,6 @@ const FeedbackModal = ({
           <p className="sub-text">{message}</p>
         </div>
 
-        {/* Actions */}
         <div className="feedback-actions">
           {actions.map((action, index) => (
             <button

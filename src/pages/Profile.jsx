@@ -136,12 +136,10 @@ const Profile = () => {
 
   const handleUpdate = async () => {
     try {
-      // Update user info
       await User.put("/profile/", userInfo)
 
-      // Update shop info
       if (user.role === "Jeweler" && profile?.shop?._id) {
-        // If a logo file was selected, use FormData
+
         if (logoFile) {
           const formData = new FormData()
           formData.append("name", shopInfo.name)
@@ -153,7 +151,6 @@ const Profile = () => {
             headers: { "Content-Type": "multipart/form-data" },
           })
         } else {
-          // No new logo
           await User.put(`/shops/${profile.shop._id}`, shopInfo)
         }
       }

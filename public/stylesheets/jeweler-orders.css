@@ -375,7 +375,6 @@
   }
 }
 
-/* Orders Page Responsive Grid */
 @media (max-width: 1200px) {
   .orders-page .orders-grid {
     grid-template-columns: repeat(3, 1fr);

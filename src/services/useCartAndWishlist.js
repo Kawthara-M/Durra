@@ -1,3 +1,5 @@
+// MIGHT BE DELETED
+
 import { useUser } from "../context/UserContext"
 import { useOrder } from "../context/OrderContext"
 import User from "../services/api"
