@@ -70,7 +70,7 @@ const JewelryForm = () => {
   const [errors, setErrors] = useState({})
   const [view, setView] = useState("General")
   const [metalRates, setMetalRates] = useState({})
-  const isEdit = jewelryId
+  const isEdit = jewelryId ? true : false
 
   useEffect(() => {
     const fetchJewelry = async () => {
@@ -416,12 +416,14 @@ const JewelryForm = () => {
     const validationErrors = validateForm(formData)
 
     if (Object.keys(validationErrors).length > 0) {
+      console.log("here")
       setErrors(validationErrors)
       return
     }
 
     try {
       const rates = await fetchMetalRates()
+
       setMetalRates(rates)
 
       const totalPrice = parseFloat(formData.totalPrice || 0)
@@ -429,12 +431,14 @@ const JewelryForm = () => {
         formData.preciousMaterials,
         metalRates
       )
+
       const originPrice = totalPrice - preciousMaterialCost
 
       const finalFormData = {
         ...formData,
         originPrice: originPrice.toFixed(2),
       }
+
       const data = new FormData()
 
       data.append("name", formData.name)
@@ -467,13 +471,19 @@ const JewelryForm = () => {
           data.append("images", imageObj.file)
         })
 
+        console.log("Submitting to backend...", data)
+console.log("User baseURL:", User.defaults?.baseURL)
+
+
       const response = isEdit
         ? await User.put(`/jewelry/${jewelryId}`, data, {
             headers: { "Content-Type": "multipart/form-data" },
           })
-        : await User.post(`/jewelry/`, data, {
+        : (
+          await User.post(`/jewelry/`, data, {
             headers: { "Content-Type": "multipart/form-data" },
-          })
+          }))
+                  
 
       setShowModal(true)
       setModalMessage(

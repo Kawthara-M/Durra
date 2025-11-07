@@ -218,7 +218,7 @@ const Jewelry = () => {
             {filteredCollections.map((c) => (
               <Link
                 key={c._id}
-                // to={`/collections/${c._id}`} //link still doesn't exist
+                to={`/collections/${c._id}`} //link still doesn't exist
               >
                 <ProductCard
                   item={c}

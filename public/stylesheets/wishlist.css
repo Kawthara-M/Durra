@@ -22,9 +22,12 @@
   gap: 2rem;
 }
 
+.wishlist-grid a:hover {
+  text-decoration: none;
+}
+
 .wishlist-grid .search-card {
-  width: 20vw;
-  height: auto;
+  max-width: 20vw;
 }
 
 .wishlist-empty-container {
@@ -41,7 +44,7 @@
 }
 .wishlist-empty-container button {
   width: 30%;
-  margin-top: .5rem;
+  margin-top: 0.5rem;
   background-color: transparent;
   border: 2px solid var(--accent-color);
   color: var(--accent-color);
@@ -57,18 +60,36 @@
   .wishlist-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .wishlist-grid .search-card {
+    width: 30vw !important;
+    max-width: 30vw !important;
+  }
 }
 @media (max-width: 1100px) {
   .wishlist-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .wishlist-grid .search-card {
+    width: 34vw !important;
+    max-width: 34vw !important;
+  }
 }
+
+@media (max-width: 900px) {
+  .wishlist-grid .search-card {
+    width: 40vw !important;
+    max-width: 40vw !important;
+  }
+}
+
 @media (max-width: 40rem) {
   .wishlist-grid {
     grid-template-columns: 1fr;
   }
   .wishlist-grid .search-card {
-    width: 55vw !important;
+    width: 60vw !important;
+    max-width: 60vw !important;
     margin: 0 auto;
   }
 }

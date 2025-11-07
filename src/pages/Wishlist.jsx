@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import ProductCard from "../components/ProductCard"
 import User from "../services/api"
 import { fetchMetalRates } from "../services/calculator"
@@ -66,16 +66,18 @@ const Wishlist = () => {
           {wishlist.items.map((item) => {
             const product = item.favouritedItem
             const id = typeof product === "object" ? product._id : product
+            const type = item.favouritedItemType.toLowerCase()
 
             return (
-              <ProductCard
-                key={id}
-                item={product}
-                type={item.favouritedItemType.toLowerCase()}
-                metalRates={metalRates}
-                inWishlistPage
-                onRemove={handleRemoveLocal}
-              />
+              <Link to={`/${type}/${id}`} key={id}>
+                <ProductCard
+                  item={product}
+                  type={type}
+                  metalRates={metalRates}
+                  inWishlistPage
+                  onRemove={handleRemoveLocal}
+                />
+              </Link>
             )
           })}
         </div>

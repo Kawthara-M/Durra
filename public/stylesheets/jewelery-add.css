@@ -462,7 +462,7 @@
   color: #a00;
 }
 
-.add-to-jewelry-list {
+/* .add-to-jewelry-list {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -484,7 +484,7 @@
   text-align: center;
   line-height: 1.5rem;
   margin-bottom: 0.5rem;
-}
+} */
 
 .jeweler-submit {
   position: absolute;

@@ -1,9 +1,10 @@
 .customer-jewelry-page {
   width: 100%;
   padding: 2.5rem;
-  min-height: 100vh; 
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .customer-jewelry-page .service-page-content {
@@ -12,12 +13,54 @@
 }
 
 .customer-jewelry-page .service-images {
-  width: 70vw !important;
+  width: 65vw !important;
   height: 80vh;
 }
 
 .customer-jewelry-page .service-image-slider {
   height: 100%;
+}
+.customer-jewelry-page .service-information {
+  position: relative;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.service-description {
+  margin-top: 1rem;
+}
+
+.jewelry-inputs {
+  display: flex;
+  flex-direction: column;
+  /* position: absolute;
+  bottom: 0.5rem; */
+  width: 25%;
+}
+
+.jewelry-inputs input[type="number"] {
+  width: 80% !important;
+}
+
+.add-or-wishlist {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.add-or-wishlist button {
+  width: 80% !important;
+}
+
+.add-or-wishlist img {
+  height: 1.2rem !important;
+  width: 1.2rem !important;
+}
+.add-or-wishlist img:hover {
+  height: 1.3rem !important;
+  width: 1.3rem !important;
 }
 
 .customer-jewelry-page .jeweler-service-details {
@@ -26,18 +69,73 @@
   gap: 0.4rem;
   margin-top: 0.4rem;
 }
+.customer-jewelry-page .jeweler-service-details .service-price {
+  font-size: 1.8rem;
+}
 
-.customer-jewelry-page .jeweler-service-details p {
-  font-size: 1rem !important;
+#jewelry-price {
   font-family: "sans-serif";
+  font-size: 1.2rem !important;
+  color: var(--text-color);
+}
+
+.extra-details-wrapper {
+  display: flex;
+  gap: 1rem;
 }
 
 .customer-jewelry-page h4 {
   font-size: 1.3rem !important;
   font-weight: 600 !important;
-  margin-top: .5rem;
+  margin-top: 0.5rem;
 }
 
 .customer-jewelry-page .reviews-heading {
   margin-top: 1rem;
+}
+
+.customer-collection-details {
+  padding-left: 1.2rem;
+}
+@media (max-width: 900px) {
+  .customer-jewelry-page .service-information {
+    height: fit-content;
+    /* justify-content: flex-start; */
+  }
+  .customer-jewelry-page .service-images {
+    width: 90vw !important;
+  }
+
+  .jewelry-inputs {
+    margin-bottom: 0 !important;
+    width: 50%;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0;
+  }
+  .jewelry-inputs .add-or-wishlist {
+    width: 70% !important;
+    margin-bottom: 1rem;
+  }
+
+  .jewelry-inputs button {
+    margin: 0;
+  }
+
+  .jewelry-inputs input {
+    flex: 1;
+  }
+
+  .customer-jewelry-page .service-page-content {
+    height: fit-content !important;
+  }
+}
+@media (max-width: 600px) {
+  .extra-details-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
 }
