@@ -19,7 +19,7 @@ const JewelerJewelryPage = () => {
   useEffect(() => {
     const getJewelry = async () => {
       try {
-        const response = await User.get("/jewelry")
+        const response = await User.get("/jewelry/jeweler")
         setJewelry(response.data.jewelry)
       } catch (err) {
         console.error("Failed to fetch jewelry", err)
