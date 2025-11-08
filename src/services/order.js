@@ -13,6 +13,7 @@ export const createOrder = async (body) => {
 }
 
 export const updateOrder = async (orderId, body) => {
+  console.log(orderId)
   const res = await User.put(`/orders/${orderId}`, body)
   return res.data.order
 }

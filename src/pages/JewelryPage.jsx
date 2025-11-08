@@ -224,7 +224,7 @@ const JewelryPage = () => {
                       alt="Wishlist"
                       title={
                         user
-                          ? (title = "Add to Wishlist")
+                          ? ( "Add to Wishlist")
                           : "Sign in to Add to Wishlist"
                       }
                       className="icon"
@@ -236,7 +236,6 @@ const JewelryPage = () => {
             </div>
           </div>
 
-          {/* Jewelry Details */}
           <div className="jewelry-details-wrapper">
             <div
               className="jewelry-details"

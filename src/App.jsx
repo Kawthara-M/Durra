@@ -31,6 +31,7 @@ import CollectionPage from "./pages/CollectionPage"
 import ServicePage from "./pages/ServicePage"
 import Wishlist from "./pages/Wishlist"
 import ShopDetails from "./pages/ShopDetails"
+import Cart from "./pages/Cart"
 
 import "./App.css"
 
@@ -63,6 +64,7 @@ function App() {
             <Route path="/jewelry/:jewelryId" element={<JewelryPage />} />
             <Route path="/services/:serviceId" element={<ServicePage />} />
             <Route path="/collections/:collectionId" element={<CollectionPage />} />
+            <Route path="/cart" element={<Cart/>} />
 
             <Route path="/jeweler-jewelry" element={<JewelerJewelryPage />} />
             <Route
