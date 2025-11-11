@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { useOrder } from "../context/OrderContext"
 import { getPendingOrder, updateOrder } from "../services/order"
 import {
@@ -11,6 +12,7 @@ import {
 import "../../public/stylesheets/cart.css"
 
 const Cart = () => {
+  const navigate = useNavigate()
   const { setOrderId } = useOrder()
   const [items, setItems] = useState([])
   const [metalRates, setMetalRates] = useState({})
@@ -40,6 +42,8 @@ const Cart = () => {
           ]
           const recalculated = await recalcJewelryPrices(allItems, rates)
           setItems(recalculated)
+          console.log(recalculated)
+
           calcSubtotal(recalculated)
         }
       } catch (err) {
@@ -169,13 +173,18 @@ const Cart = () => {
               {items.map((item, i) => (
                 <li key={i} className="item-row">
                   <div className="item-left">
-                    {item.item?.images?.[0] && (
-                      <img
-                        src={item.item.images[0]}
-                        alt={item.item?.name || "Item image"}
-                        className="item-image"
-                      />
-                    )}
+                    <img
+                      src={
+                        item.item?.images?.[0] ||
+                        item.service?.images?.[0] ||
+                        ""
+                      }
+                      alt={
+                        item.item?.name || item.service?.name || "Item image"
+                      }
+                      className="item-image"
+                    />
+
                     <div className="item-info">
                       <h3 className="item-name">
                         {item.item?.name || item.service?.name}
@@ -190,10 +199,11 @@ const Cart = () => {
 
                   <div className="item-actions">
                     <div className="item-total">
-                      {item.totalPrice.toLocaleString()} BHD
+                      {item.totalPrice.toFixed(2)} BHD
                     </div>
 
-                    {item.quantity && (
+                    {/* we should allow user to remove services as well */}
+                    {item.itemModel && (
                       <div className="quantity-controls">
                         <div className="quantity-buttons">
                           <button
@@ -235,11 +245,11 @@ const Cart = () => {
             <h2 className="summary-title">Cart Summary</h2>
             <div className="summary-row">
               <span>Subtotal</span>
-              <span>{subtotal.toLocaleString()} BHD</span>
+              <span>{subtotal.toFixed(2)} BHD</span>
             </div>
             <div className="summary-row">
               <span title="Delivery fee">Flat rate</span>
-              <span>{flatRate.toLocaleString()} BHD</span>
+              <span>{flatRate.toFixed(2)} BHD</span>
             </div>
             <div className="summary-row">
               <span>VAT (10%)</span>
@@ -259,7 +269,11 @@ const Cart = () => {
               </span>
             </div>
           </div>
-          <button disabled={items.length == 0} className="proceed-to-checkout">
+          <button
+            disabled={items.length == 0}
+            onClick={() => navigate("/checkout")}
+            className="proceed-to-checkout"
+          >
             Proceed to Checkout
           </button>
         </div>

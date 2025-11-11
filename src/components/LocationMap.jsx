@@ -3,7 +3,9 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
 
 const LocationMap = ({ position, onChange }) => {
-  const [marker, setMarker] = useState(position)
+  const [marker, setMarker] = useState(
+    Array.isArray(position) && position.length === 2 ? position : null
+  )
 
   useEffect(() => {
     if (position) setMarker(position)
@@ -12,6 +14,7 @@ const LocationMap = ({ position, onChange }) => {
   const MapClickHandler = () => {
     useMapEvents({
       click(e) {
+        if (!e.latlng) return
         const { lat, lng } = e.latlng
         const newPos = [lat, lng]
         setMarker(newPos)
@@ -27,7 +30,7 @@ const LocationMap = ({ position, onChange }) => {
         center={marker || [26.0667, 50.5577]}
         zoom={marker ? 15 : 10}
         scrollWheelZoom={true}
-        style={{ height: "400px", width: "100%" }} 
+        style={{ height: "400px", width: "100%" }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -36,7 +39,7 @@ const LocationMap = ({ position, onChange }) => {
         <MapClickHandler />
         {marker && <Marker position={marker} />}
       </MapContainer>
-      {marker && (
+      {Array.isArray(marker) && marker.length === 2 && (
         <div className="selected-coordinates">
           <p>
             Selected location:{" "}

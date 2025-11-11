@@ -202,6 +202,7 @@ const ProductCard = ({
           className="search-card-image"
         />
         {showActions && (
+          <>
           <div className="add-actions">
             <h6
               className={!user ? "disabled-link" : null}
@@ -242,7 +243,7 @@ const ProductCard = ({
             >
               {inWishlistPage ? "Remove" : "Wishlist"}
             </h6>
-          </div>
+          </div></>
         )}
       </div>
 
@@ -255,7 +256,6 @@ const ProductCard = ({
 }
 
 ProductCard.defaultProps = {
-  showActions: true, 
   inWishlistPage: false,
   onRemove: null,
 }
