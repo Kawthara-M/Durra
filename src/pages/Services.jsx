@@ -114,7 +114,7 @@ const Services = () => {
               <Link key={s._id} 
               to={`/services/${s._id}`} 
               >
-                <ProductCard item={s} type="service" />
+                <ProductCard item={s} type="service" showActions />
               </Link>
             ))}
 
