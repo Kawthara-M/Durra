@@ -8,7 +8,7 @@ import {
   calculatePreciousMaterialCost,
   calculateTotalCost,
 } from "../services/calculator"
-
+import placeholder from "../assets/placeholder.png"
 import "../../public/stylesheets/cart.css"
 
 const Cart = () => {
@@ -21,6 +21,7 @@ const Cart = () => {
   const [flatRate] = useState(2)
   const [vatRate] = useState(0.1)
   const [orderId, setOrderIdState] = useState(null)
+  const [expandedServices, setExpandedServices] = useState(true)
 
   useEffect(() => {
     const init = async () => {
@@ -31,19 +32,22 @@ const Cart = () => {
         ])
 
         setMetalRates(rates)
-
         if (pending) {
           setOrderIdState(pending._id)
           setOrderId(pending._id)
-
           const allItems = [
             ...(pending.jewelryOrder || []),
-            ...(pending.serviceOrder || []),
+            ...(pending.serviceOrder || []).map((s) => ({
+              ...s,
+              jewelry:
+                s.jewelry?.length > 0
+                  ? s.jewelry
+                  : [{ name: "", material: "", type: "", details: "" }],
+            })),
           ]
+
           const recalculated = await recalcJewelryPrices(allItems, rates)
           setItems(recalculated)
-          console.log(recalculated)
-
           calcSubtotal(recalculated)
         }
       } catch (err) {
@@ -52,7 +56,6 @@ const Cart = () => {
         setLoading(false)
       }
     }
-
     init()
   }, [])
 
@@ -75,9 +78,24 @@ const Cart = () => {
           totalPrice: collectionPrice * (item.quantity || 1),
         })
       } else if (item.service) {
-        updated.push(item)
+        const totalPrice =
+          (item.service.price || 0) * (item.jewelry?.length || 0)
+        updated.push({ ...item, totalPrice })
       }
     }
+    return updated
+  }
+
+  const recalcServicePrices = (cartItems) => {
+    const updated = cartItems.map((item) => {
+      if (item.service) {
+        const totalPrice =
+          (item.service.price || 0) * (item.jewelry?.length || 0)
+        return { ...item, totalPrice }
+      }
+      return item
+    })
+    calcSubtotal(updated)
     return updated
   }
 
@@ -90,7 +108,6 @@ const Cart = () => {
     const filtered = items.filter((_, i) => i !== index)
     setItems(filtered)
     calcSubtotal(filtered)
-
     try {
       await updateOrderInDB(filtered)
     } catch (err) {
@@ -101,16 +118,11 @@ const Cart = () => {
   const handleQuantityChange = async (index, q) => {
     const updated = items.map((i, idx) =>
       idx === index
-        ? {
-            ...i,
-            quantity: q,
-            totalPrice: (i.totalPrice / i.quantity) * q,
-          }
+        ? { ...i, quantity: q, totalPrice: (i.totalPrice / i.quantity) * q }
         : i
     )
     setItems(updated)
     calcSubtotal(updated)
-
     try {
       await updateOrderInDB(updated)
     } catch (err) {
@@ -120,46 +132,59 @@ const Cart = () => {
 
   const updateOrderInDB = async (updatedItems) => {
     if (!orderId) return
-    const allJewelryItems = items
-      .filter((i) => i.itemModel === "Jewelry" || i.itemModel === "Collection")
+
+    const jewelryOrder = updatedItems
+      .filter((i) => i.itemModel)
       .map((i) => ({
         item: i.item._id,
         itemModel: i.itemModel,
         quantity: i.quantity,
         totalPrice: i.totalPrice,
-        notes: i.notes || "",
       }))
-
-    const jewelryOrder = allJewelryItems.map((i) => {
-      const updated = updatedItems.find(
-        (u) =>
-          u.itemModel === i.itemModel &&
-          (u.item._id || u.item).toString() ===
-            (i.item._id || i.item).toString()
-      )
-      if (updated) return { ...updated }
-      return { ...i, quantity: 0, totalPrice: 0 }
-    })
 
     const serviceOrder = updatedItems
       .filter((i) => i.service)
-      .map((i) => ({
-        _id: i._id,
-        service: i.service._id || i.service,
-        jewelry: i.jewelry?.map((j) => j._id || j) || [],
-        totalPrice: i.totalPrice,
-        notes: i.notes || "",
-      }))
+      .map((i) => {
+        const totalPrice = (i.service.price || 0) * (i.jewelry?.length || 0)
+        return {
+          _id: i._id,
+          service: i.service._id,
+          jewelry: (i.jewelry || []).map((j) => ({
+            name: j.name || "",
+            material: j.material || "",
+            type: j.type || "",
+            details: j.details || "",
+          })),
+          totalPrice,
+        }
+      })
 
-    const body = { jewelryOrder, serviceOrder }
-
-    await updateOrder(orderId, body)
+    await updateOrder(orderId, { jewelryOrder, serviceOrder })
   }
+
+  const isServiceInfoComplete = () => {
+    for (const item of items) {
+      if (item.service) {
+        if (!item.jewelry || item.jewelry.length === 0) return false
+
+        for (const j of item.jewelry) {
+          if (!j.name || !j.material || !j.type || !j.details) return false
+        }
+      }
+    }
+    return true
+  }
+
+  const canProceed = items.length > 0 && isServiceInfoComplete()
+  const proceedTitle = !canProceed
+    ? "Please fill all required jewelry information for your service order."
+    : "Proceed to Checkout"
 
   const vat = subtotal * vatRate
   const estimatedTotal = subtotal + vat + flatRate
 
-  if (loading) return <div className="cart-loading">Loading cart...</div>
+  if (loading) return  <div class="loader"></div> 
+
 
   return (
     <div className="cart-page">
@@ -172,68 +197,246 @@ const Cart = () => {
             <ul className="cart-item-list">
               {items.map((item, i) => (
                 <li key={i} className="item-row">
-                  <div className="item-left">
-                    <img
-                      src={
-                        item.item?.images?.[0] ||
-                        item.service?.images?.[0] ||
-                        ""
-                      }
-                      alt={
-                        item.item?.name || item.service?.name || "Item image"
-                      }
-                      className="item-image"
-                    />
-
-                    <div className="item-info">
-                      <h3 className="item-name">
-                        {item.item?.name || item.service?.name}
-                      </h3>
-                      <p className="item-type">
-                        {item.itemModel === "Jewelry" && "Jewelry"}
-                        {item.itemModel === "Collection" && "Collection"}
-                        {item.service && "Service"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="item-actions">
-                    <div className="item-total">
-                      {item.totalPrice.toFixed(2)} BHD
-                    </div>
-
-                    {/* we should allow user to remove services as well */}
-                    {item.itemModel && (
-                      <div className="quantity-controls">
-                        <div className="quantity-buttons">
-                          <button
-                            onClick={() =>
-                              handleQuantityChange(
-                                i,
-                                Math.max(item.quantity - 1, 1)
-                              )
-                            }
-                          >
-                            -
-                          </button>
-                          <span>{item.quantity}</span>
-                          <button
-                            onClick={() =>
-                              handleQuantityChange(i, item.quantity + 1)
-                            }
-                          >
-                            +
-                          </button>
-                        </div>
-                        <button
-                          onClick={() => handleRemove(i)}
-                          className="remove-btn"
-                        >
-                          Remove
-                        </button>
+                  <div className="item-row-without-expand">
+                    <div className="item-left">
+                      <img
+                        src={
+                          item.item?.images?.[0] ||
+                          item.service.images[0] ||
+                          placeholder
+                        }
+                        alt={item.item?.name || item.service?.name || "Item"}
+                        className="item-image"
+                      />
+                      <div className="item-info">
+                        <h3 className="item-name">
+                          {item.item?.name || item.service?.name}
+                        </h3>
+                        <p className="item-type">
+                          {item.itemModel === "Jewelry" && "Jewelry"}
+                          {item.itemModel === "Collection" && "Collection"}
+                          {item.service && "Service"}
+                        </p>
                       </div>
-                    )}
+                    </div>
+
+                    <div className="item-actions">
+                      <div className="item-total">
+                        {item.totalPrice.toFixed(2)} BHD
+                      </div>
+
+                      <div className="quantity-controls">
+                        {item.itemModel && (
+                          <div className="quantity-buttons">
+                            <button
+                              onClick={() =>
+                                handleQuantityChange(
+                                  i,
+                                  Math.max(item.quantity - 1, 1)
+                                )
+                              }
+                            >
+                              -
+                            </button>
+                            <span>{item.quantity}</span>
+                            <button
+                              onClick={() =>
+                                handleQuantityChange(i, item.quantity + 1)
+                              }
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                        {item.itemModel ? (
+                          <button
+                            onClick={() => handleRemove(i)}
+                            className="remove-btn"
+                          >
+                            Remove
+                          </button>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
+
+                  {item.service && (
+                    <div className="service-extra">
+                      <div className="cart-clarification-and-add">
+                        <span className="cart-service-clarification">
+                          <a
+                            onClick={() =>
+                              setExpandedServices(!expandedServices)
+                            }
+                          >
+                            * Please fill the required information of the
+                            jewelry to be collected.
+                          </a>
+                        </span>
+                      </div>
+
+                      {expandedServices && (
+                        <div className="jewelry-list">
+                          {(item.jewelry || []).map((j, idx) => (
+                            <div key={idx} className="jewelry-entry">
+                              <div className="jewelry-entry-inputs">
+                                <span>
+                                  <label>Name</label>
+                                  <input
+                                    placeholder="Jewelry Name"
+                                    type="text"
+                                    value={j.name}
+                                    onChange={(e) => {
+                                      const newItems = [...items]
+                                      newItems.forEach((itm) => {
+                                        if (
+                                          itm.service &&
+                                          itm.service._id === item.service._id
+                                        ) {
+                                          itm.jewelry[idx].name = e.target.value
+                                        }
+                                      })
+                                      const updatedItems =
+                                        recalcServicePrices(newItems)
+                                      setItems(updatedItems)
+                                      updateOrderInDB(updatedItems)
+                                    }}
+                                  />
+                                </span>
+                                <span>
+                                  <label>Material</label>
+                                  <input
+                                    placeholder="Jewelry Material (e.g. Gold)"
+                                    type="text"
+                                    value={j.material}
+                                    onChange={(e) => {
+                                      const newItems = [...items]
+                                      newItems.forEach((itm) => {
+                                        if (
+                                          itm.service &&
+                                          itm.service._id === item.service._id
+                                        ) {
+                                          itm.jewelry[idx].material =
+                                            e.target.value
+                                        }
+                                      })
+                                      const updatedItems =
+                                        recalcServicePrices(newItems)
+                                      setItems(updatedItems)
+                                      updateOrderInDB(updatedItems)
+                                    }}
+                                  />
+                                </span>
+                                <span>
+                                  <label>Type</label>
+                                  <input
+                                    placeholder="Jewelry Type (e.g. Ring)"
+                                    type="text"
+                                    value={j.type}
+                                    onChange={(e) => {
+                                      const newItems = [...items]
+                                      newItems.forEach((itm) => {
+                                        if (
+                                          itm.service &&
+                                          itm.service._id === item.service._id
+                                        ) {
+                                          itm.jewelry[idx].type = e.target.value
+                                        }
+                                      })
+                                      const updatedItems =
+                                        recalcServicePrices(newItems)
+                                      setItems(updatedItems)
+                                      updateOrderInDB(updatedItems)
+                                    }}
+                                  />
+                                </span>
+                                <span className="details-input">
+                                  <label>Details</label>
+                                  <textarea
+                                    rows="5"
+                                    placeholder="Jewelry Details (e.g. Polish the diamond in ring ... )"
+                                    value={j.details}
+                                    onChange={(e) => {
+                                      const newItems = [...items]
+                                      newItems.forEach((itm) => {
+                                        if (
+                                          itm.service &&
+                                          itm.service._id === item.service._id
+                                        ) {
+                                          itm.jewelry[idx].details =
+                                            e.target.value
+                                        }
+                                      })
+                                      const updatedItems =
+                                        recalcServicePrices(newItems)
+                                      setItems(updatedItems)
+                                      updateOrderInDB(updatedItems)
+                                    }}
+                                  />
+                                </span>
+                                <button
+                                  className="remove-btn"
+                                  onClick={() => {
+                                    const newItems = [...items]
+                                    newItems.forEach((itm) => {
+                                      if (
+                                        itm.service &&
+                                        itm.service._id === item.service._id
+                                      ) {
+                                        itm.jewelry.splice(idx, 1)
+                                      }
+                                    })
+                                    const updatedItems =
+                                      recalcServicePrices(newItems)
+                                    setItems(updatedItems)
+                                    updateOrderInDB(updatedItems)
+                                  }}
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+
+                          {item.jewelry.length <
+                            (item.service.limitPerOrder || 1) && (
+                            <button
+                              className="add-jewelry-btn"
+                              onClick={() => {
+                                const newItems = [...items]
+                                newItems.forEach((itm) => {
+                                  if (
+                                    itm.service &&
+                                    itm.service._id === item.service._id
+                                  ) {
+                                    itm.jewelry.push({
+                                      name: "",
+                                      material: "",
+                                      type: "",
+                                      details: "",
+                                    })
+                                  }
+                                })
+                                const updatedItems =
+                                  recalcServicePrices(newItems)
+                                setItems(updatedItems)
+                                updateOrderInDB(updatedItems)
+                              }}
+                            >
+                              Add more
+                            </button>
+                          )}
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() => handleRemove(i)}
+                        className="remove-btn"
+                      >
+                        Remove Service
+                      </button>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
@@ -248,29 +451,22 @@ const Cart = () => {
               <span>{subtotal.toFixed(2)} BHD</span>
             </div>
             <div className="summary-row">
-              <span title="Delivery fee">Flat rate</span>
+              <span>Flat rate</span>
               <span>{flatRate.toFixed(2)} BHD</span>
             </div>
             <div className="summary-row">
               <span>VAT (10%)</span>
-              <span>
-                {vat.toLocaleString(undefined, { maximumFractionDigits: 3 })}{" "}
-                BHD
-              </span>
+              <span>{(subtotal * vatRate).toFixed(3)} BHD</span>
             </div>
             <hr className="summary-divider" />
             <div className="summary-total">
               <span>Estimated total</span>
-              <span>
-                {estimatedTotal.toLocaleString(undefined, {
-                  maximumFractionDigits: 3,
-                })}{" "}
-                BHD
-              </span>
+              <span>{estimatedTotal.toFixed(3)} BHD</span>
             </div>
           </div>
           <button
-            disabled={items.length == 0}
+            disabled={!canProceed}
+            title={proceedTitle}
             onClick={() => navigate("/checkout")}
             className="proceed-to-checkout"
           >

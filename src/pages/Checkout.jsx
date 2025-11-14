@@ -149,8 +149,44 @@ const Checkout = () => {
     }
   }
 
-  if (loading)
-    return <div className="checkout-loading">Loading checkout...</div>
+  const isOrderValid = () => {
+    if (!user) return false
+
+    if (!order || subtotal === 0) return false
+
+    if (!paymentMethod) return false
+
+    if (deliveryMethod === "delivery") {
+      const addr = addresses.find((a) => a._id === selectedAddress)
+      if (!addr) return false
+      console.log(addr)
+
+      const requiredFields = [
+        // "road",
+        "building",
+        "house",
+        // "area",
+        // "governorate",
+      ]
+      for (const field of requiredFields) {
+        if (
+          !addr[field] ||
+          (Array.isArray(addr[field]) && addr[field].length === 0)
+        ) {
+          return false
+        }
+      }
+    }
+
+    return true
+  }
+
+  const orderDisabled = !isOrderValid()
+  const orderTitle = orderDisabled
+    ? "Please fill all required information before placing the order."
+    : "Place your order"
+
+  if (loading) return <div class="loader"></div>
 
   return (
     <div className="checkout-page">
@@ -229,7 +265,7 @@ const Checkout = () => {
               <span className="checkout-address-span">
                 {addresses.length > 0 ? (
                   <>
-                    <div>
+                    <div className="checkout-address-span-select">
                       <label className="customer-select-address">
                         Select Address
                       </label>
@@ -250,8 +286,7 @@ const Checkout = () => {
                 ) : (
                   <p>No saved addresses yet.</p>
                 )}
-                <div>
-                  <label htmlFor=""></label>
+                <div className="checkout-new-address-div">
                   <button
                     type="button"
                     onClick={() => setShowAddressForm(!showAddressForm)}
@@ -374,20 +409,22 @@ const Checkout = () => {
               <span className="payment-option">
                 <input
                   type="radio"
+                  id="payment-cash"
                   value="Cash"
                   checked={paymentMethod === "Cash"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
-                <label> Cash on Delivery</label>
+                <label htmlFor="payment-cash"> Cash on Delivery</label>
               </span>
               <span className="payment-option">
                 <input
                   type="radio"
+                  id="payment-card"
                   value="Card"
                   checked={paymentMethod === "Card"}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
-                <label> Card Payment</label>
+                <label htmlFor="payment-card"> Card Payment</label>
               </span>
             </div>
           </section>
@@ -397,32 +434,28 @@ const Checkout = () => {
           <h2 className="summary-title">Order Summary</h2>
           <div className="summary-row">
             <span>Subtotal</span>
-            <span>{subtotal.toLocaleString()} BHD</span>
+            <span>{subtotal.toFixed(2)} BHD</span>
           </div>
           <div className="summary-row">
             <span>VAT (10%)</span>
-            <span>
-              {vat.toLocaleString(undefined, { maximumFractionDigits: 3 })} BHD
-            </span>
+            <span>{vat.toFixed(2)} BHD</span>
           </div>
           {deliveryMethod === "pickup" ? null : (
             <div className="summary-row">
               <span>Delivery Fee</span>
-              <span>{deliveryFee.toLocaleString()} BHD</span>
+              <span>{deliveryFee.toFixed(2)} BHD</span>
             </div>
           )}
           <hr className="summary-divider" />
           <div className="summary-total">
             <span>Total</span>
-            <span>
-              {total.toLocaleString(undefined, { maximumFractionDigits: 3 })}{" "}
-              BHD
-            </span>
+            <span>{total.toFixed(3)} BHD</span>
           </div>
           <button
             className="place-order-btn"
             onClick={handlePlaceOrder}
-            disabled={!user || subtotal === 0}
+            disabled={orderDisabled}
+            title={orderTitle}
           >
             Place Order
           </button>

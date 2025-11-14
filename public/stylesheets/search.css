@@ -119,6 +119,8 @@
 }
 .card-info h3 {
   margin-bottom: 0;
+    font-size: 1.6rem !important;
+
 }
 
 .card-info .price {
