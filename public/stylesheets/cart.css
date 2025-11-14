@@ -8,9 +8,15 @@
   overflow-y: auto;
 }
 
+.cart-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #222;
+}
+
 .cart-details {
   display: flex;
-  gap: 3rem;
+  gap: 4rem;
 }
 
 .cart-items {
@@ -21,10 +27,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.cart-title {
-  margin-bottom: 1rem;
-}
-
 .cart-item-list {
   list-style: none;
   margin: 0;
@@ -32,23 +34,30 @@
 }
 
 .item-row {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
-  align-items: stretch;
+  flex-direction: column;
   border-bottom: 1px solid #ddd;
   padding: 1rem 0;
   position: relative;
+  height: fit-content;
+  box-sizing: border-box;
+}
+
+.item-row-without-expand {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  min-height: 18vh;
 }
 
 .item-left {
   display: flex;
   gap: 1rem;
-  width: 70%;
+  width: 80%;
 }
 
 .item-image {
-  height: 100%;
-  height: 15vh;
   width: 20%;
   object-fit: cover;
 }
@@ -57,13 +66,13 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
 }
 
 .item-name {
   font-weight: 500;
   margin: 0;
   color: #222;
+  font-size: 1.8rem;
 }
 
 .item-type {
@@ -106,10 +115,16 @@
   width: 1.5rem;
   height: 1.5rem;
   background: #f9f9f9;
+  color: var(--text-color);
   border: 1px solid #ccc;
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+  transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
 }
 
 .quantity-buttons span {
@@ -125,6 +140,138 @@
   font-size: 0.85rem;
   text-decoration: underline;
   margin-top: 0.3rem;
+  transition: color 0.2s;
+  text-align: right;
+}
+
+.service-extra .remove-btn {
+  width: fit-content;
+  align-self: flex-end;
+  margin-top: 0;
+}
+.jewelry-entry .remove-btn {
+  text-align: left;
+  padding-top: 0;
+  width: fit-content;
+}
+
+.remove-btn:hover {
+  color: #a00;
+}
+
+.service-extra {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.toggle-service-btn {
+  display: flex;
+  background-color: transparent !important;
+  color: var(--text-color);
+  font-weight: 600;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.4rem;
+  padding-bottom: 0;
+}
+
+.toggle-service-btn span {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.toggle-service-btn p {
+  font-weight: 700;
+}
+
+.cart-clarification-and-add {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.cart-service-clarification {
+  font-weight: 400 !important;
+  font-size: 0.9rem !important;
+  padding: 0.8rem 0;
+}
+.cart-service-clarification a {
+  color: var(--accent-color) !important;
+}
+
+.cart-service-clarification a:hover {
+  text-decoration: none;
+}
+
+.cart-page .toggle-jewelry-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background: #f9f9f9;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-weight: 500;
+}
+
+.cart-page .jewelry-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.cart-page .jewelry-entry {
+  display: flex;
+  gap: 1rem;
+}
+
+.cart-page .jewelry-entry-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+.cart-page .jewelry-entry-inputs span {
+  flex: 1 1 30%;
+  min-width: 120px;
+}
+
+.cart-page .jewelry-entry-inputs span.details-input {
+  flex: 1 1 100%;
+  min-width: 200px;
+}
+
+.cart-page .jewelry-entry-inputs input {
+  margin-bottom: 0.5rem;
+}
+
+.cart-page .jewelry-entry-inputs input,
+.cart-page .jewelry-entry-inputs textarea {
+  font-size: 0.8rem;
+  font-family: "Playfair", serif;
+  width: 100%;
+}
+
+.cart-page .jewelry-entry label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  gap: 0.3rem;
+}
+
+.cart-page .add-jewelry-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  width: 18%;
+  font-size: 0.9rem !important;
+  transition: all 0.2s;
+}
+
+.cart-page .jewelry-list .remove-btn {
+  align-self: flex-end;
 }
 
 .summary-wrapper {
@@ -168,27 +315,35 @@
   font-size: 1.1rem;
 }
 
-/* not working */
 .cart-empty {
   margin: auto;
+  color: #777;
+  text-align: center;
 }
 
 .proceed-to-checkout {
-  width: 90%;
   margin: 0 auto;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 0;
+  font-size: 1rem;
+  transition: all 0.2s;
 }
 
-@media (max-width:1200px) {
+@media (max-width: 1200px) {
   .item-image {
     width: 28% !important;
-  } 
+  }
+  .add-jewelry-btn {
+    width: 30% !important;
+  }
 }
 
 @media (max-width: 1000px) {
   .cart-details {
     flex-direction: column;
-    justify-content: space-between;
   }
+
   .cart-summary {
     width: 100%;
   }
@@ -196,36 +351,82 @@
   .item-image {
     width: 22% !important;
   }
+
+  .add-jewelry-btn {
+    width: 23% !important;
+  }
 }
 
-@media (max-width:800px) {
+@media (max-width: 800px) {
   .item-image {
     width: 28% !important;
-  } 
+  }
+
+  .add-jewelry-btn {
+    width: 25% !important;
+  }
 }
-@media (max-width:600px) {
-  /* idk about these yet */
+
+@media (max-width: 700px) {
+  .add-jewelry-btn {
+    width: 29% !important;
+  }
+}
+
+@media (max-width: 600px) {
   .item-row {
     flex-direction: column;
   }
-  .item-left, .item-actions {
+  .item-row-without-expand {
+    flex-direction: column;
+  }
+  .item-actions,
+  .item-left {
     width: 100%;
   }
 
   .item-actions {
+    margin-top: 0.5rem;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    position: relative;
   }
 
   .quantity-controls {
-    flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+  }
+
+  .remove-btn {
+    text-align: center;
+    margin-top: 0;
   }
 
   .item-image {
     width: 32% !important;
-  } 
+  }
 
+  .upload-label {
+    align-items: flex-start;
+  }
+
+  .add-jewelry-btn {
+    width: 35% !important;
+  }
+
+  .cart-page .jewelry-entry {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .service-extra .remove-btn {
+    text-align: right;
+  }
+
+  .item-total {
+    font-size: 1.2rem;
+  }
+  .cart-page .jewelry-entry-inputs textarea {
+    height: 10em !important;
+  }
 }

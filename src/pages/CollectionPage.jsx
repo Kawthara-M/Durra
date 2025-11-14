@@ -7,6 +7,8 @@ import imageSlider from "../services/imageSliders"
 import { useUser } from "../context/UserContext"
 import { useOrder } from "../context/OrderContext"
 import { createOrder, updateOrder } from "../services/order"
+import { calculateCollectionPrice } from "../services/calculator"
+import { fetchMetalRates } from "../services/calculator"
 
 import "../../public/stylesheets/customer-jewelry-page.css"
 
@@ -14,6 +16,7 @@ const CollectionPage = () => {
   const { collectionId } = useParams()
   const { user } = useUser()
   const { order, addJewelryToOrder, setOrderId } = useOrder()
+  const [metalRates, setMetalRates] = useState()
 
   const [collection, setCollection] = useState()
   const [totalPrice, setTotalPrice] = useState(0)
@@ -28,19 +31,29 @@ const CollectionPage = () => {
   useEffect(() => {
     const getCollection = async () => {
       try {
-        const res = await User.get(`/collections/${collectionId}`)
-        setCollection(res.data.collection)
-        if (res.data.collection.jewelry?.length > 0) {
-          setTotalPrice(
-            parseFloat(res.data.collection.jewelry[0].originPrice.toFixed(2))
-          )
-        }
+        const response = await User.get(`/collections/${collectionId}`)
+        setCollection(response.data.collection)
       } catch (err) {
-        console.error("Failed to fetch collection:", err)
+        console.error("Failed to fetch collection", err)
       }
     }
     getCollection()
   }, [collectionId])
+
+  useEffect(() => {
+    const getRates = async () => {
+      if (!collection) return
+      try {
+        const rates = await fetchMetalRates()
+        setMetalRates(rates) 
+        const price = calculateCollectionPrice(collection, rates)
+        if (price !== null) setTotalPrice(price.toFixed(2))
+      } catch (err) {
+        console.error("Failed to fetch collection price", err)
+      }
+    }
+    getRates()
+  }, [collection])
 
   const handleChange = (e) => setQuantity(parseInt(e.target.value))
 
@@ -169,7 +182,7 @@ const CollectionPage = () => {
                 <p id="jeweler-service-description">{collection.description}</p>
                 <div className="jeweler-service-details">
                   <h3 className="service-price">Price</h3>
-                  <p id="jewelry-price">{totalPrice.toFixed(2)} BHD</p>
+                  <p id="jewelry-price">{totalPrice} BHD</p>
                 </div>
               </div>
 
@@ -195,9 +208,7 @@ const CollectionPage = () => {
                     src={heartIcon}
                     alt="Wishlist"
                     title={
-                      user
-                        ? (title = "Add to Wishlist")
-                        : "Sign in to Add to Wishlist"
+                      user ? "Add to Wishlist" : "Sign in to Add to Wishlist"
                     }
                     className="icon"
                     onClick={user && handleWishlist}
@@ -219,9 +230,7 @@ const CollectionPage = () => {
               <div className="jewelry-extra-details">
                 <ul className="customer-collection-details">
                   {collection.jewelry?.map((item, index) => (
-                    <li key={index}>
-                      {item.name}
-                    </li>
+                    <li key={index}>{item.name}</li>
                   ))}
                 </ul>
               </div>

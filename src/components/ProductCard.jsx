@@ -76,11 +76,12 @@ const ProductCard = ({
         notes: "",
       }
     } else if (type === "service") {
+      console.log(item.price)
       price = item.price
       newItem = {
         service: item._id,
         jewelry: [],
-        totalPrice: price,
+        totalPrice: item.price,
         notes: "",
       }
     }

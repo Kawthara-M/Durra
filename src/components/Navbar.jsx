@@ -2,8 +2,9 @@ import { Link, useNavigate } from "react-router-dom"
 import { useState, useEffect, useContext } from "react"
 import { useUser } from "../context/UserContext"
 import { useOrder } from "../context/OrderContext"
-import User from "../services/api"
 import { ThemeContext } from "../context/ThemeContext"
+import { getPendingOrder } from "../services/order.js"
+import User from "../services/api"
 
 import userIcon from "../assets/user.png"
 import cartIcon from "../assets/cart.png"
@@ -26,6 +27,7 @@ const Navbar = () => {
   const [showSearchInput, setShowSearchInput] = useState(false)
 
   const [wishlistCount, setWishlistCount] = useState(0)
+  const [hasPendingOrder, setHasPendingOrder] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
 
   const toggleMenu = () => setIsOpen(!isOpen)
@@ -70,6 +72,26 @@ const Navbar = () => {
     handleResize()
     return () => window.removeEventListener("resize", handleResize)
   }, [])
+
+  useEffect(() => {
+    const fetchPendingOrder = async () => {
+      if (!user) return setHasPendingOrder(false)
+      try {
+        const pending = await getPendingOrder()
+        setHasPendingOrder(!!pending)
+      } catch (err) {
+        console.error("Failed to fetch pending order:", err)
+        setHasPendingOrder(false)
+      }
+    }
+
+    fetchPendingOrder()
+
+    const handleOrderUpdate = () => fetchPendingOrder()
+    window.addEventListener("order-updated", handleOrderUpdate)
+
+    return () => window.removeEventListener("order-updated", handleOrderUpdate)
+  }, [user])
 
   useEffect(() => {
     const handleEsc = (e) => {
@@ -150,17 +172,16 @@ const Navbar = () => {
               <>
                 <Link to="/cart" className="icon-btn cart-btn">
                   <img src={cartIcon} alt="cart" className="icon" />
-                  {(order?.jewelryOrder?.length ||
-                    order?.serviceOrder?.length) > 0 && (
+                  {(hasPendingOrder ||
+                    (order?.jewelryOrder?.length ||
+                      order?.serviceOrder?.length) > 0) && (
                     <span className="icon-badge"></span>
                   )}
                 </Link>
 
                 <Link to="/wishlist" className="icon-btn wish-btn">
                   <img src={heartIcon} alt="wishlist" className="icon" />
-                  {wishlistCount > 0 && (
-                    <span className="icon-badge"></span>
-                  )}
+                  {wishlistCount > 0 && <span className="icon-badge"></span>}
                 </Link>
               </>
             )}
