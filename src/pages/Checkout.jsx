@@ -5,16 +5,24 @@ import { useOrder } from "../context/OrderContext"
 import { getPendingOrder, updateOrder } from "../services/order"
 import LocationMap from "../components/LocationMap"
 import User from "../services/api"
+import { useOrderWait } from "../services/useOrderWait"
 
 import mapIcon from "../assets/map.png"
 import "../../public/stylesheets/checkout.css"
 
 const Checkout = () => {
   const { user } = useUser()
-  const { orderId } = useOrder()
+  const {
+    order,
+    setOrderId,
+    addJewelryToOrder,
+    addServiceToOrder,
+    resetOrder,
+  } = useOrder()
+  const orderId = order?.orderId
   const navigate = useNavigate()
 
-  const [order, setOrder] = useState(null)
+  // const [order, setOrder] = useState(null)
   const [fullUser, setFullUser] = useState(null)
   const [shop, setShop] = useState(null)
   const [deliveryMethod, setDeliveryMethod] = useState("delivery")
@@ -37,6 +45,7 @@ const Checkout = () => {
     coordinates: [],
   })
   const [showMap, setShowMap] = useState(false)
+  const { waiting, waitForJeweler } = useOrderWait()
 
   const fetchProfile = async () => {
     try {
@@ -73,10 +82,30 @@ const Checkout = () => {
       try {
         const pending = await getPendingOrder()
         if (pending) {
-          setOrder(pending)
+          setOrderId(pending._id)
+
+          pending.jewelryOrder.forEach((item) => {
+            addJewelryToOrder({
+              item: item.item._id,
+              itemModel: item.itemModel,
+              quantity: item.quantity,
+              totalPrice: item.totalPrice,
+              shop: pending.shop,
+            })
+          })
+
+          pending.serviceOrder.forEach((service) => {
+            addServiceToOrder({
+              service: service.service._id,
+              price: service.totalPrice,
+              jewelry: service.jewelry.map((j) => j._id),
+            })
+          })
+
           setSubtotal(pending.totalPrice || 0)
           if (pending.shop) await fetchShop(pending.shop._id)
         }
+
         await fetchProfile()
         await fetchAddresses()
       } catch (err) {
@@ -126,29 +155,6 @@ const Checkout = () => {
     }
   }
 
-  const handlePlaceOrder = async () => {
-    try {
-      if (!orderId) return
-      const addressToUse =
-        deliveryMethod === "pickup"
-          ? shop?.user?.defaultAddress
-          : selectedAddress
-      const body = {
-        collectionMethod:
-          deliveryMethod === "pickup" ? "at-shop-collection" : "delivery",
-        paymentMethod,
-        address: addressToUse,
-        totalPrice: total,
-        status: "confirmed",
-      }
-      await updateOrder(orderId, body)
-      alert("Order placed successfully!")
-    } catch (err) {
-      console.error("Failed to place order:", err)
-      alert("Error placing order. Try again later.")
-    }
-  }
-
   const isOrderValid = () => {
     if (!user) return false
 
@@ -159,7 +165,6 @@ const Checkout = () => {
     if (deliveryMethod === "delivery") {
       const addr = addresses.find((a) => a._id === selectedAddress)
       if (!addr) return false
-      console.log(addr)
 
       const requiredFields = [
         // "road",
@@ -181,14 +186,57 @@ const Checkout = () => {
     return true
   }
 
+  const handlePlaceOrder = async () => {
+    try {
+      const idToUse = orderId || order?._id
+      if (!idToUse) return
+
+      const addressToUse =
+        deliveryMethod === "pickup"
+          ? shop?.user?.defaultAddress
+          : selectedAddress
+
+      const body = {
+        collectionMethod:
+          deliveryMethod === "pickup" ? "at-shop-collection" : "delivery",
+        paymentMethod,
+        address: addressToUse,
+        totalPrice: total,
+        jewelryOrder: order.jewelryOrder,
+        serviceOrder: order.serviceOrder.map((s) => ({
+          ...s,
+          jewelry: s.jewelry.map((j) => ({
+            item: j.item || j,
+            itemModel: j.itemModel || "Jewelry",
+            quantity: j.quantity || 1,
+            totalPrice: j.totalPrice || 0,
+          })),
+        })),
+        notes: order.notes || "",
+      }
+
+      await updateOrder(idToUse, body)
+
+      await User.put(`/orders/update-status/${idToUse}`, {
+        status: "submitted",
+      })
+
+      waitForJeweler(idToUse)
+    } catch (err) {
+      console.error("Failed to place order:", err)
+      alert("Error placing order. Try again later.")
+    }
+  }
+
   const orderDisabled = !isOrderValid()
   const orderTitle = orderDisabled
     ? "Please fill all required information before placing the order."
     : "Place your order"
 
-  if (loading) return <div class="loader"></div>
+  if (loading) return <div className="loader"></div>
 
   return (
+    <div className="checkout-wrapper" style={{ position: "relative" }}>
     <div className="checkout-page">
       <div>
         <h2>Checkout</h2>
@@ -451,9 +499,10 @@ const Checkout = () => {
             <span>Total</span>
             <span>{total.toFixed(3)} BHD</span>
           </div>
+
           <button
             className="place-order-btn"
-            onClick={handlePlaceOrder}
+            onClick={() => handlePlaceOrder()}
             disabled={orderDisabled}
             title={orderTitle}
           >
@@ -523,6 +572,17 @@ const Checkout = () => {
           </div>
         </div>
       )}
+</div>
+      {waiting && (
+        <div className="waiting-overlay">
+          <div className="waiting-box">
+            <div className="waiting-loader"></div>
+            <h4>Waiting for jeweler’s response...</h4>
+            <p>This may take a moment.</p>
+          </div>
+        </div>
+      )}
+    
     </div>
   )
 }
