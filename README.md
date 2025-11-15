@@ -30,10 +30,9 @@ The following figma prototypes present a visual blueprint of the application's u
 - Search Logic (back-end): [Medium Platform](https://medium.com/@aniagudo.godson/running-a-simple-search-query-on-mongodb-atlas-using-express-nodejs-2-refining-search-queries-49949ce5c4a1)
 - Password Validator (front-end): [geeksforgeeks](https://www.geeksforgeeks.org/reactjs/create-a-password-validator-using-reactjs/)
 - Feedback Modal: [uiverse.io](https://uiverse.io/akshat-patel28/quick-baboon-29)
-- Services Card: [uiverse.io](https://uiverse.io/satyamchaudharydev/itchy-chipmunk-95)
 - Price Slider : [Material UI](https://mui.com/material-ui/react-slider/)
 - Icons: [flatIcon](https://www.flaticon.com/)
-- Loading Animations: [LottieFiles](https://lottiefiles.com/)
+- Loading Animations: [CSS Loaders](https://css-loaders.com/dots/)
 
 
 
