@@ -9,7 +9,7 @@ export const getPendingOrder = async () => {
 
 export const createOrder = async (body) => {
   const res = await User.post("/orders", body)
-  vwindow.dispatchEvent(new Event("order-updated"))
+  window.dispatchEvent(new Event("order-updated"))
   return res.data.order
 }
 

@@ -10,8 +10,6 @@ import CustomerOrders from "../components/CustomerOrders"
 import User from "../services/api"
 
 import accountIcon from "../assets/account.png"
-import logout from "../assets/logout.png"
-import themeIcon from "../assets/theme.png"
 import editIcon from "../assets/edit.png"
 import deleteIcon from "../assets/delete.png"
 import "../../public/stylesheets/profile.css"
@@ -389,20 +387,6 @@ const Profile = () => {
               : null}
           </h2>
           {/* {profile ? profile.user.email : null} */}
-          <span className="profile-icons">
-            <img
-              src={themeIcon}
-              alt="Theme Icon"
-              className="icon"
-              onClick={toggleTheme}
-            />
-            <img
-              src={logout}
-              alt="Sign out"
-              className="icon"
-              onClick={() => handleLogOut()}
-            />
-          </span>
         </div>
 
         <div className="profile-right">

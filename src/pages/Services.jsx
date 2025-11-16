@@ -19,22 +19,27 @@ const Services = () => {
   })
 
   const [showFilter, setShowFilter] = useState(false)
-
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const getServices = async () => {
-      const response = await User.get("/services/")
-      setServices(response.data.services)
-      setFilteredServices(response.data.services)
+    const fetchData = async () => {
+      try {
+        const [servicesRes, shopsRes] = await Promise.all([
+          User.get("/services/"),
+          User.get("/shops/"),
+        ])
+
+        setServices(servicesRes.data.services)
+        setFilteredServices(servicesRes.data.services)
+        setShops(shopsRes.data.shops)
+      } catch (error) {
+        console.error("Failed to fetch data:", error)
+      } finally {
+        setLoading(false)
+      }
     }
 
-    const getShops = async () => {
-      const response = await User.get("/shops/") 
-      setShops(response.data.shops)
-    }
-
-    getServices()
-    getShops()
+    fetchData()
   }, [])
 
   const applyFilters = (filters) => {
@@ -66,6 +71,8 @@ const Services = () => {
       ],
     },
   ]
+
+  if (loading) return <div class="loader"></div>
 
   return (
     <>
@@ -99,7 +106,7 @@ const Services = () => {
               <Filter
                 filters={filters}
                 fields={filterFields}
-                showPrice={true} 
+                showPrice={true}
                 onApply={(f) => {
                   setFilters(f)
                   applyFilters(f)
@@ -111,14 +118,16 @@ const Services = () => {
 
           <div className="jewelry-grid">
             {filteredServices.map((s) => (
-              <Link key={s._id} 
-              to={`/services/${s._id}`} 
-              >
+              <Link key={s._id} to={`/services/${s._id}`}>
                 <ProductCard item={s} type="service" showActions />
               </Link>
             ))}
 
-            {filteredServices.length === 0 && <div className="empty-wrapper"><p className="empty">No Services Available</p></div>}
+            {filteredServices.length === 0 && (
+              <div className="empty-wrapper">
+                <p className="empty">No Services Available</p>
+              </div>
+            )}
           </div>
         </div>
       )}

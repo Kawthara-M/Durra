@@ -6,8 +6,9 @@ import FeedbackModal from "./FeedbackModal"
 import User from "../services/api"
 
 import "../../public/styleSheets/auth.css"
+import authImage from "../assets/auth.jpg"
 
-const SignIn = ({ setShowSignUp }) => {
+const SignIn = () => {
   const { setUser } = useUser()
   let navigate = useNavigate()
   const initialState = { email: "", password: "" }
@@ -58,66 +59,88 @@ const SignIn = ({ setShowSignUp }) => {
 
   return (
     <>
-      <div className="wrapper">
-        <h1 className="sign-in-title">Sign In</h1>
-        <form onSubmit={handleSubmit} className="sign-in-form">
-          <div>
-            <label htmlFor="email">Email</label>
-            <input
-              onChange={handleChange}
-              id="email"
-              type="email"
-              name="email"
-              placeholder="user@example.com"
-              value={formValues.email}
-              required
-              autoComplete="email"
-            />
-          </div>
+      <div className="wrapper" style = {{width:"100%"}}>
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage: `url(${authImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "bottom",
+            opacity: 0.7,
+            zIndex: 0,
+          }}
+        />
 
-          <div>
-            <label htmlFor="password">Password</label>
-            <input
-              onChange={(e) => {
-                handleChange(e)
+        <div
+          style={{ position: "relative", zIndex: 1 }}
+          className="sign-in-container"
+        >
+          <h1 className="sign-in-title">Sign In</h1>
+          <form onSubmit={handleSubmit} className="sign-in-form">
+            <div>
+              <label htmlFor="email">Email</label>
+              <input
+                onChange={handleChange}
+                id="email"
+                type="email"
+                name="email"
+                placeholder="user@example.com"
+                value={formValues.email}
+                required
+                autoComplete="email"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password">Password</label>
+              <input
+                onChange={handleChange}
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                value={formValues.password}
+                required
+              />
+            </div>
+
+            <a
+              className={`forget-password ${
+                !formValues.email ? "disabled-link" : ""
+              }`}
+              title="Please Enter your Email"
+              onClick={() => {
+                if (!formValues.email) return
+                forgetPassword()
               }}
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formValues.password}
-              required
-            />
-          </div>
-          <a
-            className={`forget-password ${
-              !formValues.email ? "disabled-link" : null
-            }`}
-            title="Please Enter your Email"
-            onClick={() => {
-              if (!formValues.email) return
-              forgetPassword()
-            }}
-          >
-            Forgot your password?
-          </a>
-          <div>
-            {errorMessage && <span className="error">{errorMessage}</span>}
-            <button disabled={!formValues.email || !formValues.password}>
-              Sign In
-            </button>
-          </div>
-          <p id="switch">
-            <button
-              className="switch"
-              type="button"
-              onClick={() => setShowSignUp(true)}
             >
-              Create an Account?
-            </button>
-          </p>
-        </form>
+              Forgot your password?
+            </a>
+
+            <div>
+              {errorMessage && <span className="error">{errorMessage}</span>}
+              <button disabled={!formValues.email || !formValues.password} className="sign-in-button">
+                Sign In
+              </button>
+            </div>
+
+            <p id="switch">
+              <button
+                className="switch"
+                type="button"
+                onClick={() => navigate("/sign-up")}
+              >
+                Create an Account?
+              </button>
+            </p>
+          </form>
+        </div>
       </div>
+
       {showModal && (
         <FeedbackModal
           show={showModal}

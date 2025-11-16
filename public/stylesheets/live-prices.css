@@ -59,7 +59,7 @@
 }
 
 .prices-chart-container canvas {
-  width: 65% !important;
+  width: 60% !important;
   height: 40vh !important;
 }
 @media (max-width: 1300px) {

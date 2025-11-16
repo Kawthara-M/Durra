@@ -57,11 +57,6 @@
   transition: background-color 0.3s ease;
 }
 
-.add-to-jewelry-list:hover,
-.add-to-collections-list:hover {
-  background-color: var(--primary-hover, #333);
-}
-
 @media (max-width: 1200px) {
   .jeweler-services .grid,
   .jeweler-collections .grid {

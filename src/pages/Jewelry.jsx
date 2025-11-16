@@ -21,6 +21,7 @@ const Jewelry = () => {
   const [filteredCollections, setFilteredCollections] = useState([])
 
   const [metalRates, setMetalRates] = useState()
+  const [loading, setLoading] = useState(true)
 
   const filterFields = [
     { name: "singlePiece", label: "Single Piece", type: "checkbox" },
@@ -64,26 +65,30 @@ const Jewelry = () => {
   const [showFilter, setShowFilter] = useState(false)
 
   useEffect(() => {
-    const getJewelry = async () => {
-      const response = await User.get("/jewelry/")
-      setJewelry(response.data.jewelry)
-      setFilteredJewelry(response.data.jewelry)
+    const fetchData = async () => {
+      setLoading(true) // start loading
+      try {
+        const [jewelryRes, collectionsRes, rates] = await Promise.all([
+          User.get("/jewelry/"),
+          User.get("/collections/"),
+          fetchMetalRates(),
+        ])
+
+        setJewelry(jewelryRes.data.jewelry)
+        setFilteredJewelry(jewelryRes.data.jewelry)
+
+        setCollections(collectionsRes.data.collections)
+        setFilteredCollections(collectionsRes.data.collections)
+
+        setMetalRates(rates)
+      } catch (error) {
+        console.error("Failed to load data:", error)
+      } finally {
+        setLoading(false)
+      }
     }
 
-    const getCollections = async () => {
-      const response = await User.get("/collections/")
-      setCollections(response.data.collections)
-      setFilteredCollections(response.data.collections)
-    }
-
-    const loadRates = async () => {
-      const rates = await fetchMetalRates()
-      setMetalRates(rates)
-    }
-
-    loadRates()
-    getJewelry()
-    getCollections()
+    fetchData()
   }, [])
 
   useEffect(() => {
@@ -162,6 +167,8 @@ const Jewelry = () => {
     setFilteredJewelry(filteredJewelry)
     setFilteredCollections(filteredCollections)
   }
+
+  if (loading) return <div class="loader"></div>
 
   return (
     <>

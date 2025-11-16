@@ -67,7 +67,7 @@ main {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
+  /* align-items: center; */
 }
 
 /* headings */
@@ -170,16 +170,16 @@ input {
   border-radius: 5px;
   margin-bottom: 1rem;
   box-sizing: border-box;
+  font-family: "Playfair", serif;
 }
 
-input[type="radio"] {
+input[type="radio"], input[type="checkbox"] {
   accent-color: var(--accent-color);
 }
 
 textarea {
   padding: 0.5rem;
   border: 1px solid #bbb;
-
 }
 
 .inline {
@@ -230,8 +230,17 @@ textarea {
 .loader {
   width: 50px;
   aspect-ratio: 4;
-  background: radial-gradient(circle closest-side,#000 90%,#0000) 0/calc(100%/3) 100% space;
+  background: radial-gradient(
+      circle closest-side,
+      var(--accent-color) 90%,
+      #0000
+    )
+    0 / calc(100% / 3) 100% space;
   clip-path: inset(0 100% 0 0);
   animation: l1 1s steps(4) infinite;
 }
-@keyframes l1 {to{clip-path: inset(0 -34% 0 0)}}
+@keyframes l1 {
+  to {
+    clip-path: inset(0 -34% 0 0);
+  }
+}

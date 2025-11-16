@@ -2,7 +2,8 @@ import { Route, Routes } from "react-router-dom"
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 import AboutUs from "./pages/AboutUs"
-import Authentication from "./pages/Authentication"
+import SignIn from "./components/SignIn"
+import SignUp from "./components/SignUp"
 import Home from "./pages/Home"
 import Profile from "./pages/Profile"
 import JewelerJewelryPage from "./pages/JewelerJewelryPage"
@@ -33,6 +34,7 @@ import Wishlist from "./pages/Wishlist"
 import ShopDetails from "./pages/ShopDetails"
 import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout"
+import Payment from "./components/Payment"
 
 import "./App.css"
 
@@ -45,7 +47,8 @@ function App() {
         <main>
           <Routes>
             <Route path="/*" element={<Home />} />
-            <Route path="/auth" element={<Authentication />} />
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/SizeGuide" element={<SizeGuide />} />
             <Route path="/live-prices" element={<LivePrices />} />
@@ -67,6 +70,7 @@ function App() {
             <Route path="/collections/:collectionId" element={<CollectionPage />} />
             <Route path="/cart" element={<Cart/>} />
             <Route path="/checkout" element={<Checkout/>} />
+            <Route path="/payment" element={<Payment/>} />
 
             <Route path="/jeweler-jewelry" element={<JewelerJewelryPage />} />
             <Route

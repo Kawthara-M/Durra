@@ -210,7 +210,7 @@ const Navbar = () => {
                     <span className="menu-item-wrapper">
                       <img src={themeIcon} className="icon" />
                       <button className="menu-btn" onClick={toggleTheme}>
-                        Theme
+                        Switch
                       </button>
                     </span>
 
@@ -225,7 +225,7 @@ const Navbar = () => {
                   <>
                     <span className="menu-item-wrapper">
                       <img src={logoutIcon} className="icon" />
-                      <button className="menu-btn" onClick={handleLogOut}>
+                      <button className="menu-btn" onClick={()=>navigate("/sign-in")}>
                         Sign In
                       </button>
                     </span>
@@ -233,7 +233,7 @@ const Navbar = () => {
                     <span className="menu-item-wrapper">
                       <img src={themeIcon} className="icon" />
                       <button className="menu-btn" onClick={toggleTheme}>
-                        Theme
+                        Switch
                       </button>
                     </span>
                   </>
