@@ -48,13 +48,13 @@ const CustomerOrders = () => {
                   <h6>Order ID:</h6>
                   <p>{order._id}</p>
                 </div>
+                <p>
+                  <strong>Collection Method:</strong> {order.collectionMethod}
+                </p>
                 <div className="inline">
                   <strong>Total Price:</strong>
-                  <p>{order.totalPrice} BHD</p>
+                  <p>{order.totalPrice.toFixed(3)} BHD</p>
                 </div>
-                <p>
-                  <strong>Collection:</strong> {order.collectionMethod}
-                </p>
                 <p>
                   <strong>Payment:</strong> {order.paymentStatus}
                 </p>

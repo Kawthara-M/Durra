@@ -6,7 +6,7 @@ import "../../public/styleSheets/auth.css"
 
 import validator from "validator"
 
-const SignUp = ({ setShowSignUp }) => {
+const SignUp = () => {
   let navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState("")
 
@@ -49,8 +49,7 @@ const SignUp = ({ setShowSignUp }) => {
       const payload = await SignUpUser(formValues)
       if (payload) {
         setFormValues(initialState)
-        setShowSignUp(false)
-        // navigate("/auth/sign-in")
+        navigate("/sign-in")
       }
     } catch (error) {
       setErrorMessage(error.message)
@@ -58,7 +57,7 @@ const SignUp = ({ setShowSignUp }) => {
   }
 
   return (
-    <div className="wrapper">
+    <div className="wrapper" style= {{padding:"1rem"}}>
       <h1 className="form-title">Sign Up</h1>
       <div className="signUp-form">
         <form onSubmit={handleSubmit} className="sign-up">
@@ -163,13 +162,12 @@ const SignUp = ({ setShowSignUp }) => {
             Sign Up
           </button>
           <p id="switch">
-            Already have an account?{" "}
             <button
               type="button"
               className="switch"
-              onClick={() => setShowSignUp(false)}
+              onClick={() => navigate("/sign-in")}
             >
-              Sign In
+             Already have an Account? Sign In
             </button>
           </p>
         </form>

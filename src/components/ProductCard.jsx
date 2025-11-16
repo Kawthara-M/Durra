@@ -58,80 +58,109 @@ const ProductCard = ({
     let newItem = {}
 
     if (type === "jewelry") {
-      price = getJewelryPrice()
+      price = Number(getJewelryPrice())
       newItem = {
         item: item._id,
         itemModel: "Jewelry",
         quantity: 1,
         totalPrice: price,
-        notes: "",
       }
     } else if (type === "collection") {
-      price = collectionPrice
+      price = Number(collectionPrice)
       newItem = {
         item: item._id,
         itemModel: "Collection",
         quantity: 1,
         totalPrice: price,
-        notes: "",
       }
     } else if (type === "service") {
-      console.log(item.price)
-      price = item.price
+      price = Number(item.price || 0)
       newItem = {
         service: item._id,
         jewelry: [],
-        totalPrice: item.price,
-        notes: "",
+        totalPrice: price,
       }
     }
 
     try {
-      let finalOrderId = currentOrderId
+      let updatedJewelryOrder = [...(currentOrder?.jewelryOrder || [])]
+      let updatedServiceOrder = [...(currentOrder?.serviceOrder || [])]
+
+      if (type === "jewelry" || type === "collection") {
+        const existingIndex = updatedJewelryOrder.findIndex(
+          (i) => i.item === newItem.item && i.itemModel === newItem.itemModel
+        )
+
+        if (existingIndex !== -1) {
+          const existing = updatedJewelryOrder[existingIndex]
+          updatedJewelryOrder[existingIndex] = {
+            ...existing,
+            quantity: (existing.quantity || 0) + newItem.quantity,
+            totalPrice:
+              Number(existing.totalPrice || 0) +
+              Number(newItem.totalPrice || 0),
+          }
+        } else {
+          updatedJewelryOrder.push(newItem)
+        }
+      } else if (type === "service") {
+        const existingServiceIndex = updatedServiceOrder.findIndex(
+          (s) => s.service === newItem.service
+        )
+
+        if (existingServiceIndex !== -1) {
+          const existing = updatedServiceOrder[existingServiceIndex]
+          updatedServiceOrder[existingServiceIndex] = {
+            ...existing,
+            totalPrice:
+              Number(existing.totalPrice || 0) +
+              Number(newItem.totalPrice || 0),
+          }
+        } else {
+          updatedServiceOrder.push(newItem)
+        }
+      }
 
       if (!currentOrderId) {
-        const payload =
-          type === "service"
-            ? {
-                jewelryOrder: [],
-                serviceOrder: [newItem],
-                totalPrice: price,
-                collectionMethod: "delivery",
-              }
-            : {
-                jewelryOrder: [newItem],
-                serviceOrder: [],
-                totalPrice: price,
-                collectionMethod: "delivery",
-              }
+        const payload = {
+          jewelryOrder: updatedJewelryOrder,
+          serviceOrder: updatedServiceOrder,
+          totalPrice:
+            updatedJewelryOrder.reduce(
+              (a, i) => a + Number(i.totalPrice || 0),
+              0
+            ) +
+            updatedServiceOrder.reduce(
+              (a, i) => a + Number(i.totalPrice || 0),
+              0
+            ),
+          collectionMethod: "delivery",
+          notes: "",
+        }
 
-        const res = await createOrder(payload)
-        finalOrderId = res._id || res.data?.order?._id
+        const createdOrder = await createOrder(payload) 
+        const finalOrderId = createdOrder._id
         setOrderId(finalOrderId)
 
         if (type === "service") addServiceToOrder(newItem)
         else addJewelryToOrder(newItem)
+
         return
       }
 
-      let updatedJewelryOrder = [...currentOrder.jewelryOrder]
-      let updatedServiceOrder = [...currentOrder.serviceOrder]
-
       if (type === "service") {
-        updatedServiceOrder.push(newItem)
+        await updateOrder(currentOrderId, {
+          serviceOrder: updatedServiceOrder,
+        })
+        addServiceToOrder(newItem)
       } else {
-        updatedJewelryOrder.push(newItem)
+        await updateOrder(currentOrderId, {
+          jewelryOrder: updatedJewelryOrder,
+        })
+        addJewelryToOrder(newItem)
       }
-
-      await updateOrder(currentOrderId, {
-        jewelryOrder: updatedJewelryOrder,
-        serviceOrder: updatedServiceOrder,
-      })
-
-      if (type === "service") addServiceToOrder(newItem)
-      else addJewelryToOrder(newItem)
     } catch (err) {
-      console.log(err)
+      console.error(err)
     }
   }
 
@@ -204,47 +233,48 @@ const ProductCard = ({
         />
         {showActions && (
           <>
-          <div className="add-actions">
-            <h6
-              className={!user ? "disabled-link" : null}
-              title={!user ? "Sign in to add to Cart" : "Add to Cart"}
-              onClick={(e) => {
-                if (!user) return
+            <div className="add-actions">
+              <h6
+                className={!user ? "disabled-link" : null}
+                title={!user ? "Sign in to add to Cart" : "Add to Cart"}
+                onClick={(e) => {
+                  if (!user) return
 
-                e.preventDefault()
-                e.stopPropagation()
+                  e.preventDefault()
+                  e.stopPropagation()
 
-                handleAdd()
-              }}
-            >
-              Add to Cart
-            </h6>
+                  handleAdd()
+                }}
+              >
+                Add to Cart
+              </h6>
 
-            <h6
-              className={!user ? "disabled-link" : null}
-              title={
-                !user
-                  ? "Sign in to manage Wishlist"
-                  : inWishlistPage
-                  ? "Remove from Wishlist"
-                  : "Add to Wishlist"
-              }
-              onClick={(e) => {
-                if (!user) return
-
-                e.preventDefault()
-                e.stopPropagation()
-
-                handleWishlist()
-
-                if (inWishlistPage && typeof onRemove === "function") {
-                  onRemove(item._id)
+              <h6
+                className={!user ? "disabled-link" : null}
+                title={
+                  !user
+                    ? "Sign in to manage Wishlist"
+                    : inWishlistPage
+                    ? "Remove from Wishlist"
+                    : "Add to Wishlist"
                 }
-              }}
-            >
-              {inWishlistPage ? "Remove" : "Wishlist"}
-            </h6>
-          </div></>
+                onClick={(e) => {
+                  if (!user) return
+
+                  e.preventDefault()
+                  e.stopPropagation()
+
+                  handleWishlist()
+
+                  if (inWishlistPage && typeof onRemove === "function") {
+                    onRemove(item._id)
+                  }
+                }}
+              >
+                {inWishlistPage ? "Remove" : "Wishlist"}
+              </h6>
+            </div>
+          </>
         )}
       </div>
 

@@ -14,18 +14,39 @@ export const OrderProvider = ({ children }) => {
     setOrder((prev) => ({ ...prev, orderId: id }))
   }
 
-  const addJewelryToOrder = ({ item, itemModel, quantity, totalPrice, shop }) => {
+  const setFullOrder = (pending) => {
+    setOrder({
+      orderId: pending._id,
+      jewelryOrder: pending.jewelryOrder || [],
+      serviceOrder: pending.serviceOrder || [],
+      notes: pending.notes || "",
+    })
+  }
+
+  const addJewelryToOrder = ({
+    item,
+    itemModel,
+    quantity,
+    totalPrice,
+    shop,
+  }) => {
     setOrder((prev) => ({
       ...prev,
       shop,
-      jewelryOrder: [...prev.jewelryOrder, { item, itemModel, quantity, totalPrice }],
+      jewelryOrder: [
+        ...prev.jewelryOrder,
+        { item, itemModel, quantity, totalPrice },
+      ],
     }))
   }
 
   const addServiceToOrder = ({ service, price, jewelry }) => {
     setOrder((prev) => ({
       ...prev,
-      serviceOrder: [...prev.serviceOrder, { service, totalPrice: price, jewelry }],
+      serviceOrder: [
+        ...prev.serviceOrder,
+        { service, totalPrice: price, jewelry },
+      ],
     }))
   }
 
@@ -34,7 +55,16 @@ export const OrderProvider = ({ children }) => {
   }
 
   return (
-    <OrderContext.Provider value={{ order, setOrderId, addJewelryToOrder, addServiceToOrder, resetOrder }}>
+    <OrderContext.Provider
+      value={{
+        order,
+        setOrderId,
+        setFullOrder,
+        addJewelryToOrder,
+        addServiceToOrder,
+        resetOrder,
+      }}
+    >
       {children}
     </OrderContext.Provider>
   )

@@ -69,6 +69,12 @@
   height: 100%;
 }
 
+.orders-view {
+  display: flex;
+  flex-direction: column;
+  gap:.5rem;
+}
+
 .account-information textarea {
   width: 100%;
 }

@@ -1,12 +1,12 @@
 .terms-checkbox {
+  padding-left: .5rem;
   display: flex;
   align-items: center;
-  gap:0;
-
+  gap: .5rem;
 }
 .terms-checkbox input[type="checkbox"] {
   height: 10%;
-  width:10%;
+  width: fit-content;
   margin: auto 0;
 }
 

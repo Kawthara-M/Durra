@@ -12,13 +12,7 @@ import "../../public/stylesheets/checkout.css"
 
 const Checkout = () => {
   const { user } = useUser()
-  const {
-    order,
-    setOrderId,
-    addJewelryToOrder,
-    addServiceToOrder,
-    resetOrder,
-  } = useOrder()
+  const { order, setFullOrder, setOrderId, resetOrder } = useOrder()
   const orderId = order?.orderId
   const navigate = useNavigate()
 
@@ -45,7 +39,7 @@ const Checkout = () => {
     coordinates: [],
   })
   const [showMap, setShowMap] = useState(false)
-  const { waiting, waitForJeweler } = useOrderWait()
+  const { waiting, waitForJeweler, cancelWait } = useOrderWait()
 
   const fetchProfile = async () => {
     try {
@@ -82,26 +76,7 @@ const Checkout = () => {
       try {
         const pending = await getPendingOrder()
         if (pending) {
-          setOrderId(pending._id)
-
-          pending.jewelryOrder.forEach((item) => {
-            addJewelryToOrder({
-              item: item.item._id,
-              itemModel: item.itemModel,
-              quantity: item.quantity,
-              totalPrice: item.totalPrice,
-              shop: pending.shop,
-            })
-          })
-
-          pending.serviceOrder.forEach((service) => {
-            addServiceToOrder({
-              service: service.service._id,
-              price: service.totalPrice,
-              jewelry: service.jewelry.map((j) => j._id),
-            })
-          })
-
+          setFullOrder(pending)
           setSubtotal(pending.totalPrice || 0)
           if (pending.shop) await fetchShop(pending.shop._id)
         }
@@ -116,6 +91,24 @@ const Checkout = () => {
     }
     init()
   }, [user])
+
+  useEffect(() => {
+    if (!orderId) return
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await User.get(`/orders/${orderId}`)
+        if (res.data.order.status !== "submitted") {
+          setWaitingForJeweler(false)
+          localStorage.removeItem("submittedOrder")
+        }
+      } catch (err) {
+        console.error("Failed to fetch order status:", err)
+      }
+    }, 10000) 
+
+    return () => clearInterval(interval)
+  }, [orderId])
 
   const vat = subtotal * vatRate
   const deliveryFee = deliveryMethod === "pickup" ? 0 : flatRate
@@ -196,13 +189,24 @@ const Checkout = () => {
           ? shop?.user?.defaultAddress
           : selectedAddress
 
+      const cleanedJewelryOrder = []
+      const seen = new Set()
+
+      for (const item of order.jewelryOrder || []) {
+        const key = `${item.item}-${item.itemModel}`
+        if (!seen.has(key)) {
+          seen.add(key)
+          cleanedJewelryOrder.push(item)
+        }
+      }
+
       const body = {
         collectionMethod:
           deliveryMethod === "pickup" ? "at-shop-collection" : "delivery",
         paymentMethod,
         address: addressToUse,
         totalPrice: total,
-        jewelryOrder: order.jewelryOrder,
+        jewelryOrder: cleanedJewelryOrder, // ← FIXED
         serviceOrder: order.serviceOrder.map((s) => ({
           ...s,
           jewelry: s.jewelry.map((j) => ({
@@ -221,6 +225,14 @@ const Checkout = () => {
         status: "submitted",
       })
 
+      localStorage.setItem(
+        "submittedOrder",
+        JSON.stringify({
+          orderId: idToUse,
+          status: "submitted",
+        })
+      )
+
       waitForJeweler(idToUse)
     } catch (err) {
       console.error("Failed to place order:", err)
@@ -237,10 +249,10 @@ const Checkout = () => {
 
   return (
     <div className="checkout-wrapper" style={{ position: "relative" }}>
-    <div className="checkout-page">
-      <div>
-        <h2>Checkout</h2>
-        {/* <button
+      <div className="checkout-page">
+        <div>
+          <h2>Checkout</h2>
+          {/* <button
           onClick={() => {
             navigate("/cart")
           }}
@@ -248,341 +260,346 @@ const Checkout = () => {
         >
           ←   Cart
         </button> */}
-      </div>
+        </div>
 
-      <div className="checkout-details">
-        <div className="checkout-left">
-          <section className="checkout-section">
-            <h3>Contact Information</h3>
-            <div className="contact-row">
-              <div className="email-field">
-                <label>Email</label>
-                <input
-                  type="email"
-                  value={user?.email || ""}
-                  readOnly
-                  className="readonly-input"
-                />
-              </div>
-              <div className="phone-field">
-                <label>Phone</label>
-                <input
-                  type="tel"
-                  value={fullUser?.phone || ""}
-                  readOnly
-                  className="readonly-input"
-                />
-              </div>
-            </div>
-          </section>
-
-          <section className="checkout-section">
-            <h3>Delivery Method</h3>
-            <div className="delivery-toggle">
-              <button
-                className={deliveryMethod === "delivery" ? "selected" : ""}
-                onClick={() => setDeliveryMethod("delivery")}
-              >
-                Delivery
-              </button>
-              <button
-                className={deliveryMethod === "pickup" ? "selected" : ""}
-                onClick={() => setDeliveryMethod("pickup")}
-              >
-                Pickup
-              </button>
-            </div>
-
-            {deliveryMethod === "pickup" && shop && (
-              <div className="pickup-info">
-                <p>
-                  <strong>Pickup From:</strong>
-                </p>
-                <p>{shop.name}</p>
-                <p>
-                  {formatAddress(shop.user?.defaultAddress) ||
-                    "Shop address unavailable"}
-                </p>
-              </div>
-            )}
-          </section>
-
-          {deliveryMethod === "delivery" && (
+        <div className="checkout-details">
+          <div className="checkout-left">
             <section className="checkout-section">
-              <h3>Delivery Address</h3>
-              <span className="checkout-address-span">
-                {addresses.length > 0 ? (
-                  <>
-                    <div className="checkout-address-span-select">
-                      <label className="customer-select-address">
-                        Select Address
-                      </label>
-                      <select
-                        value={selectedAddress}
-                        onChange={(e) => setSelectedAddress(e.target.value)}
-                        className="customer-select-address"
-                      >
-                        {addresses.map((addr) => (
-                          <option key={addr._id} value={addr._id}>
-                            {addr.name ? `${addr.name} - ` : ""}
-                            {formatAddress(addr)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </>
-                ) : (
-                  <p>No saved addresses yet.</p>
-                )}
-                <div className="checkout-new-address-div">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddressForm(!showAddressForm)}
-                    className={`checkout-add-new-address ${
-                      showAddressForm ? "selected-btn" : ""
-                    }`}
-                  >
-                    New Address
-                  </button>
-                </div>
-              </span>
-              {showAddressForm && (
-                <form
-                  onSubmit={handleAddAddress}
-                  className="checkout-address-form"
-                >
-                  <label htmlFor="name">Address Name</label>
+              <h3>Contact Information</h3>
+              <div className="contact-row">
+                <div className="email-field">
+                  <label>Email</label>
                   <input
-                    type="text"
-                    name="name"
-                    placeholder="Address Name (e.g., Home)"
-                    value={newAddress.name}
-                    onChange={(e) =>
-                      setNewAddress({ ...newAddress, name: e.target.value })
-                    }
+                    type="email"
+                    value={user?.email || ""}
+                    readOnly
+                    className="readonly-input"
                   />
-                  <div className="address-row">
-                    <select
-                      value={newAddress.governorate}
-                      className="customer-select-address"
-                      onChange={(e) =>
-                        setNewAddress({
-                          ...newAddress,
-                          governorate: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">Select Governorate</option>
-                      <option value="Capital">Capital</option>
-                      <option value="Muharraq">Muharraq</option>
-                      <option value="Northern">Northern</option>
-                      <option value="Southern">Southern</option>
-                    </select>
-                    <input
-                      type="text"
-                      placeholder="Area"
-                      value={newAddress.area}
-                      onChange={(e) =>
-                        setNewAddress({ ...newAddress, area: e.target.value })
-                      }
-                    />
-                  </div>
+                </div>
+                <div className="phone-field">
+                  <label>Phone</label>
+                  <input
+                    type="tel"
+                    value={fullUser?.phone || ""}
+                    readOnly
+                    className="readonly-input"
+                  />
+                </div>
+              </div>
+            </section>
 
-                  <label>Address Details</label>
-                  <div className="address-row">
-                    <input
-                      type="text"
-                      name="road"
-                      placeholder="Road No."
-                      value={newAddress.road}
-                      onChange={(e) =>
-                        setNewAddress({ ...newAddress, road: e.target.value })
-                      }
-                    />
-                    <input
-                      type="text"
-                      name="building"
-                      placeholder="Building"
-                      value={newAddress.building}
-                      onChange={(e) =>
-                        setNewAddress({
-                          ...newAddress,
-                          building: e.target.value,
-                        })
-                      }
-                    />
-                    <input
-                      type="text"
-                      name="house"
-                      placeholder="House / Apartment"
-                      value={newAddress.house}
-                      onChange={(e) =>
-                        setNewAddress({ ...newAddress, house: e.target.value })
-                      }
-                    />
-                  </div>
+            <section className="checkout-section">
+              <h3>Delivery Method</h3>
+              <div className="delivery-toggle">
+                <button
+                  className={deliveryMethod === "delivery" ? "selected" : ""}
+                  onClick={() => setDeliveryMethod("delivery")}
+                >
+                  Delivery
+                </button>
+                <button
+                  className={deliveryMethod === "pickup" ? "selected" : ""}
+                  onClick={() => setDeliveryMethod("pickup")}
+                >
+                  Pickup
+                </button>
+              </div>
 
-                  <div>
-                    <label>Coordinates</label>
-
-                    <div className="address-buttons">
-                      <span className="map-and-coordinates">
-                        <button
-                          type="button"
-                          onClick={() => setShowMap(true)}
-                          className="checkout-map-button"
-                        >
-                          <img src={mapIcon} alt="Map" className="icon" />
-                        </button>
-                        {newAddress.coordinates.length ? (
-                          <span className="coordinates-span form-group">
-                            📍 {newAddress.coordinates[0].toFixed(5)},{" "}
-                            {newAddress.coordinates[1].toFixed(5)}
-                          </span>
-                        ) : null}
-                      </span>
-                      <button type="submit" className="checkout-save-address">
-                        Save Address
-                      </button>
-                    </div>
-                  </div>
-                </form>
+              {deliveryMethod === "pickup" && shop && (
+                <div className="pickup-info">
+                  <p>
+                    <strong>Pickup From:</strong>
+                  </p>
+                  <p>{shop.name}</p>
+                  <p>
+                    {formatAddress(shop.user?.defaultAddress) ||
+                      "Shop address unavailable"}
+                  </p>
+                </div>
               )}
             </section>
-          )}
 
-          <section className="checkout-section">
-            <h3>Payment Method</h3>
-            <div className="option-group" id="payment-group">
-              <span className="payment-option">
-                <input
-                  type="radio"
-                  id="payment-cash"
-                  value="Cash"
-                  checked={paymentMethod === "Cash"}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                />
-                <label htmlFor="payment-cash"> Cash on Delivery</label>
-              </span>
-              <span className="payment-option">
-                <input
-                  type="radio"
-                  id="payment-card"
-                  value="Card"
-                  checked={paymentMethod === "Card"}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                />
-                <label htmlFor="payment-card"> Card Payment</label>
-              </span>
-            </div>
-          </section>
-        </div>
+            {deliveryMethod === "delivery" && (
+              <section className="checkout-section">
+                <h3>Delivery Address</h3>
+                <span className="checkout-address-span">
+                  {addresses.length > 0 ? (
+                    <>
+                      <div className="checkout-address-span-select">
+                        <label className="customer-select-address">
+                          Select Address
+                        </label>
+                        <select
+                          value={selectedAddress}
+                          onChange={(e) => setSelectedAddress(e.target.value)}
+                          className="customer-select-address"
+                        >
+                          {addresses.map((addr) => (
+                            <option key={addr._id} value={addr._id}>
+                              {addr.name ? `${addr.name} - ` : ""}
+                              {formatAddress(addr)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </>
+                  ) : (
+                    <p>No saved addresses yet.</p>
+                  )}
+                  <div className="checkout-new-address-div">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddressForm(!showAddressForm)}
+                      className={`checkout-add-new-address ${
+                        showAddressForm ? "selected-btn" : ""
+                      }`}
+                    >
+                      New Address
+                    </button>
+                  </div>
+                </span>
+                {showAddressForm && (
+                  <form
+                    onSubmit={handleAddAddress}
+                    className="checkout-address-form"
+                  >
+                    <label htmlFor="name">Address Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Address Name (e.g., Home)"
+                      value={newAddress.name}
+                      onChange={(e) =>
+                        setNewAddress({ ...newAddress, name: e.target.value })
+                      }
+                    />
+                    <div className="address-row">
+                      <select
+                        value={newAddress.governorate}
+                        className="customer-select-address"
+                        onChange={(e) =>
+                          setNewAddress({
+                            ...newAddress,
+                            governorate: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="">Select Governorate</option>
+                        <option value="Capital">Capital</option>
+                        <option value="Muharraq">Muharraq</option>
+                        <option value="Northern">Northern</option>
+                        <option value="Southern">Southern</option>
+                      </select>
+                      <input
+                        type="text"
+                        placeholder="Area"
+                        value={newAddress.area}
+                        onChange={(e) =>
+                          setNewAddress({ ...newAddress, area: e.target.value })
+                        }
+                      />
+                    </div>
 
-        <div className="checkout-summary">
-          <h2 className="summary-title">Order Summary</h2>
-          <div className="summary-row">
-            <span>Subtotal</span>
-            <span>{subtotal.toFixed(2)} BHD</span>
+                    <label>Address Details</label>
+                    <div className="address-row">
+                      <input
+                        type="text"
+                        name="road"
+                        placeholder="Road No."
+                        value={newAddress.road}
+                        onChange={(e) =>
+                          setNewAddress({ ...newAddress, road: e.target.value })
+                        }
+                      />
+                      <input
+                        type="text"
+                        name="building"
+                        placeholder="Building"
+                        value={newAddress.building}
+                        onChange={(e) =>
+                          setNewAddress({
+                            ...newAddress,
+                            building: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        type="text"
+                        name="house"
+                        placeholder="House / Apartment"
+                        value={newAddress.house}
+                        onChange={(e) =>
+                          setNewAddress({
+                            ...newAddress,
+                            house: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <label>Coordinates</label>
+
+                      <div className="address-buttons">
+                        <span className="map-and-coordinates">
+                          <button
+                            type="button"
+                            onClick={() => setShowMap(true)}
+                            className="checkout-map-button"
+                          >
+                            <img src={mapIcon} alt="Map" className="icon" />
+                          </button>
+                          {newAddress.coordinates.length ? (
+                            <span className="coordinates-span form-group">
+                              📍 {newAddress.coordinates[0].toFixed(5)},{" "}
+                              {newAddress.coordinates[1].toFixed(5)}
+                            </span>
+                          ) : null}
+                        </span>
+                        <button type="submit" className="checkout-save-address">
+                          Save Address
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                )}
+              </section>
+            )}
+
+            <section className="checkout-section">
+              <h3>Payment Method</h3>
+              <div className="option-group" id="payment-group">
+                <span className="payment-option">
+                  <input
+                    type="radio"
+                    id="payment-cash"
+                    value="Cash"
+                    checked={paymentMethod === "Cash"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />
+                  <label htmlFor="payment-cash"> Cash on Delivery</label>
+                </span>
+                <span className="payment-option">
+                  <input
+                    type="radio"
+                    id="payment-card"
+                    value="Card"
+                    checked={paymentMethod === "Card"}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                  />
+                  <label htmlFor="payment-card"> Card Payment</label>
+                </span>
+              </div>
+            </section>
           </div>
-          <div className="summary-row">
-            <span>VAT (10%)</span>
-            <span>{vat.toFixed(2)} BHD</span>
-          </div>
-          {deliveryMethod === "pickup" ? null : (
+
+          <div className="checkout-summary">
+            <h2 className="summary-title">Order Summary</h2>
             <div className="summary-row">
-              <span>Delivery Fee</span>
-              <span>{deliveryFee.toFixed(2)} BHD</span>
+              <span>Subtotal</span>
+              <span>{subtotal.toFixed(2)} BHD</span>
             </div>
-          )}
-          <hr className="summary-divider" />
-          <div className="summary-total">
-            <span>Total</span>
-            <span>{total.toFixed(3)} BHD</span>
+            <div className="summary-row">
+              <span>VAT (10%)</span>
+              <span>{vat.toFixed(2)} BHD</span>
+            </div>
+            {deliveryMethod === "pickup" ? null : (
+              <div className="summary-row">
+                <span>Delivery Fee</span>
+                <span>{deliveryFee.toFixed(2)} BHD</span>
+              </div>
+            )}
+            <hr className="summary-divider" />
+            <div className="summary-total">
+              <span>Total</span>
+              <span>{total.toFixed(3)} BHD</span>
+            </div>
+
+            <button
+              className="place-order-btn"
+              onClick={() => handlePlaceOrder()}
+              disabled={orderDisabled}
+              title={orderTitle}
+            >
+              Place Order
+            </button>
           </div>
-
-          <button
-            className="place-order-btn"
-            onClick={() => handlePlaceOrder()}
-            disabled={orderDisabled}
-            title={orderTitle}
-          >
-            Place Order
-          </button>
         </div>
-      </div>
 
-      {showMap && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 1000,
-          }}
-        >
+        {showMap && (
           <div
             style={{
-              background: "#fff",
-              padding: "1rem",
-              borderRadius: "8px",
-              width: "80%",
-              maxWidth: "700px",
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1000,
             }}
           >
             <div
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "10px",
-                color: "var(--text-color)",
+                background: "#fff",
+                padding: "1rem",
+                borderRadius: "8px",
+                width: "80%",
+                maxWidth: "700px",
               }}
             >
-              <h3 style={{ margin: 0 }}>Select Address on Map</h3>
-              <button
-                onClick={() => setShowMap(false)}
+              <div
                 style={{
-                  background: "transparent",
-                  border: "none",
-                  fontSize: "1.2rem",
-                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "10px",
                   color: "var(--text-color)",
-                  width: "fit-content",
-                  textAlign: "right",
                 }}
               >
-                ✖
-              </button>
-            </div>
+                <h3 style={{ margin: 0 }}>Select Address on Map</h3>
+                <button
+                  onClick={() => setShowMap(false)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "1.2rem",
+                    cursor: "pointer",
+                    color: "var(--text-color)",
+                    width: "fit-content",
+                    textAlign: "right",
+                  }}
+                >
+                  ✖
+                </button>
+              </div>
 
-            <LocationMap
-              position={
-                Array.isArray(newAddress.coordinates) &&
-                newAddress.coordinates.length === 2
-                  ? newAddress.coordinates
-                  : null
-              }
-              onChange={(coords) =>
-                setNewAddress({ ...newAddress, coordinates: coords })
-              }
-            />
+              <LocationMap
+                position={
+                  Array.isArray(newAddress.coordinates) &&
+                  newAddress.coordinates.length === 2
+                    ? newAddress.coordinates
+                    : null
+                }
+                onChange={(coords) =>
+                  setNewAddress({ ...newAddress, coordinates: coords })
+                }
+              />
+            </div>
           </div>
-        </div>
-      )}
-</div>
+        )}
+      </div>
       {waiting && (
         <div className="waiting-overlay">
           <div className="waiting-box">
             <div className="waiting-loader"></div>
             <h4>Waiting for jeweler’s response...</h4>
             <p>This may take a moment.</p>
+            <button className="cancel-btn" onClick={() => cancelWait(orderId)}>
+              Cancel
+            </button>
           </div>
         </div>
       )}
-    
     </div>
   )
 }

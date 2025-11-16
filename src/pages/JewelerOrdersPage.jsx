@@ -119,12 +119,13 @@ const JewelerOrderPage = () => {
                         ? "Service Order"
                         : "Order"}
                     </h3>
+                    <div>
                     <p>
                       Status: {STATUS_DISPLAY_MAP[order.status] || order.status}
                     </p>
                     <p className="order-date">
                       Placed on: {new Date(order.createdAt).toLocaleDateString()}
-                    </p>
+                    </p></div>
                   </div>
                 </div>
               </Link>

@@ -45,7 +45,7 @@ const CollectionPage = () => {
       if (!collection) return
       try {
         const rates = await fetchMetalRates()
-        setMetalRates(rates) 
+        setMetalRates(rates)
         const price = calculateCollectionPrice(collection, rates)
         if (price !== null) setTotalPrice(price.toFixed(2))
       } catch (err) {
@@ -239,7 +239,7 @@ const CollectionPage = () => {
 
           <div>
             <h3 className="reviews-heading">Reviews</h3>
-            <Reviews collectionId={collectionId} />
+            <Reviews collectionId={collectionId} type="Collection" />
           </div>
         </div>
       )}

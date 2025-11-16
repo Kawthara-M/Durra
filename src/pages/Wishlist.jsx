@@ -76,6 +76,7 @@ const Wishlist = () => {
                   metalRates={metalRates}
                   inWishlistPage
                   onRemove={handleRemoveLocal}
+                  showActions
                 />
               </Link>
             )

@@ -1,24 +1,27 @@
-.authentication-card {
-  width: 28vw;
+.sign-in-container {
+  width: 27vw;
   height: fit-content;
   box-sizing: border-box;
+  margin: 0 auto;
 }
 
-.wrapper {
-  width: 100%;
+.wrapper,
+.registeration-wrapper {
+  position: relative;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
   justify-content: center;
   padding: 1rem;
+  padding-top: 0;
+  z-index: 0;
 }
 
-.sign-in-title {
-  margin-bottom: 1.5rem;
-}
-
+.sign-in-title,
 .form-title {
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .authentication-card form,
@@ -27,20 +30,27 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  opacity: 1;
 }
 
 .sign-in-form input {
   margin-bottom: 0.5rem;
+  font-family: "Playfair", serif;
 }
 
 .forget-password {
   padding-left: 0.3rem;
   margin-bottom: 0.4rem;
+  font-weight: bold;
 }
 
 .sign-in-form .error {
   padding-left: 0.3rem;
   margin-bottom: 0.3rem;
+}
+
+.sign-in-button {
+  margin-top: 0.4rem;
 }
 
 .registeration-form {
@@ -82,19 +92,18 @@
   color: #555;
   pointer-events: none;
   height: 100%;
-  font-family: sans-serif;
+  font-family: "Trebuchet MS", sans-serif;
 }
 
 .phone-input-wrapper input {
   width: 100%;
   padding: 0.6rem 0.6rem 0.6rem 4rem;
-  font-size: 1rem;
   border: 1px solid #bbb;
-  border-radius: 5px;
   box-sizing: border-box;
   height: 2.5rem;
-  line-height: 1.2;
+  font-family: "Trebuchet MS", sans-serif;
 }
+
 .switch {
   background: none;
   border: none;
@@ -142,37 +151,48 @@
   border: 2px solid #b00000 !important;
 }
 
-/* jeweler registeration */
-
-.address-autocomplete-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-.autocomplete-suggestions {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background: white;
-  border: 1px solid #ddd;
-  max-height: 150px;
-  overflow-y: auto;
-  z-index: 10;
-  box-sizing: border-box;
-}
-
-.autocomplete-suggestions li {
-  padding: 10px;
-  cursor: pointer;
-}
-
-.autocomplete-suggestions li:hover {
-  background: #f0f0f0;
-}
-
 .confirm-password {
-  margin-bottom: .5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* resgiteration */
+
+.registeration-wrapper {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: center;
+  padding: 0 !important;
+  overflow-x: hidden;
+
+  overflow-y: auto;
+}
+
+.registeration-wrapper .registeration-form {
+  flex: 1;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.registeration-form div {
+  width: 42vw;
+  margin: 0 auto;
+}
+
+.img-side {
+  width: 43%;
+  background-size: cover;
+  background-position:center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.registeration-form button {
+  margin-top: 0.5rem;
 }
 
 @media (min-width: 1000px) {
@@ -185,28 +205,72 @@
   .registeration-form {
     width: 40vw;
   }
-  .authentication-card {
-    width: 42vw;
+  .sign-in-container {
+    width: 40vw;
+  }
+}
+@media (max-width: 1100px) {
+  .sign-in-container {
+    width: 38vw;
   }
 }
 @media (max-width: 960px) {
-  .authentication-card {
-    width: 45vw;
+  .sign-in-container {
+    width: 43vw;
   }
   .registeration-form {
     width: 50vw;
   }
 }
-@media (max-width: 740px) {
+
+@media (max-width: 900px) {
+  .registeration-form {
+    width: 100% !important;
+    padding: 1.8rem;
+  }
+
+  .registeration-wrapper {
+    flex-direction: column;
+  }
+  .img-side {
+    width: 100% !important;
+    min-height: 80%;
+
+    background-size: contain;
+    background-position: bottom;
+  }
+
+  .registeration-form div {
+    width: 58vw;
+  }
+}
+
+@media (max-width: 800px) {
+  .img-side {
+    height: 80% !important;
+    background-repeat: no-repeat;
+  }
+}
+
+@media (max-width: 700px) {
   .registeration-form {
     width: 60vw;
   }
+  .sign-in-container {
+    width: 58vw;
+  }
+
+  .img-side {
+    min-height: 70vh !important;
+  }
 }
-@media (max-width: 650px) {
-  .authentication-card {
+
+@media (max-width: 600px) {
+  .sign-in-container {
     width: 70vw;
   }
-  .registeration-form {
+
+  .registeration-form div {
     width: 80vw;
   }
 }

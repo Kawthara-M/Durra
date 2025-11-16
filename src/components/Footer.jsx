@@ -10,110 +10,49 @@ const Footer = () => {
   const { user } = useUser()
 
   return (
-    <>
-      <footer>
-        <div className="links">
-          <div className={`container `}>
-            <h6>General</h6>
-            <div
-              className={`options ${user?.role === "Jeweler" ? "row" : null}`}
-            >
-              <p
-                onClick={() => {
-                  navigate("/about")
-                }}
-              >
-                About Us
-              </p>
-              <p
-                onClick={() => {
-                  navigate("/live-prices")
-                }}
-              >
-                Live Prices
-              </p>
-              {!user ? (
-                <p
-                  onClick={() => {
-                    navigate("/registeration")
-                  }}
-                >
-                  Join as a Jeweler
-                </p>
-              ) : null}
-            </div>
-          </div>
-          <div className={`container `}>
-            <h6>Legal</h6>
-            <div
-              className={`options ${user?.role === "Jeweler" ? "row" : null}`}
-            >
-              <p>Privacy Policy</p>
-              <p
-                onClick={() => {
-                  navigate("/terms-and-conditions")
-                }}
-              >
-                Terms and Conditions
-              </p>
-            </div>
-          </div>
+    <footer>
+      <div className="footer-container">
+        <div className="logo-container">
+          <h1 className="brand-logo" onClick={() => navigate("/")}>
+            DURRA
+          </h1>
+        </div>
 
-          {user ? (
-            user.role === "Customer" ? (
+        <div className="row1">
+          <div className="container">
+            <h6 onClick={() => navigate("/about")}>About Us</h6>
+          </div>
+          <div className="container">
+            <h6 onClick={() => navigate("/live-prices")}>Live Prices</h6>
+          </div>
+          {user?.role !== "Jeweler" && (
+            <>
               <div className="container">
-                <h6>Customer Service</h6>
-                <div className="options">
-                  <p>Delivery</p>
-                  <p
-                    onClick={() => {
-                      navigate("/SizeGuide")
-                    }}
-                  >
-                    Size Guide
-                  </p>
-                </div>
+                <h6 onClick={() => navigate("/sizeGuide")}>Size Guide</h6>
               </div>
-            ) : null
-          ) : (
-            <div className="container">
-              <h6>Customer Service</h6>
-              <div className="options">
-                <p>Delivery</p>
-                <p
-                  onClick={() => {
-                    navigate("/SizeGuide")
-                  }}
-                >
-                  Size Guide
-                </p>
+              <div className="container">
+                <h6 onClick={() => navigate("/registeration")}>
+                  Join as a Jeweler
+                </h6>
               </div>
-            </div>
+            </>
           )}
 
-          <div className={`container `}>
-            <h6>Social Media</h6>
-          <Link
-            to={`/social-media/instagram`} // replace with insta link
-            className="icon-btn"
-            title="Durra Instagram"
-          >
-            <img src={instaIcon} alt="Instagram icon" className="icon" />
-          </Link>
+          <div className="container">
+            <h6>Privacy Policy</h6>
           </div>
+          <div className="container">
+            <h6>Terms and Conditions</h6>
+          </div>
+          {!user && (
+            <div className="container">
+              <h6 onClick={() => navigate("/sign-in")}>Sign In</h6>
+            </div>
+          )}
         </div>
-        {/* <div className="social-media">
-          <Link
-            to={`/social-media/instagram`} // replace with insta link
-            className="icon-btn"
-            title="Durra Instagram"
-          >
-            <img src={instaIcon} alt="Instagram icon" className="icon" />
-          </Link>
-        </div> */}
-        <p id="durra">© 2025 DURRA</p>
-      </footer>
-    </>
+      </div>
+    </footer>
   )
 }
+
 export default Footer

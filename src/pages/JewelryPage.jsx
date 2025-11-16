@@ -2,7 +2,6 @@ import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 
 import Reviews from "../components/Reviews"
-import FeedbackModal from "../components/FeedbackModal"
 
 import imageSlider from "../services/imageSliders"
 import heartIcon from "../assets/heart.png"
@@ -163,6 +162,14 @@ const JewelryPage = () => {
     }
   }
 
+  const formatCertificationName = (name) => {
+    if (!name) return ""
+    if (name.toUpperCase() === "GIA") {
+      return "Gemological Institute of America (GIA)"
+    }
+    return name
+  }
+
   return (
     <>
       {jewelry && (
@@ -194,6 +201,17 @@ const JewelryPage = () => {
                 <h2 className="service-description">Description</h2>
                 <p id="jeweler-service-description">{jewelry.description}</p>
 
+                <div className="jewelry-certifications">
+                  <h3>Certified By</h3>
+                  {jewelry.certifications?.length > 0 && (
+                    <p>
+                      {jewelry.certifications
+                        .map((c) => formatCertificationName(c.name))
+                        .join(", ")}
+                    </p>
+                  )}
+                </div>
+
                 <div className="jeweler-service-details">
                   <h3 className="service-price">Price</h3>
                   <p id="jewelry-price">{totalPrice.toFixed(2)} BHD</p>
@@ -223,9 +241,7 @@ const JewelryPage = () => {
                       src={heartIcon}
                       alt="Wishlist"
                       title={
-                        user
-                          ? ( "Add to Wishlist")
-                          : "Sign in to Add to Wishlist"
+                        user ? "Add to Wishlist" : "Sign in to Add to Wishlist"
                       }
                       className="icon"
                       onClick={user && handleWishlist}
@@ -325,7 +341,8 @@ const JewelryPage = () => {
                     <ul className="list-details">
                       {jewelry.certifications.map((m, index) => (
                         <li key={index}>
-                          {m.name} - {m.reportNumber} - {m.reportDate}
+                          {formatCertificationName(m.name)}: report {m.reportNumber} issued on {" "}
+                          {m.reportDate}
                         </li>
                       ))}
                     </ul>
@@ -336,9 +353,10 @@ const JewelryPage = () => {
           </div>
 
           {/* Reviews */}
+          {/* I should add this to Service page as well + collection */}
           <div>
             <h3 className="reviews-heading">Reviews</h3>
-            <Reviews jewelryId={jewelryId} />
+            <Reviews jewelryId={jewelryId} type= "Jewelry" />
           </div>
         </div>
       )}
