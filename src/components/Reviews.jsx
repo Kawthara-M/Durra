@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react"
 import User from "../services/api"
-import SingleReview from "./SingleReview"
 import { useUser } from "../context/UserContext"
-
+import SingleReview from "./SingleReview"
 import "../../public/stylesheets/reviews.css"
 
-const Reviews = ({ jewelryId, serviceId, collectionId, type }) => {
+const Reviews = ({
+  reviewedItemId,
+  reviewedItemType = "Jewelry",
+  readOnly = false,
+}) => {
   const { user } = useUser()
-
-  const reviewedItemType = type 
-  const reviewedItemId = jewelryId || serviceId || collectionId
+  console.log(user)
+  const userId = user?.id
 
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
@@ -17,8 +19,6 @@ const Reviews = ({ jewelryId, serviceId, collectionId, type }) => {
   const [comment, setComment] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [canReview, setCanReview] = useState(false)
-
-  const userId = user?._id || user?.id
 
   useEffect(() => {
     if (!reviewedItemId || !reviewedItemType) return
@@ -43,65 +43,49 @@ const Reviews = ({ jewelryId, serviceId, collectionId, type }) => {
   }, [reviewedItemId, reviewedItemType])
 
   useEffect(() => {
-    const checkEligibility = async () => {
-      if (!userId) return setCanReview(false)
+    if (readOnly || !userId || !reviewedItemId || !reviewedItemType) {
+      console.log(userId)
+      setCanReview(false)
+      return
+    }
 
+    const checkEligibility = async () => {
       try {
+        console.log(" we are here")
         const res = await User.get(
           `/reviews/can-review/${reviewedItemType}/${reviewedItemId}`
         )
-        setCanReview(res.data.canReview)
+        setCanReview(!!res.data.canReview)
       } catch (err) {
-        console.error("Eligibility check failed:", err)
+        console.error("Failed to check review eligibility:", err)
         setCanReview(false)
       }
     }
 
     checkEligibility()
-  }, [userId, reviewedItemId])
+  }, [readOnly, userId, reviewedItemId, reviewedItemType])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!user) {
-      setError("Please sign in to leave a review.")
-      return
-    }
-    if (!comment.trim()) {
-      setError("Comment cannot be empty.")
-      return
-    }
+    if (!user || readOnly || !canReview || !comment.trim()) return
 
     setSubmitting(true)
     setError("")
-
     try {
-      const body = {
+      const res = await User.post("/reviews", {
         reviewedItem: reviewedItemId,
         reviewedItemType,
         comment: comment.trim(),
-      }
+      })
 
-      const res = await User.post("/reviews", body)
       const newReview = res.data.review
-
-      setReviews((prev) => [
-        {
-          ...newReview,
-          user: {
-            fName: user.fName,
-            lName: user.lName,
-            email: user.email,
-            _id: userId,
-          },
-        },
-        ...prev,
-      ])
+      setReviews((prev) => [newReview, ...prev])
       setComment("")
     } catch (err) {
       console.error("Failed to create review:", err)
       const msg =
         err.response?.data?.error ||
-        "Failed to post review. You may need to have ordered and collected this item."
+        "Failed to submit review. Please try again."
       setError(msg)
     } finally {
       setSubmitting(false)
@@ -109,7 +93,6 @@ const Reviews = ({ jewelryId, serviceId, collectionId, type }) => {
   }
 
   const handleDelete = async (reviewId) => {
-    if (!user) return
     try {
       await User.delete(`/reviews/${reviewId}`)
       setReviews((prev) => prev.filter((r) => r._id !== reviewId))
@@ -119,44 +102,34 @@ const Reviews = ({ jewelryId, serviceId, collectionId, type }) => {
     }
   }
 
-  const handleUpdate = async (reviewId, newComment, done) => {
-    if (!user) return
-    if (!newComment.trim()) return
-
+  const handleUpdate = async (reviewId, newComment) => {
     try {
       const res = await User.put(`/reviews/${reviewId}`, {
-        comment: newComment.trim(),
+        comment: newComment,
       })
       const updated = res.data.review
-      setReviews((prev) =>
-        prev.map((r) =>
-          r._id === reviewId ? { ...r, comment: updated.comment } : r
-        )
-      )
-      done && done()
+
+      setReviews((prev) => prev.map((r) => (r._id === reviewId ? updated : r)))
     } catch (err) {
       console.error("Failed to update review:", err)
       setError("Failed to update review.")
     }
   }
 
-  if (!reviewedItemId) return null
-
   return (
     <div className="reviews-wrapper">
       <div className="reviews-list">
         {loading ? (
-          <p>Loading reviews...</p>
+          <p>Loading reviews . . .</p>
         ) : reviews.length === 0 ? (
           <p>No reviews yet.</p>
         ) : (
           <>
-            <h4>What others say</h4>
             {reviews.map((review) => (
               <SingleReview
                 key={review._id}
                 review={review}
-                canEdit={userId && review.user?._id === userId}
+                canEdit={!!userId && review.user?._id === userId && !readOnly}
                 onDelete={() => handleDelete(review._id)}
                 onUpdate={handleUpdate}
               />
@@ -165,33 +138,35 @@ const Reviews = ({ jewelryId, serviceId, collectionId, type }) => {
         )}
       </div>
 
-      <div className="reviews-form">
-        <h4>Leave a Review</h4>
-        {!user && (
-          <p className="reviews-hint">
-            Sign in and make sure you have ordered and collected this item to
-            leave a review.
-          </p>
-        )}
+      {!readOnly && (
+        <div className="reviews-form">
+          <h4>Leave a Review</h4>
 
-        <form onSubmit={handleSubmit}>
-          <textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder={
-              canReview
-                ? "Write your review…"
-                : "You can only review items you have purchased and received."
-            }
-            disabled={!canReview}
-            className={!canReview ? "textarea-disabled" : ""}
-          />
           {error && <p className="reviews-error">{error}</p>}
-          <button type="submit" disabled={!user || submitting}>
-            {submitting ? "Submitting..." : "Submit"}
-          </button>
-        </form>
-      </div>
+
+          <form onSubmit={handleSubmit}>
+            <textarea
+              rows="4"
+              placeholder={
+                !user
+                  ? "Sign in to leave a review."
+                  : canReview
+                  ? "Share your experience..."
+                  : "You can only review items you have purchased and collected."
+              }
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              disabled={!user || !canReview || submitting}
+            />
+            <button
+              type="submit"
+              disabled={!user || !canReview || submitting || !comment.trim()}
+            >
+              {submitting ? "Submitting..." : "Submit Review"}
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   )
 }

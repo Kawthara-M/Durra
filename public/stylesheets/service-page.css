@@ -29,7 +29,6 @@
   position: relative;
 }
 
-
 .service-images {
   flex: 1;
   min-width: 400px;
@@ -128,7 +127,7 @@
 }
 
 .service-information {
-  gap:1rem;
+  gap: 1rem;
 }
 
 .service-information h2 {
@@ -160,7 +159,7 @@
 .jeweler-service-details h3 {
   font-size: 1.4rem;
   font-weight: 600;
-  color: var(--accent-color);
+  color: var(--text-color);
 }
 
 .price {
@@ -211,7 +210,9 @@
   .service-page-content {
     flex-direction: column !important;
     align-items: center;
+    justify-content: flex-start !important;
     gap: 3rem;
+    height: fit-content !important;
   }
 
   .service-images {
@@ -224,6 +225,11 @@
 
   .service-information {
     width: 100%;
+  }
+
+  .service-page .service-information {
+    flex: none;
+    height: fit-content !important;
   }
 
   .left-arrow,

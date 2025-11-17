@@ -133,7 +133,7 @@ img.icon {
 
 /* icon buttons styling */
 .icon-btn {
-  background: none;
+  background: transparent !important;
   border: none;
   cursor: pointer;
 }
@@ -173,7 +173,8 @@ input {
   font-family: "Playfair", serif;
 }
 
-input[type="radio"], input[type="checkbox"] {
+input[type="radio"],
+input[type="checkbox"] {
   accent-color: var(--accent-color);
 }
 
@@ -208,9 +209,10 @@ textarea {
   /* display: block; */
 }
 
-.disabled {
-  opacity: 0.9;
-  cursor: not-allowed;
+.disabled,
+button[type="submit"]:disabled {
+  opacity: 0.8;
+  cursor: not-allowed !important;
 }
 
 .none {

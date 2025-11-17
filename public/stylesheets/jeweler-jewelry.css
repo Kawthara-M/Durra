@@ -61,5 +61,6 @@
   .jewelry-overview-wrapper {
     flex-direction: row;
     gap: 2rem;
+    margin-bottom: 0;
   }
 }

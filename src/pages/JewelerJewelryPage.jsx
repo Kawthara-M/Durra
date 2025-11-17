@@ -5,9 +5,6 @@ import ProductCard from "../components/ProductCard.jsx"
 import User from "../services/api"
 import {
   fetchMetalRates,
-  calculatePreciousMaterialCost,
-  calculateTotalCost,
-  calculateCollectionPrice,
 } from "../services/calculator.js"
 import "../../public/stylesheets/jeweler-services.css"
 

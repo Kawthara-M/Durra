@@ -189,7 +189,7 @@ const ServicePage = () => {
 
           <div>
             <h3 className="reviews-heading">Reviews</h3>
-            <Reviews serviceId={serviceId} type= "Service" />
+            <Reviews reviewedItemId={serviceId} reviewedItemType="Service" />
           </div>
         </div>
       )}

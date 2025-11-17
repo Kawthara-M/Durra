@@ -88,20 +88,25 @@ const JewelerServicePage = () => {
                   <p className="description">{service.description}</p>
                 </div>
                 <div className="service-details">
-                <div className="jeweler-service-details">
-                  <h3 className="service-limit">Limit Per Order</h3>
-                  <p>{service.limitPerOrder} jewelry</p>
-                </div>
-                <div className="jeweler-service-details">
-                  <h3 className="service-price">Price</h3>
-                  <p >{service.price} BHD</p>
-                </div>
+                  <div className="jeweler-service-details">
+                    <h3 className="service-limit">Limit Per Order</h3>
+                    <p>{service.limitPerOrder} jewelry</p>
+                  </div>
+                  <div className="jeweler-service-details">
+                    <h3 className="service-price">Price</h3>
+                    <p>{service.price.toFixed(2)} BHD</p>
+                  </div>
                 </div>
               </div>
             </div>
             <div className="service-reviews">
-              <h2 className="reviews-heading">Reviews</h2>
-              <Reviews serviceId={serviceId} />
+              <h3 className="reviews-heading">Reviews</h3>
+
+              <Reviews
+                reviewedItemId={serviceId}
+                reviewedItemType="Service"
+                readOnly={true}
+              />
             </div>
           </div>
 

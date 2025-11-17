@@ -341,8 +341,8 @@ const JewelryPage = () => {
                     <ul className="list-details">
                       {jewelry.certifications.map((m, index) => (
                         <li key={index}>
-                          {formatCertificationName(m.name)}: report {m.reportNumber} issued on {" "}
-                          {m.reportDate}
+                          {formatCertificationName(m.name)}: report{" "}
+                          {m.reportNumber} issued on {m.reportDate}
                         </li>
                       ))}
                     </ul>
@@ -352,11 +352,12 @@ const JewelryPage = () => {
             )}
           </div>
 
-          {/* Reviews */}
-          {/* I should add this to Service page as well + collection */}
           <div>
             <h3 className="reviews-heading">Reviews</h3>
-            <Reviews jewelryId={jewelryId} type= "Jewelry" />
+            <Reviews
+              reviewedItemId={jewelryId}
+              reviewedItemType="Jewelry"
+            />
           </div>
         </div>
       )}
