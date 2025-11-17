@@ -239,7 +239,10 @@ const CollectionPage = () => {
 
           <div>
             <h3 className="reviews-heading">Reviews</h3>
-            <Reviews collectionId={collectionId} type="Collection" />
+            <Reviews
+              creviewedItemId={collectionId}
+              reviewedItemType="Collection"
+            />
           </div>
         </div>
       )}

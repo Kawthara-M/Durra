@@ -1,7 +1,7 @@
-import { useParams, Link } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { useState, useEffect } from "react"
 
-import { STATUS_DISPLAY_MAP } from "../services/statusMap"
+import { STATUS_DISPLAY_MAP, PAYMENT_DISPLAY_MAP } from "../services/statusMap"
 import imageSlider from "../services/imageSliders"
 import User from "../services/api"
 
@@ -52,7 +52,8 @@ const JewelerOrderPage = () => {
         _status: raw.status,
         collectionMethod: capitalize(raw.collectionMethod),
         paymentMethod: capitalize(raw.paymentMethod),
-        paymentStatus: capitalize(raw.paymentStatus),
+        paymentStatus:
+          PAYMENT_DISPLAY_MAP[raw.paymentStatus] || raw.paymentStatus,
       }
       const jewelryImages =
         raw.jewelryOrder?.flatMap((i) => i.item?.images[0] || []) || []
@@ -139,10 +140,10 @@ const JewelerOrderPage = () => {
                   {order._status === "processing" && (
                     <div className="update-status">
                       <button onClick={() => updateOrder("pickup")}>
-                        Ready for Pickup
+                        Pickup Ready{" "}
                       </button>
                       <button onClick={() => updateOrder("ready")}>
-                        Ready for Delivery
+                        Delivery Ready
                       </button>
                     </div>
                   )}
@@ -218,22 +219,20 @@ const JewelerOrderPage = () => {
                       {order.jewelryOrder.map((entry) => (
                         <div key={entry._id} className="contents-item">
                           <h5>{entry.item.name}</h5>
-                          <p>Quantity: {entry.quantity || 1}</p>
-                          <p>
-                            Total Price:{" "}
-                            {Number(entry.totalPrice).toLocaleString("en-US", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            })}{" "}
-                            BHD
-                          </p>
-                          <p>Notes: {entry.notes || "-"}</p>
+                          <div className="contents-item-details">
+                            <span>
+                              <h6>Quantity:</h6> <p> {entry.quantity || 1}</p>
+                            </span>
+                            <span>
+                              <h6>Total Price:</h6>
+                              <p>{Number(entry.totalPrice).toFixed(3)} BHD</p>
+                            </span>
+                          </div>
                         </div>
                       ))}
                     </>
                   )}
 
-                  {/* Services details */}
                   {order.serviceOrder?.length > 0 && (
                     <>
                       <h4>Services</h4>
@@ -272,6 +271,12 @@ const JewelerOrderPage = () => {
                         </div>
                       ))}
                     </>
+                  )}
+                  {order.notes && (
+                    <div className="contents-item">
+                      <h5>Notes</h5>
+                      <p>{order.notes}</p>
+                    </div>
                   )}
                 </div>
               )}

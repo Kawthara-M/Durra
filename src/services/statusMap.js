@@ -10,3 +10,8 @@ export const STATUS_DISPLAY_MAP = {
   delivered: "Delivered",
   cancelled: "Cancelled",
 }
+
+export const PAYMENT_DISPLAY_MAP = {
+  "not-paid": "Not Paid",
+  paid: "Paid",
+}

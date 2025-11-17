@@ -73,6 +73,14 @@ const JewelryPiecePage = () => {
       setErrorMessage(message)
     }
   }
+
+  const formatCertificationName = (name) => {
+    if (!name) return ""
+    if (name.toUpperCase() === "GIA") {
+      return "Gemological Institute of America (GIA)"
+    }
+    return name
+  }
   return (
     <>
       {jewelry && (
@@ -205,7 +213,7 @@ const JewelryPiecePage = () => {
                   {jewelry.otherMaterials?.length > 0 && (
                     <div>
                       <p>
-                        <strong>Metals:</strong>
+                        <strong>Other Metals:</strong>
                       </p>
                       <ul className="list-details">
                         {jewelry.otherMaterials.map((m, index) => (
@@ -224,7 +232,8 @@ const JewelryPiecePage = () => {
                       <ul className="list-details">
                         {jewelry.certifications.map((m, index) => (
                           <li key={index}>
-                            {m.name} - {m.reportNumber} - {m.reportDate}
+                            {formatCertificationName(m.name)}: Report{" "}
+                            {m.reportNumber} issued on {m.reportDate}
                           </li>
                         ))}
                       </ul>
@@ -236,7 +245,11 @@ const JewelryPiecePage = () => {
 
             <div className="service-reviews">
               <h3 className="reviews-heading">Reviews</h3>
-              <Reviews jewelryId={jewelryId} />
+              <Reviews
+                reviewedItemId={jewelryId}
+                reviewedItemType="Jewelry"
+                readOnly={true} 
+              />
             </div>
           </div>
 

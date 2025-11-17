@@ -1,6 +1,7 @@
 import { useParams, useNavigate, Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 
+import Reviews from "../components/Reviews"
 import FeedbackModal from "../components/FeedbackModal"
 import imageSlider from "../services/imageSliders"
 import {
@@ -34,6 +35,7 @@ const JewelerCollectionPage = () => {
         const response = await User.get(`/collections/${collectionId}`)
         const fetchedCollection = response.data.collection
         setCollection(fetchedCollection)
+        console.log(response.data.collection)
 
         const metalRates = await fetchMetalRates()
 
@@ -79,7 +81,7 @@ const JewelerCollectionPage = () => {
           <div className="service-page">
             <div className="service-page-content">
               <div className="service-images">
-                {collection.jewelry[0].images.length > 0 && (
+                {collection.images.length > 0 && (
                   <div className="service-image-slider">
                     <button className="left-arrow" onClick={handlePrev}>
                       ←
@@ -115,14 +117,14 @@ const JewelerCollectionPage = () => {
                 <h2 className="service-description">Description</h2>
                 <p className="description">{collection.description}</p>
                 <div className="service-details">
-                <div className="jeweler-service-details">
-                  <h3 className="service-limit">Limit Per Order</h3>
-                  <p>{collection.limitPerOrder} Unit</p>
-                </div>
-                <div className="jeweler-service-details">
-                  <h3 className="service-price">Price</h3>
-                  <p >{totalPrice} BHD</p>
-                </div>
+                  <div className="jeweler-service-details">
+                    <h3 className="service-limit">Limit Per Order</h3>
+                    <p>{collection.limitPerOrder} Unit</p>
+                  </div>
+                  <div className="jeweler-service-details">
+                    <h3 className="service-price">Price</h3>
+                    <p>{totalPrice} BHD</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -143,12 +145,19 @@ const JewelerCollectionPage = () => {
                       <p>
                         <strong>Weight:</strong> {item.totalWeight}g
                       </p>
-
-           
                     </div>
                   </div>
                 ))}
             </div>
+              <div className="service-reviews">
+                <h3 className="reviews-heading">Reviews</h3>
+
+                <Reviews
+                  reviewedItemId={collectionId}
+                  reviewedItemType="Collection"
+                  readOnly={true}
+                />
+              </div>
           </div>
 
           <FeedbackModal
