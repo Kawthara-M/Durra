@@ -28,6 +28,9 @@ const Footer = () => {
           {user?.role !== "Jeweler" && (
             <>
               <div className="container">
+                <h6 onClick={() => navigate("/comparsion")}>Comparsion</h6>
+              </div>
+              <div className="container">
                 <h6 onClick={() => navigate("/sizeGuide")}>Size Guide</h6>
               </div>
               <div className="container">
