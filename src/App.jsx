@@ -21,6 +21,7 @@ import JewelerRegisteration from "./components/JewelerRegisteration"
 import SetPassword from "./components/SetPassword"
 import Search from "./pages/Search"
 import LivePrices from "./pages/LivePrices"
+import ComparsionPage from "./pages/ComparsionPage"
 import SizeGuide from "./pages/SizeGuide"
 import ScrollToTop from "./components/ScrollToTop"
 import TermsAndConditions from "./pages/TermsAndConditions"
@@ -51,6 +52,7 @@ function App() {
             <Route path="/sign-up" element={<SignUp />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/SizeGuide" element={<SizeGuide />} />
+            <Route path="/comparsion" element={<ComparsionPage />} />
             <Route path="/live-prices" element={<LivePrices />} />
             <Route
               path="/terms-and-conditions"

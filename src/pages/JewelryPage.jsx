@@ -2,9 +2,9 @@ import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 
 import Reviews from "../components/Reviews"
+import Comparsion from "../components/Comparsion"
 
 import imageSlider from "../services/imageSliders"
-import heartIcon from "../assets/heart.png"
 import User from "../services/api"
 import {
   fetchMetalRates,
@@ -15,6 +15,8 @@ import { createOrder, updateOrder } from "../services/order"
 import { useUser } from "../context/UserContext"
 import { useOrder } from "../context/OrderContext"
 
+import heartIcon from "../assets/heart.png"
+import comparsionIcon from "../assets/comparsion.png"
 import "../../public/stylesheets/customer-jewelry-page.css"
 
 const JewelryPage = () => {
@@ -28,6 +30,7 @@ const JewelryPage = () => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [metalRates, setMetalRates] = useState()
   const [quantity, setQuantity] = useState(1)
+  const [showComparison, setShowComparison] = useState(false)
 
   const {
     currentIndex: currentImageIndex,
@@ -243,8 +246,20 @@ const JewelryPage = () => {
                       title={
                         user ? "Add to Wishlist" : "Sign in to Add to Wishlist"
                       }
-                      className="icon"
+                      className={`icon ${!user && "disabled"}`}
+                      disabled={!user}
                       onClick={user && handleWishlist}
+                    />
+                    <img
+                      src={comparsionIcon}
+                      alt="Comparsion"
+                      title={
+                        user
+                          ? "Compare with other pieces"
+                          : "Sign in to Compare this piece with other pieces"
+                      }
+                      className={`icon ${!user && "disabled"}`}
+                      onClick={() => setShowComparison(true)}
                     />
                   </span>
                 </div>
@@ -354,11 +369,16 @@ const JewelryPage = () => {
 
           <div>
             <h3 className="reviews-heading">Reviews</h3>
-            <Reviews
-              reviewedItemId={jewelryId}
-              reviewedItemType="Jewelry"
-            />
+            <Reviews reviewedItemId={jewelryId} reviewedItemType="Jewelry" />
           </div>
+
+          {showComparison && (
+            <Comparsion
+              isOverlay
+              currentJewelryId={jewelryId}
+              onClose={() => setShowComparison(false)}
+            />
+          )}
         </div>
       )}
     </>
