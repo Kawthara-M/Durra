@@ -42,22 +42,22 @@ const LivePrices = () => {
     }
   }, [])
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setKarats((prev) => {
-        const updated = {}
-        for (const metal in prev) {
-          const options = karatOptions[metal]
-          const currentIndex = options.indexOf(prev[metal])
-          const nextIndex = (currentIndex + 1) % options.length
-          updated[metal] = options[nextIndex]
-        }
-        return updated
-      })
-    }, 10000)
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setKarats((prev) => {
+  //       const updated = {}
+  //       for (const metal in prev) {
+  //         const options = karatOptions[metal]
+  //         const currentIndex = options.indexOf(prev[metal])
+  //         const nextIndex = (currentIndex + 1) % options.length
+  //         updated[metal] = options[nextIndex]
+  //       }
+  //       return updated
+  //     })
+  //   }, 10000)
 
-    return () => clearInterval(interval)
-  }, [])
+  //   return () => clearInterval(interval)
+  // }, [])
 
   const handleKaratChange = (metal) => {
     setKarats((prev) => {
@@ -79,7 +79,14 @@ const LivePrices = () => {
 
   const handleMetalClick = (metal) => {
     setSelectedMetal(metal)
-    handleKaratChange(metal) 
+    // handleKaratChange(metal)
+  }
+
+  const handleKaratSelectChange = (metal, value) => {
+    setKarats((prev) => ({
+      ...prev,
+      [metal]: value,
+    }))
   }
 
   return (
@@ -91,23 +98,73 @@ const LivePrices = () => {
 
       <div className="precious-metals-prices">
         <div
-          className="silver-prices"
+          className={`metal-card silver-prices ${
+            selectedMetal === "silver" ? "selected" : ""
+          }`}
           onClick={() => handleMetalClick("silver")}
         >
           <h2>Silver</h2>
-          <p>{karats.silver} Karat</p>
+
+          <select
+            className="karat-select"
+            value={karats.silver}
+            onChange={(e) => handleKaratSelectChange("silver", e.target.value)}
+          >
+            {karatOptions.silver.map((k) => (
+              <option key={k} value={k}>
+                {k} Karat
+              </option>
+            ))}
+          </select>
+
           <p>{getPrice("silver")} BHD</p>
         </div>
 
-        <div className="gold-prices" onClick={() => handleMetalClick("gold")}>
+        <div
+          className={`metal-card gold-prices ${
+            selectedMetal === "gold" ? "selected" : ""
+          }`}
+          onClick={() => handleMetalClick("gold")}
+        >
           <h2>Gold</h2>
-          <p>{karats.gold} Karat</p>
+
+          <select
+            className="karat-select"
+            value={karats.gold}
+            onChange={(e) => handleKaratSelectChange("gold", e.target.value)}
+          >
+            {karatOptions.gold.map((k) => (
+              <option key={k} value={k}>
+                {k} Karat
+              </option>
+            ))}
+          </select>
+
           <p>{getPrice("gold")} BHD</p>
         </div>
 
-        <div className="platinium-prices">
+        <div
+          className={`metal-card platinium-prices ${
+            selectedMetal === "platinum" ? "selected" : ""
+          }`}
+          onClick={() => handleMetalClick("platinum")}
+        >
           <h2>Platinium</h2>
-          <p>{karats.platinum} Karat</p>
+
+          <select
+            className="karat-select"
+            value={karats.platinum}
+            onChange={(e) =>
+              handleKaratSelectChange("platinum", e.target.value)
+            }
+          >
+            {karatOptions.platinum.map((k) => (
+              <option key={k} value={k}>
+                {k} Karat
+              </option>
+            ))}
+          </select>
+
           <p>{getPrice("platinum")} BHD</p>
         </div>
       </div>
