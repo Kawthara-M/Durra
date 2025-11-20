@@ -22,32 +22,28 @@ const JewelerServices = () => {
 
   return (
     <div className="jeweler-services">
-      <h1 className="services-heading">Services</h1>
-
+      <div className="jeweler-jewelry-header">
+        <h1 className="jeweler-jewelry-heading">Services</h1>
+        <button
+          type="button"
+          title="Add Service"
+          onClick={() => navigate("/add-services")}
+        >
+          Add Service
+        </button>
+      </div>
       {services?.length === 0 ? (
         <p>No services found.</p>
       ) : (
         <div className="grid">
           {services.map((service) => (
             <Link to={`/show-service/${service._id}`} key={service._id}>
-              <ProductCard
-                item={service}
-                type="service"
-                showActions={false} 
-              />
+              <ProductCard item={service} type="service" showActions={false} />
             </Link>
           ))}
         </div>
       )}
 
-      <button
-        type="button"
-        className="add-to-jewelry-list"
-        title="Add Service"
-        onClick={() => navigate("/add-services")}
-      >
-        +
-      </button>
     </div>
   )
 }

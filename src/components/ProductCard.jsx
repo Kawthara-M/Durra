@@ -59,7 +59,9 @@ const ProductCard = ({
     if (type === "jewelry") return `${getJewelryPrice()} BHD`
     if (type === "service") return `${item.price?.toFixed(2)} BHD`
     if (type === "collection")
-      return collectionPrice !== null ? `${collectionPrice.toFixed(2)} BHD` : "—"
+      return collectionPrice !== null
+        ? `${collectionPrice.toFixed(2)} BHD`
+        : "—"
     return null
   }
   const handleAdd = async () => {
@@ -127,7 +129,7 @@ const ProductCard = ({
       price = Number(item.price || 0)
       newItem = {
         service: item._id,
-        jewelry: [{}], 
+        jewelry: [{}],
         totalPrice: price,
       }
     }
@@ -344,7 +346,13 @@ const ProductCard = ({
   }
 
   const url =
-    type === "collection"
+    user.role === "Jeweler"
+      ? type === "collection"
+        ? `/jeweler-collections/${item._id}`
+        : type === "service"
+        ? `/jeweler-services/${item._id}`
+        : `/jeweler-jewelry/${item._id}`
+      : type === "collection"
       ? `/collections/${item._id}`
       : type === "service"
       ? `/services/${item._id}`

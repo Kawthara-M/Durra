@@ -17,6 +17,35 @@
   color: var(--accent-color);
 }
 
+.jeweler-jewelry-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.jeweler-jewelry-heading {
+  text-align: left;
+  color: var(--accent-color);
+}
+
+.jeweler-jewelry-header button {
+  height: fit-content;
+  width: fit-content;
+  padding: 0.6rem 0.8rem;
+  background-color: transparent;
+  border: 2px solid var(--accent-color);
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+.jeweler-jewelry-header button:hover {
+  background-color: var(--accent-color);
+  color: var(--btn-color);
+  font-weight: normal;
+}
+
 .jeweler-services .grid,
 .jeweler-collections .grid {
   display: grid;
