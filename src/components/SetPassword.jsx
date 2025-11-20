@@ -1,8 +1,12 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import validator from "validator"
 import FeedbackModal from "./FeedbackModal"
 import User from "../services/api"
+
+import "../../public/stylesheets/terms-modal.css"
+import sideImage from "../assets/pearl.jpg"
+import smallImage from "../assets/pearl.jpg"
 
 const SetPassword = () => {
   const navigate = useNavigate()
@@ -18,7 +22,22 @@ const SetPassword = () => {
   const [modalMessage, setModalMessage] = useState("")
   const [modalActions, setModalActions] = useState([])
   const [errorMessage, setErrorMessage] = useState("")
+  const [bgImage, setBgImage] = useState(sideImage)
+
   const token = searchParams.get("token")
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 900px)")
+
+    const handleChange = (e) => {
+      setBgImage(e.matches ? smallImage : sideImage)
+    }
+
+    handleChange(mq)
+    mq.addEventListener("change", handleChange)
+
+    return () => mq.removeEventListener("change", handleChange)
+  }, [])
 
   const validate = (value) => {
     if (
@@ -35,6 +54,7 @@ const SetPassword = () => {
       setErrorMessage("Weak Password!")
     }
   }
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormValues((prev) => ({ ...prev, [name]: value }))
@@ -47,21 +67,23 @@ const SetPassword = () => {
     if (password !== confirmPassword) {
       setModalType("error")
       setModalMessage("Passwords do not match.")
+      setModalActions([])
       setShowModal(true)
       return
     }
+
     try {
       const response = await User.post(`/auth/set-password?token=${token}`, {
         newPassword: formValues.password,
         confirmPassword: formValues.confirmPassword,
       })
+
       setModalType("success")
       setModalMessage(response.data.message || "Password set successfully.")
-
       setModalActions([
         {
           label: "Sign In",
-          onClick: () => navigate("/auth"),
+          onClick: () => navigate("/sign-in"),
         },
         {
           label: "Close",
@@ -81,12 +103,21 @@ const SetPassword = () => {
 
   return (
     <>
-      <div className="wrapper">
-        <h1 className="form-title">Password Setup</h1>
-        <div className="registeration-form">
+      <div className="set-password-wrapper">
+        <div
+          className="img-side"
+          style={{
+            backgroundImage: `url(${bgImage})`,
+          }}
+        ></div>
+
+        <div className="set-password-form">
+          <h1 className="form-title">Password Setup</h1>
+
           <label htmlFor="password">Password</label>
           <input
             type="password"
+            placeholder="Enter Password"
             name="password"
             onChange={(e) => {
               handleChange(e)
@@ -95,15 +126,18 @@ const SetPassword = () => {
             value={formValues.password}
             required
           />
+
           <label htmlFor="confirmPassword">Confirm Password</label>
           <input
             type="password"
+            placeholder="Confirm Password"
             name="confirmPassword"
             onChange={handleChange}
             value={formValues.confirmPassword}
             className="confirm-password"
             required
           />
+
           {errorMessage && <p className="error">{errorMessage}</p>}
 
           <button
@@ -113,11 +147,12 @@ const SetPassword = () => {
               !formValues.confirmPassword ||
               formValues.password !== formValues.confirmPassword
             }
-            onClick={(e) => handleSubmit(e)}
+            onClick={handleSubmit}
           >
             Set Password
           </button>
         </div>
+
         <FeedbackModal
           show={showModal}
           type={modalType}

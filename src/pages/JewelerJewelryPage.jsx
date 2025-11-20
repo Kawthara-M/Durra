@@ -3,9 +3,7 @@ import { useNavigate, Link } from "react-router-dom"
 import ProductCard from "../components/ProductCard.jsx"
 
 import User from "../services/api"
-import {
-  fetchMetalRates,
-} from "../services/calculator.js"
+import { fetchMetalRates } from "../services/calculator.js"
 import "../../public/stylesheets/jeweler-services.css"
 
 const JewelerJewelryPage = () => {
@@ -38,7 +36,16 @@ const JewelerJewelryPage = () => {
 
   return (
     <div className="jeweler-services">
-      <h1 className="services-heading">Jewelry</h1>
+      <div className="jeweler-jewelry-header">
+        <h1 className="jeweler-jewelry-heading">Jewellery</h1>
+        <button
+          type="button"
+          title="Add Jewelry"
+          onClick={() => navigate("/add-jewelry")}
+        >
+          Add Jewellery
+        </button>
+      </div>
 
       {jewelry?.length === 0 ? (
         <p>No Jewelry found.</p>
@@ -50,21 +57,12 @@ const JewelerJewelryPage = () => {
                 item={j}
                 type="jewelry"
                 metalRates={metalRates}
-                showActions={false} 
+                showActions={false}
               />
             </Link>
           ))}
         </div>
       )}
-
-      <button
-        type="button"
-        className="add-to-jewelry-list"
-        title="Add Jewelry"
-        onClick={() => navigate("/add-jewelry")}
-      >
-        +
-      </button>
     </div>
   )
 }

@@ -34,7 +34,16 @@ const JewelerCollectionsPage = () => {
 
   return (
     <div className="jeweler-collections">
-      <h1 className="collections-heading">Jewelry Collections</h1>
+      <div className="jeweler-jewelry-header">
+        <h1 className="jeweler-jewelry-heading">Jewellery Collections</h1>
+        <button
+          type="button"
+          title="Add Collection"
+          onClick={() => navigate("/add-collections")}
+        >
+          Add Collection
+        </button>
+      </div>
 
       {collections?.length === 0 ? (
         <p>No collections found.</p>
@@ -55,15 +64,6 @@ const JewelerCollectionsPage = () => {
           ))}
         </div>
       )}
-
-      <button
-        type="button"
-        className="add-to-jewelry-list"
-        title="Add Collection"
-        onClick={() => navigate("/add-collections")}
-      >
-        +
-      </button>
     </div>
   )
 }
