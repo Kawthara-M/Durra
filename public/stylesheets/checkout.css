@@ -311,7 +311,6 @@ select {
   position: relative;
 }
 
-/* needs update */
 .waiting-overlay {
   position: fixed;
   top: 0;
@@ -323,11 +322,11 @@ select {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  pointer-events: none; /* overlay itself doesn't catch clicks */
+  pointer-events: none;
 }
 
 .waiting-box {
-  pointer-events: all; /* box and buttons are clickable */
+  pointer-events: all;
   background: var(--bg-color);
   padding: 2rem;
   padding-bottom: 1rem;
@@ -336,7 +335,7 @@ select {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: .5rem;
 }
 
 .waiting-loader {
@@ -346,6 +345,10 @@ select {
   border-top: 5px solid #000;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+}
+
+.waiting-box h4, .waiting-box p {
+  text-align: center;
 }
 
 .cancel-btn {
@@ -367,6 +370,8 @@ select {
     transform: rotate(360deg);
   }
 }
+
+
 
 @media (max-width: 1200px) {
   .waiting-box {

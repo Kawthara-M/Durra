@@ -42,23 +42,6 @@ const LivePrices = () => {
     }
   }, [])
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setKarats((prev) => {
-  //       const updated = {}
-  //       for (const metal in prev) {
-  //         const options = karatOptions[metal]
-  //         const currentIndex = options.indexOf(prev[metal])
-  //         const nextIndex = (currentIndex + 1) % options.length
-  //         updated[metal] = options[nextIndex]
-  //       }
-  //       return updated
-  //     })
-  //   }, 10000)
-
-  //   return () => clearInterval(interval)
-  // }, [])
-
   const handleKaratChange = (metal) => {
     setKarats((prev) => {
       const options = karatOptions[metal]
@@ -79,7 +62,6 @@ const LivePrices = () => {
 
   const handleMetalClick = (metal) => {
     setSelectedMetal(metal)
-    // handleKaratChange(metal)
   }
 
   const handleKaratSelectChange = (metal, value) => {

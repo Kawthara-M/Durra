@@ -48,12 +48,14 @@ export const getKaratAdjustedPricePerGram = (
 
 export const calculatePreciousMaterialCost = (materials, metalRates) => {
   if (!materials || !metalRates) return 0
+  console.log(materials)
 
   let total = 0
   for (const mat of materials) {
-    const rate = metalRates[mat.metalType] || 0
+    const rate = metalRates[mat.name?.toLowerCase()] || 0
     total += rate * mat.weight
   }
+  console.log(total)
 
   return total
 }
@@ -66,9 +68,8 @@ export const calculateTotalCost = (
   return parseFloat(preciousMaterialCost) + parseFloat(originCost)
 }
 
-export const calculateCollectionPrice =  (collection, metalRates) => {
+export const calculateCollectionPrice = (collection, metalRates) => {
   if (!metalRates || !collection?.jewelry?.length) return null
-  console.log("metal rates", metalRates)
   let jewelryCostSum = 0
 
   for (const jewel of collection.jewelry) {

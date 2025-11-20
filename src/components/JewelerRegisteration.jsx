@@ -42,7 +42,6 @@ const JewelerRegisteration = () => {
       setBgImage(e.matches ? smallImage : sideImage)
     }
 
-    // run once on mount
     handleChange(mq)
 
     mq.addEventListener("change", handleChange)

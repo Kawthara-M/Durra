@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom"
 
 import Reviews from "../components/Reviews"
 import Comparsion from "../components/Comparsion"
+import FeedbackModal from "../components/FeedbackModal"
 
 import imageSlider from "../services/imageSliders"
 import User from "../services/api"
@@ -23,14 +24,18 @@ const JewelryPage = () => {
   const [jewelry, setJewelry] = useState()
   const { jewelryId } = useParams()
   const { user } = useUser()
-  const { order, addJewelryToOrder, setOrderId } = useOrder()
+  const { order, addJewelryToOrder, setOrderId, setFullOrder, resetOrder } =
+    useOrder()
 
   const [totalPrice, setTotalPrice] = useState(0)
   const [preciousMaterialCost, setPreciousMaterialCost] = useState(0)
   const [isExpanded, setIsExpanded] = useState(false)
   const [metalRates, setMetalRates] = useState()
   const [quantity, setQuantity] = useState(1)
+  const [size, setSize] = useState("")
   const [showComparison, setShowComparison] = useState(false)
+  const [showShopModal, setShowShopModal] = useState(false)
+  const [shopModalMessage, setShopModalMessage] = useState("")
 
   const {
     currentIndex: currentImageIndex,
@@ -76,38 +81,117 @@ const JewelryPage = () => {
     if (!user) return
     if (!jewelry) return
 
+    const currentOrder = order || {}
+    const currentOrderId = currentOrder.orderId
+
+    const currentShopId =
+      typeof currentOrder.shop === "object"
+        ? currentOrder.shop?._id
+        : currentOrder.shop
+
+    const itemShopId =
+      typeof jewelry.shop === "object" ? jewelry.shop?._id : jewelry.shop
+
+    if (currentOrderId && currentShopId && itemShopId) {
+      if (String(currentShopId) !== String(itemShopId)) {
+        setShopModalMessage(
+          "Your cart currently contains items from another shop. To add this item, you need to clear your existing cart."
+        )
+        setShowShopModal(true)
+        return
+      }
+    }
+
     const newItem = {
       item: jewelry._id,
       itemModel: "Jewelry",
       quantity: quantity || 1,
       totalPrice: totalPrice * (quantity || 1),
+      size: size || undefined,
       notes: "",
     }
 
     try {
-      let currentOrderId = order?.orderId
+      let currentOrderId = currentOrder.orderId
+
       if (!currentOrderId) {
         const payload = {
           jewelryOrder: [newItem],
           serviceOrder: [],
           totalPrice: newItem.totalPrice,
           collectionMethod: "delivery",
+          notes: "",
         }
-        const res = await createOrder(payload)
-        const finalOrderId = res._id || res.data?.order?._id
-        setOrderId(finalOrderId)
+
+        const createdOrder = await createOrder(payload)
+
+        setOrderId(createdOrder._id)
+        setFullOrder(createdOrder)
         addJewelryToOrder(newItem)
         return
       }
 
-      const updatedJewelryOrder = [...(order.jewelryOrder || []), newItem]
-      await updateOrder(currentOrderId, {
+      const updatedJewelryOrder = [
+        ...(order.jewelryOrder || []).map((entry) => ({
+          item: typeof entry.item === "object" ? entry.item._id : entry.item,
+          itemModel: entry.itemModel,
+          quantity: entry.quantity ?? 1,
+          totalPrice: Number(entry.totalPrice ?? 0),
+          size: entry.size || undefined, 
+        })),
+        {
+          item: jewelry._id,
+          itemModel: "Jewelry",
+          quantity: quantity || 1,
+          totalPrice: totalPrice * (quantity || 1),
+          size: size || undefined, 
+        },
+      ]
+
+      const updatedOrder = await updateOrder(currentOrderId, {
         jewelryOrder: updatedJewelryOrder,
-        serviceOrder: order.serviceOrder,
       })
+
+      setFullOrder(updatedOrder)
       addJewelryToOrder(newItem)
     } catch (err) {
       console.error("Failed to add to cart:", err)
+    }
+  }
+
+  const handleClearCartAndAdd = async () => {
+    try {
+      if (!order?.orderId || !jewelry) return
+
+      const qty = quantity || 1
+      const total = totalPrice * qty
+
+      const jewelryOrder = [
+        {
+          item: jewelry._id,
+          itemModel: "Jewelry",
+          quantity: qty,
+          totalPrice: total,
+          size: size || undefined, // ✅ save size
+        },
+      ]
+
+      const serviceOrder = []
+
+      const updatedOrder = await updateOrder(order.orderId, {
+        jewelryOrder,
+        serviceOrder,
+        shop:
+          typeof jewelry.shop === "object" ? jewelry.shop._id : jewelry.shop,
+      })
+
+      setFullOrder(updatedOrder)
+      setOrderId(updatedOrder._id)
+
+      setShowShopModal(false)
+    } catch (err) {
+      console.error("Failed to clear cart and add:", err)
+      setShowShopModal(false)
     }
   }
 
@@ -205,13 +289,15 @@ const JewelryPage = () => {
                 <p id="jeweler-service-description">{jewelry.description}</p>
 
                 <div className="jewelry-certifications">
-                  <h3>Certified By</h3>
                   {jewelry.certifications?.length > 0 && (
-                    <p>
-                      {jewelry.certifications
-                        .map((c) => formatCertificationName(c.name))
-                        .join(", ")}
-                    </p>
+                    <>
+                      <h3>Certified By</h3>
+                      <p>
+                        {jewelry.certifications
+                          .map((c) => formatCertificationName(c.name))
+                          .join(", ")}
+                      </p>
+                    </>
                   )}
                 </div>
 
@@ -223,23 +309,44 @@ const JewelryPage = () => {
 
               <div className="jewelry-overview-wrapper">
                 <div className="jewelry-inputs">
-                  <input
-                    type="number"
-                    name="quantity"
-                    onChange={handleChange}
-                    value={quantity}
-                    min="1"
-                    max={jewelry.limitPerOrder}
-                    placeholder="1"
-                  />
+                  <div className="jewelry-inputs-select-and-size">
+                    {jewelry.type?.toLowerCase() === "ring" && (
+                      <select
+                        className="ring-size-selector"
+                        value={size}
+                        onChange={(e) => setSize(e.target.value)}
+                      >
+                        <option value="">Select Size</option>
+                        <option value="US 5">US 5</option>
+                        <option value="US 6">US 6</option>
+                        <option value="US 7">US 7</option>
+                        <option value="US 8">US 8</option>
+                        <option value="US 9">US 9</option>
+                      </select>
+                    )}
+                    <input
+                      type="number"
+                      name="quantity"
+                      onChange={handleChange}
+                      value={quantity}
+                      min="1"
+                      max={jewelry.limitPerOrder}
+                      placeholder={`Quantity${
+                        jewelry.limitPerOrder != 1
+                          ? `1 ....` + jewelry.limitPerOrder
+                          : ""
+                      }`}
+                    />{" "}
+                  </div>
                   <span className="add-or-wishlist">
                     <button
-                      onClick={user && handleAdd}
+                      onClick={user ? handleAdd : undefined}
                       disabled={!user}
                       title={user ? "Add to Cart" : "Sign in to Add"}
                     >
                       Add to Cart
                     </button>
+
                     <img
                       src={heartIcon}
                       alt="Wishlist"
@@ -377,6 +484,30 @@ const JewelryPage = () => {
               isOverlay
               currentJewelryId={jewelryId}
               onClose={() => setShowComparison(false)}
+            />
+          )}
+
+          {showShopModal && (
+            <FeedbackModal
+              className="prevent-different-shops-modal"
+              show={showShopModal}
+              type="confirm"
+              message={shopModalMessage}
+              onClose={() => {
+                setShowShopModal(false)
+              }}
+              actions={[
+                {
+                  label: "Clear Cart and Add",
+                  onClick: handleClearCartAndAdd,
+                },
+                {
+                  label: "Cancel",
+                  onClick: () => {
+                    setShowShopModal(false)
+                  },
+                },
+              ]}
             />
           )}
         </div>

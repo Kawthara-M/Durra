@@ -72,7 +72,7 @@ const Services = () => {
     },
   ]
 
-  if (loading) return <div class="loader"></div>
+  if (loading) return <div className="loader"></div>
 
   return (
     <>
@@ -118,9 +118,7 @@ const Services = () => {
 
           <div className="jewelry-grid">
             {filteredServices.map((s) => (
-              <Link key={s._id} to={`/services/${s._id}`}>
-                <ProductCard item={s} type="service" showActions />
-              </Link>
+                <ProductCard key={s._id} item={s} type="service" showActions showShopName />
             ))}
 
             {filteredServices.length === 0 && (

@@ -35,23 +35,32 @@
 .jewelry-inputs {
   display: flex;
   flex-direction: column;
-  /* position: absolute;
-  bottom: 0.5rem; */
-  width: 25%;
+  gap: 0.5rem;
+  width: 50%;
 }
 
-.jewelry-inputs input[type="number"] {
-  width: 80% !important;
+.jewelry-inputs-select-and-size {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 50%;
+}
+
+.jewelry-inputs .ring-size-selector {
+  background-color: transparent;
+  width: auto;
+  margin: 0;
 }
 
 .add-or-wishlist {
   display: flex;
   gap: 1rem;
   align-items: center;
+  margin-bottom: 1rem;
 }
 
 .add-or-wishlist button {
-  width: 80% !important;
+  width: 50%;
 }
 
 .add-or-wishlist img {
@@ -113,40 +122,98 @@
 .customer-collection-details {
   padding-left: 1.2rem;
 }
+
+.jewelry-page .feedback-modal-overlay .card {
+  width: 35%;
+}
+
+.customer-jewelry-page .card,
+.customer-jewelry-page + .feedback-modal-overlay .card,
+.checkout-wrapper .card {
+  width: 40%;
+}
+
+@media (max-width: 1200px) {
+  .jewelry-page .feedback-modal-overlay .card {
+    width: 45%;
+  }
+}
+@media (max-width: 1000px) {
+  .jewelry-page .feedback-modal-overlay .card {
+    width: 50%;
+  }
+}
+
+@media (max-width: 1100px) {
+  .customer-jewelry-page .card,
+  .customer-jewelry-page + .feedback-modal-overlay .card,
+  .checkout-wrapper .card,
+  .cart-wrapper .card {
+    width: 55%;
+  }
+}
+
 @media (max-width: 900px) {
   .customer-jewelry-page .service-information {
     height: fit-content !important;
     justify-content: flex-start;
     flex: none;
   }
+
   .customer-jewelry-page .service-images {
-    width: 90vw !important;
+    width: 80vw !important;
+    flex: none;
   }
 
   .jewelry-inputs {
     margin-bottom: 0 !important;
-    width: 50%;
+    width: 100%;
     flex-direction: row;
     gap: 0.5rem;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
     padding: 0;
   }
+
+  .jewelry-inputs-select-and-size {
+    flex-direction: row;
+  }
   .jewelry-inputs .add-or-wishlist {
     width: 70% !important;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
   }
 
   .jewelry-inputs button {
     margin: 0;
   }
 
-  .jewelry-inputs input {
-    flex: 1;
+  .jewelry-inputs input[type="number"] {
+    min-width: 10vw;
+    margin: 0;
   }
 
   .customer-jewelry-page .service-page-content {
     height: fit-content !important;
+  }
+  .jewelry-page .feedback-modal-overlay .card {
+    width: 70%;
+  }
+}
+
+@media (max-width: 800px) {
+  .customer-jewelry-page .card,
+  .customer-jewelry-page + .feedback-modal-overlay .card,
+  .checkout-wrapper .card,
+  .cart-wrapper .card {
+    width: 60%;
+  }
+}
+@media (max-width: 700px) {
+  .customer-jewelry-page .card,
+  .customer-jewelry-page + .feedback-modal-overlay .card,
+  .checkout-wrapper .card,
+  .cart-wrapper .card {
+    width: 69%;
   }
 }
 @media (max-width: 600px) {
@@ -154,5 +221,35 @@
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
+  }
+  .jewelry-inputs {
+    margin-bottom: 0 !important;
+    width: 100%;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0;
+  }
+  .jewelry-inputs-select-and-size {
+    width: 60%;
+  }
+
+  .jewelry-inputs .add-or-wishlist {
+    width: 77% !important;
+  }
+  .add-or-wishlist button {
+    width: 100% !important;
+  }
+
+  .jewelry-page .feedback-modal-overlay .card {
+    width: 80%;
+  }
+
+  .customer-jewelry-page .card,
+  .customer-jewelry-page + .feedback-modal-overlay .card,
+  .checkout-wrapper .card,
+  .cart-wrapper .card {
+    width: 78%;
   }
 }

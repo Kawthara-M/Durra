@@ -7,21 +7,35 @@ import imageSlider from "../services/imageSliders"
 import { useUser } from "../context/UserContext"
 import { useOrder } from "../context/OrderContext"
 import { createOrder, updateOrder } from "../services/order"
-import { calculateCollectionPrice } from "../services/calculator"
-import { fetchMetalRates } from "../services/calculator"
+import {
+  calculateCollectionPrice,
+  fetchMetalRates,
+} from "../services/calculator"
+import FeedbackModal from "../components/FeedbackModal" 
 
 import "../../public/stylesheets/customer-jewelry-page.css"
 
 const CollectionPage = () => {
   const { collectionId } = useParams()
   const { user } = useUser()
-  const { order, addJewelryToOrder, setOrderId } = useOrder()
-  const [metalRates, setMetalRates] = useState()
 
-  const [collection, setCollection] = useState()
+  const {
+    order,
+    addJewelryToOrder,
+    setOrderId,
+    setShopId,
+    setFullOrder,
+  } = useOrder()
+
+  const [metalRates, setMetalRates] = useState(null)
+  const [collection, setCollection] = useState(null)
   const [totalPrice, setTotalPrice] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [isExpanded, setIsExpanded] = useState(false)
+
+  const [showShopModal, setShowShopModal] = useState(false)
+  const [shopModalMessage, setShopModalMessage] = useState("")
+
   const {
     currentIndex: currentImageIndex,
     handleNext,
@@ -47,7 +61,7 @@ const CollectionPage = () => {
         const rates = await fetchMetalRates()
         setMetalRates(rates)
         const price = calculateCollectionPrice(collection, rates)
-        if (price !== null) setTotalPrice(price.toFixed(2))
+        if (price !== null) setTotalPrice(Number(price.toFixed(2)))
       } catch (err) {
         console.error("Failed to fetch collection price", err)
       }
@@ -55,50 +69,204 @@ const CollectionPage = () => {
     getRates()
   }, [collection])
 
-  const handleChange = (e) => setQuantity(parseInt(e.target.value))
+  const handleChange = (e) => {
+    const val = parseInt(e.target.value, 10)
+    setQuantity(Number.isNaN(val) ? 1 : val)
+  }
 
-  const handleAdd = async () => {
-    if (!user) return
-    if (!collection) return
+  const addItemToOrder = async () => {
+    if (!user || !collection) return
+
+    const currentOrder = order || {}
+    const currentOrderId = currentOrder.orderId
+
+    const qty = quantity || 1
+    const itemTotal = totalPrice * qty
 
     const newItem = {
       item: collection._id,
       itemModel: "Collection",
-      quantity: quantity || 1,
-      totalPrice: totalPrice * (quantity || 1),
-      notes: "",
+      quantity: qty,
+      totalPrice: itemTotal,
     }
 
     try {
-      let currentOrderId = order?.orderId
+      let updatedJewelryOrder = (currentOrder?.jewelryOrder || []).map(
+        (entry) => ({
+          item: typeof entry.item === "object" ? entry.item._id : entry.item,
+          itemModel: entry.itemModel,
+          quantity: entry.quantity ?? 1,
+          totalPrice: Number(entry.totalPrice ?? 0),
+        })
+      )
+
+      let updatedServiceOrder = [...(currentOrder?.serviceOrder || [])]
+
+      const existingIndex = updatedJewelryOrder.findIndex(
+        (i) =>
+          String(i.item) === String(newItem.item) &&
+          i.itemModel === "Collection"
+      )
+
+      if (existingIndex !== -1) {
+        const existing = updatedJewelryOrder[existingIndex]
+        updatedJewelryOrder[existingIndex] = {
+          ...existing,
+          quantity: (existing.quantity || 0) + newItem.quantity,
+          totalPrice:
+            Number(existing.totalPrice || 0) + Number(newItem.totalPrice || 0),
+        }
+      } else {
+        updatedJewelryOrder.push(newItem)
+      }
+
       if (!currentOrderId) {
         const payload = {
-          jewelryOrder: [newItem],
-          serviceOrder: [],
-          totalPrice: newItem.totalPrice,
+          jewelryOrder: updatedJewelryOrder,
+          serviceOrder: updatedServiceOrder,
+          totalPrice:
+            updatedJewelryOrder.reduce(
+              (a, i) => a + Number(i.totalPrice || 0),
+              0
+            ) +
+            updatedServiceOrder.reduce(
+              (a, i) => a + Number(i.totalPrice || 0),
+              0
+            ),
           collectionMethod: "delivery",
+          notes: "",
         }
-        const res = await createOrder(payload)
-        const finalOrderId = res._id || res.data?.order?._id
+
+        const createdOrder = await createOrder(payload) 
+        const orderDoc = createdOrder
+        const finalOrderId = orderDoc._id
+
         setOrderId(finalOrderId)
-        addJewelryToOrder(newItem)
+        setFullOrder(orderDoc)
+
+        const shopIdFromBackend =
+          typeof orderDoc.shop === "object"
+            ? orderDoc.shop?._id
+            : orderDoc.shop
+
+        if (shopIdFromBackend) {
+          setShopId(shopIdFromBackend)
+        }
+
+        addJewelryToOrder({
+          ...newItem,
+          shop: orderDoc.shop,
+        })
+
         return
       }
 
-      const updatedJewelryOrder = [...(order.jewelryOrder || []), newItem]
-      await updateOrder(currentOrderId, {
+      const updatedOrderDoc = await updateOrder(currentOrderId, {
         jewelryOrder: updatedJewelryOrder,
-        serviceOrder: order.serviceOrder,
+        serviceOrder: updatedServiceOrder,
       })
-      addJewelryToOrder(newItem)
+
+      setFullOrder(updatedOrderDoc)
+      addJewelryToOrder({
+        ...newItem,
+        shop: updatedOrderDoc.shop,
+      })
     } catch (err) {
-      console.error("Failed to add collection to cart:", err)
+      console.error("Failed to add collection to cart:", err.response?.data || err)
+    }
+  }
+
+  const handleAdd = async () => {
+    if (!user || !collection) return
+
+    const currentOrder = order || {}
+    const currentOrderId = currentOrder.orderId
+
+    const currentShopId =
+      currentOrder.shopId ??
+      (typeof currentOrder.shop === "object"
+        ? currentOrder.shop?._id
+        : currentOrder.shop)
+
+    const itemShopId =
+      typeof collection.shop === "object"
+        ? collection.shop?._id
+        : collection.shop
+
+    if (currentOrderId && currentShopId && itemShopId) {
+      if (String(itemShopId) !== String(currentShopId)) {
+        setShopModalMessage(
+          "Your cart currently contains items from another shop. To add this collection, you need to replace your existing cart."
+        )
+        setShowShopModal(true)
+        return
+      }
+    }
+
+    await addItemToOrder()
+  }
+
+  const handleClearCartAndAdd = async () => {
+    try {
+      if (!order.orderId || !collection) {
+        setShowShopModal(false)
+        return
+      }
+
+      const qty = quantity || 1
+      const itemTotal = totalPrice * qty
+
+      const jewelryOrder = [
+        {
+          item: collection._id,
+          itemModel: "Collection",
+          quantity: qty,
+          totalPrice: itemTotal,
+        },
+      ]
+
+      const serviceOrder = []
+
+      const body = {
+        jewelryOrder,
+        serviceOrder,
+      }
+
+      const itemShopId =
+        typeof collection.shop === "object"
+          ? collection.shop?._id
+          : collection.shop
+
+      if (itemShopId) {
+        body.shop = itemShopId
+      }
+
+      const updatedOrderDoc = await updateOrder(order.orderId, body)
+
+      setFullOrder(updatedOrderDoc)
+      setShopId(
+        typeof updatedOrderDoc.shop === "object"
+          ? updatedOrderDoc.shop?._id
+          : updatedOrderDoc.shop
+      )
+
+      addJewelryToOrder({
+        item: collection._id,
+        itemModel: "Collection",
+        quantity: qty,
+        totalPrice: itemTotal,
+        shop: updatedOrderDoc.shop,
+      })
+
+      setShowShopModal(false)
+    } catch (err) {
+      console.error("Failed to clear cart and add:", err.response?.data || err)
+      setShowShopModal(false)
     }
   }
 
   const handleWishlist = async () => {
-    if (!user) return
-    if (!collection) return
+    if (!user || !collection) return
 
     const newEntry = {
       favouritedItem: collection._id,
@@ -108,6 +276,7 @@ const CollectionPage = () => {
     try {
       const res = await User.get("/wishlist")
       const wishlist = res.data.wishlist
+
       const exists = wishlist.items.some((it) => {
         const id =
           typeof it.favouritedItem === "object"
@@ -156,14 +325,14 @@ const CollectionPage = () => {
         <div className="customer-jewelry-page">
           <div className="service-page-content">
             <div className="service-images">
-              {collection.jewelry?.[0]?.images?.length > 0 && (
+              {collection.images?.length > 0 && (
                 <div className="service-image-slider">
                   <button className="left-arrow" onClick={handlePrev}>
                     ←
                   </button>
                   <div className="image-box">
                     <img
-                      src={collection.jewelry[0].images[currentImageIndex]}
+                      src={collection.images[currentImageIndex]}
                       alt={`Image ${currentImageIndex + 1}`}
                       className="box-image"
                     />
@@ -179,10 +348,14 @@ const CollectionPage = () => {
               <div className="information-top-wrapper">
                 <h1>{collection.name}</h1>
                 <h2 className="service-description">Description</h2>
-                <p id="jeweler-service-description">{collection.description}</p>
+                <p id="jeweler-service-description">
+                  {collection.description}
+                </p>
                 <div className="jeweler-service-details">
                   <h3 className="service-price">Price</h3>
-                  <p id="jewelry-price">{totalPrice} BHD</p>
+                  <p id="jewelry-price">
+                    {totalPrice.toFixed ? totalPrice.toFixed(2) : totalPrice} BHD
+                  </p>
                 </div>
               </div>
 
@@ -198,7 +371,7 @@ const CollectionPage = () => {
                 />
                 <span className="add-or-wishlist">
                   <button
-                    onClick={user && handleAdd}
+                    onClick={handleAdd}
                     disabled={!user}
                     title={user ? "Add to Cart" : "Sign in to Add"}
                   >
@@ -211,7 +384,7 @@ const CollectionPage = () => {
                       user ? "Add to Wishlist" : "Sign in to Add to Wishlist"
                     }
                     className="icon"
-                    onClick={user && handleWishlist}
+                    onClick={user ? handleWishlist : undefined}
                   />
                 </span>
               </div>
@@ -246,6 +419,28 @@ const CollectionPage = () => {
           </div>
         </div>
       )}
+
+      {/* 🔹 Same confirm modal behaviour as ProductCard */}
+      <FeedbackModal
+        show={showShopModal}
+        type="confirm"
+        message={shopModalMessage}
+        onClose={() => {
+          setShowShopModal(false)
+        }}
+        actions={[
+          {
+            label: "Clear Cart and Add",
+            onClick: handleClearCartAndAdd,
+          },
+          {
+            label: "Cancel",
+            onClick: () => {
+              setShowShopModal(false)
+            },
+          },
+        ]}
+      />
     </>
   )
 }

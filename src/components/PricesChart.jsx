@@ -70,7 +70,6 @@ const PricesChart = ({ selectedMetal, selectedKarat }) => {
 
         const priceData = { gold, silver }
 
-        // Save fetched data and today's date to localStorage
         localStorage.setItem("metalPriceData", JSON.stringify(priceData))
         localStorage.setItem("metalPriceDataDate", new Date().toDateString())
 

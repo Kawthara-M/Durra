@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
+import FeedbackModal from "./FeedbackModal"
 import placeholder from "../assets/placeholder.png"
 import { useUser } from "../context/UserContext"
 import { useOrder } from "../context/OrderContext"
@@ -7,7 +9,7 @@ import {
   calculateTotalCost,
   calculateCollectionPrice,
 } from "../services/calculator.js"
-import { createOrder, updateOrder } from "../services/order.js"
+import { createOrder, updateOrder, cancelOrder } from "../services/order.js"
 import User from "../services/api.js"
 
 const ProductCard = ({
@@ -17,10 +19,23 @@ const ProductCard = ({
   inWishlistPage,
   onRemove,
   showActions,
+  showShopName = false,
 }) => {
   const { user } = useUser()
-  const { order, addJewelryToOrder, addServiceToOrder, setOrderId } = useOrder()
+  const {
+    order,
+    addJewelryToOrder,
+    addServiceToOrder,
+    setOrderId,
+    setShopId,
+    setFullOrder,
+    resetOrder,
+  } = useOrder()
   const [collectionPrice, setCollectionPrice] = useState(null)
+
+  const [showShopModal, setShowShopModal] = useState(false)
+  const [shopModalMessage, setShopModalMessage] = useState("")
+  const [pendingAddType, setPendingAddType] = useState(null)
 
   useEffect(() => {
     if (type === "collection" && metalRates) {
@@ -41,31 +56,66 @@ const ProductCard = ({
   }
 
   const displayPrice = () => {
-    if (type === "jewelry") return `${getJewelryPrice()} BD`
-    if (type === "service") return `${item.price?.toFixed(2)} BD`
+    if (type === "jewelry") return `${getJewelryPrice()} BHD`
+    if (type === "service") return `${item.price?.toFixed(2)} BHD`
     if (type === "collection")
-      return collectionPrice !== null ? `${collectionPrice.toFixed(2)} BD` : "—"
+      return collectionPrice !== null ? `${collectionPrice.toFixed(2)} BHD` : "—"
     return null
   }
-
   const handleAdd = async () => {
     if (!user) return
 
+    const currentOrder = order || {}
+
+    const currentOrderId = currentOrder.orderId
+
+    const currentShopId =
+      currentOrder.shopId ??
+      (typeof currentOrder.shop === "object"
+        ? currentOrder.shop?._id
+        : currentOrder.shop)
+
+    const itemShopId =
+      (typeof item.shop === "object" ? item.shop?._id : item.shop) ||
+      (typeof item.service === "object"
+        ? item.service?.shop
+        : item.service?.shop)
+
+    if (currentOrderId && currentShopId && itemShopId) {
+      if (String(itemShopId) !== String(currentShopId)) {
+        setShopModalMessage(
+          "Your cart currently contains items from another shop. To add this item, you need to clear your existing cart."
+        )
+        setPendingAddType(type)
+        setShowShopModal(true)
+        return
+      }
+    }
+
+    await addItemToOrder(type)
+  }
+
+  const addItemToOrder = async (forcedType) => {
+    const effectiveType = forcedType || type
+
+    if (!user) return
+
     const currentOrder = order
-    const currentOrderId = order.orderId
+    const currentOrderId = currentOrder?.orderId
 
     let price = 0
     let newItem = {}
 
-    if (type === "jewelry") {
+    if (effectiveType === "jewelry") {
       price = Number(getJewelryPrice())
       newItem = {
         item: item._id,
         itemModel: "Jewelry",
         quantity: 1,
         totalPrice: price,
+        shop: item.shop,
       }
-    } else if (type === "collection") {
+    } else if (effectiveType === "collection") {
       price = Number(collectionPrice)
       newItem = {
         item: item._id,
@@ -73,39 +123,43 @@ const ProductCard = ({
         quantity: 1,
         totalPrice: price,
       }
-    } else if (type === "service") {
+    } else if (effectiveType === "service") {
       price = Number(item.price || 0)
       newItem = {
         service: item._id,
-        jewelry: [],
+        jewelry: [{}], 
         totalPrice: price,
       }
     }
 
     try {
-      let updatedJewelryOrder = [...(currentOrder?.jewelryOrder || [])]
+      let updatedJewelryOrder = (currentOrder?.jewelryOrder || []).map(
+        (entry) => ({
+          item: typeof entry.item === "object" ? entry.item._id : entry.item,
+          itemModel: entry.itemModel,
+          quantity: entry.quantity ?? 1,
+          totalPrice: Number(entry.totalPrice ?? 0),
+        })
+      )
+
       let updatedServiceOrder = [...(currentOrder?.serviceOrder || [])]
 
-      if (type === "jewelry" || type === "collection") {
+      if (effectiveType === "jewelry" || effectiveType === "collection") {
         const existingIndex = updatedJewelryOrder.findIndex(
-          (i) => i.item === newItem.item && i.itemModel === newItem.itemModel
+          (i) =>
+            String(i.item) === String(newItem.item) &&
+            i.itemModel === newItem.itemModel
         )
 
         if (existingIndex !== -1) {
-          const existing = updatedJewelryOrder[existingIndex]
-          updatedJewelryOrder[existingIndex] = {
-            ...existing,
-            quantity: (existing.quantity || 0) + newItem.quantity,
-            totalPrice:
-              Number(existing.totalPrice || 0) +
-              Number(newItem.totalPrice || 0),
-          }
+          return
         } else {
           updatedJewelryOrder.push(newItem)
+          console.log("jewelry order after pushing", updatedJewelryOrder)
         }
-      } else if (type === "service") {
+      } else if (effectiveType === "service") {
         const existingServiceIndex = updatedServiceOrder.findIndex(
-          (s) => s.service === newItem.service
+          (s) => String(s.service) === String(newItem.service)
         )
 
         if (existingServiceIndex !== -1) {
@@ -120,7 +174,6 @@ const ProductCard = ({
           updatedServiceOrder.push(newItem)
         }
       }
-
       if (!currentOrderId) {
         const payload = {
           jewelryOrder: updatedJewelryOrder,
@@ -138,29 +191,96 @@ const ProductCard = ({
           notes: "",
         }
 
-        const createdOrder = await createOrder(payload) 
-        const finalOrderId = createdOrder._id
-        setOrderId(finalOrderId)
+        const createdOrder = await createOrder(payload)
 
-        if (type === "service") addServiceToOrder(newItem)
-        else addJewelryToOrder(newItem)
+        const orderDoc = createdOrder.order || createdOrder
+
+        const finalOrderId = orderDoc._id
+        setOrderId(finalOrderId)
+        setFullOrder(orderDoc)
+
+        const shopIdFromBackend =
+          typeof orderDoc.shop === "object" ? orderDoc.shop?._id : orderDoc.shop
+
+        setShopId(shopIdFromBackend)
+
+        if (effectiveType === "service") {
+          addServiceToOrder(newItem)
+        } else {
+          addJewelryToOrder({ ...newItem, shop: orderDoc.shop })
+        }
 
         return
       }
 
-      if (type === "service") {
-        await updateOrder(currentOrderId, {
+      if (effectiveType === "service") {
+        const updated = await updateOrder(currentOrderId, {
           serviceOrder: updatedServiceOrder,
         })
+        setFullOrder(updated)
         addServiceToOrder(newItem)
       } else {
-        await updateOrder(currentOrderId, {
+        const updated = await updateOrder(currentOrderId, {
           jewelryOrder: updatedJewelryOrder,
         })
+        setFullOrder(updated)
         addJewelryToOrder(newItem)
       }
     } catch (err) {
-      console.error(err)
+      console.error("Failed to add to order:", err.response?.data || err)
+    }
+  }
+
+  const handleClearCartAndAdd = async () => {
+    try {
+      if (!order.orderId) return
+
+      const effectiveType = pendingAddType || type
+
+      let jewelryOrder = []
+      let serviceOrder = []
+
+      if (effectiveType === "jewelry") {
+        jewelryOrder = [
+          {
+            item: item._id,
+            itemModel: "Jewelry",
+            quantity: 1,
+            totalPrice: Number(getJewelryPrice()),
+          },
+        ]
+      } else if (effectiveType === "collection") {
+        jewelryOrder = [
+          {
+            item: item._id,
+            itemModel: "Collection",
+            quantity: 1,
+            totalPrice: Number(collectionPrice),
+          },
+        ]
+      } else if (effectiveType === "service") {
+        serviceOrder = [
+          {
+            service: item._id,
+            jewelry: [],
+            totalPrice: Number(item.price || 0),
+          },
+        ]
+      }
+
+      const res = await updateOrder(order.orderId, {
+        jewelryOrder,
+        serviceOrder,
+        shop: typeof item.shop === "object" ? item.shop._id : item.shop,
+      })
+
+      setFullOrder(res)
+      setShowShopModal(false)
+      setPendingAddType(null)
+    } catch (err) {
+      console.error("Failed to clear cart and add:", err.response?.data || err)
+      setShowShopModal(false)
+      setPendingAddType(null)
     }
   }
 
@@ -223,66 +343,108 @@ const ProductCard = ({
     }
   }
 
+  const url =
+    type === "collection"
+      ? `/collections/${item._id}`
+      : type === "service"
+      ? `/services/${item._id}`
+      : `/jewelry/${item._id}`
+
   return (
-    <div className="search-card">
-      <div className="search-image-wrapper">
-        <img
-          src={item.images?.[0] || placeholder}
-          alt={item.name}
-          className="search-card-image"
-        />
-        {showActions && (
-          <>
-            <div className="add-actions">
-              <h6
-                className={!user ? "disabled-link" : null}
-                title={!user ? "Sign in to add to Cart" : "Add to Cart"}
-                onClick={(e) => {
-                  if (!user) return
+    <>
+      <div className="search-card">
+        <div className="search-image-wrapper">
+          <Link to={url}>
+            <img
+              src={item.images?.[0] || placeholder}
+              alt={item.name}
+              className="search-card-image"
+            />
+          </Link>
+          {showActions && (
+            <>
+              <div className="add-actions">
+                <h6
+                  className={!user ? "disabled-link" : null}
+                  title={!user ? "Sign in to add to Cart" : "Add to Cart"}
+                  onClick={(e) => {
+                    if (!user) return
 
-                  e.preventDefault()
-                  e.stopPropagation()
+                    e.preventDefault()
+                    e.stopPropagation()
 
-                  handleAdd()
-                }}
-              >
-                Add to Cart
-              </h6>
+                    handleAdd()
+                  }}
+                >
+                  Add to Cart
+                </h6>
 
-              <h6
-                className={!user ? "disabled-link" : null}
-                title={
-                  !user
-                    ? "Sign in to manage Wishlist"
-                    : inWishlistPage
-                    ? "Remove from Wishlist"
-                    : "Add to Wishlist"
-                }
-                onClick={(e) => {
-                  if (!user) return
-
-                  e.preventDefault()
-                  e.stopPropagation()
-
-                  handleWishlist()
-
-                  if (inWishlistPage && typeof onRemove === "function") {
-                    onRemove(item._id)
+                <h6
+                  className={!user ? "disabled-link" : null}
+                  title={
+                    !user
+                      ? "Sign in to manage Wishlist"
+                      : inWishlistPage
+                      ? "Remove from Wishlist"
+                      : "Add to Wishlist"
                   }
-                }}
-              >
-                {inWishlistPage ? "Remove" : "Wishlist"}
-              </h6>
-            </div>
-          </>
-        )}
-      </div>
+                  onClick={(e) => {
+                    if (!user) return
 
-      <div className="card-info">
-        <h3 className="service-card__title">{item.name}</h3>
-        <p className="price">{displayPrice()}</p>
+                    e.preventDefault()
+                    e.stopPropagation()
+
+                    handleWishlist()
+
+                    if (inWishlistPage && typeof onRemove === "function") {
+                      onRemove(item._id)
+                    }
+                  }}
+                >
+                  {inWishlistPage ? "Remove" : "Wishlist"}
+                </h6>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="card-info">
+          <Link to={url}>
+            <h3 className="service-card__title">{item.name}</h3>
+          </Link>
+          {showShopName && (
+            <p className="shop-name">
+              {typeof item.shop === "object"
+                ? item.shop?.name || "Shop"
+                : item.shopName || "Shop"}
+            </p>
+          )}
+          <p className="price">{displayPrice()}</p>
+        </div>
       </div>
-    </div>
+      <FeedbackModal
+        show={showShopModal}
+        type="confirm"
+        message={shopModalMessage}
+        onClose={() => {
+          setShowShopModal(false)
+          setPendingAddType(null)
+        }}
+        actions={[
+          {
+            label: "Clear Cart and Add",
+            onClick: handleClearCartAndAdd,
+          },
+          {
+            label: "Cancel",
+            onClick: () => {
+              setShowShopModal(false)
+              setPendingAddType(null)
+            },
+          },
+        ]}
+      />
+    </>
   )
 }
 
