@@ -8,11 +8,24 @@
 
 ## 📌 Description
 **Durra** is the arabic pronunciation of pearl and things of value, and was chosen to intitle the web-based platform matching between jewelrs and jewelry seekers in Bahrain. All  guided by the vision of preserving Bahrain's jewelry heritage and culture. 
- <!-- -update to include features- -->
+Durra mainly provides an interface for jewelers and customers. 
+### Customer Features
+- Search and Filter
+- Add to Wish List
+- Add Jewelry, Collections, and Services to Cart
+- Comparsion between Jewelry Pieces
+- Precious Metals Live Prices
+
+### Jeweler Features
+- Offer Jewelry, Collections, and Services
+- Receive Orders
+- Accept/Reject Orders
+- Update Order Status
 
 ## 🚀 Getting Started
 Durra has been developed with the end-user prioritized, so a first-time user is not to have a hard time figuring things out.
-To ensure that, the planning phase included several diagrams...
+To ensure that, a careful analysis of the requirements were conducted. The obtained requirements were translated into several diagrams to guide the development.
+ ### Entity Relationship Diagram (ERD)
 
 ## ⚙️ Technologies Used
 - React.js (frontend)
@@ -23,8 +36,9 @@ The following figma prototypes present a visual blueprint of the application's u
 <!-- include link -->
 
 ## Future Updates
+- Reselling Feature
 - Mobile platform
--
+
 ## Attributations
 <!-- - Locations Autocomplete (front-end): [Geoapify Autocomplete](https://www.geoapify.com/) -->
 - Search Logic (back-end): [Medium Platform](https://medium.com/@aniagudo.godson/running-a-simple-search-query-on-mongodb-atlas-using-express-nodejs-2-refining-search-queries-49949ce5c4a1)
