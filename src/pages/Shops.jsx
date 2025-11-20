@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import User from "../services/api"
-import "../../public/stylesheets/shops-page.css" 
+import "../../public/stylesheets/shops-page.css"
 
 const Shops = () => {
   const navigate = useNavigate()
@@ -26,9 +26,10 @@ const Shops = () => {
     if (searchTerm.trim() === "") {
       setFilteredShops(shops)
     } else {
-      const filtered = shops.filter(shop =>
-        shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        shop.description.toLowerCase().includes(searchTerm.toLowerCase())
+      const filtered = shops.filter(
+        (shop) =>
+          shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          shop.description.toLowerCase().includes(searchTerm.toLowerCase())
       )
       setFilteredShops(filtered)
     }
@@ -45,9 +46,9 @@ const Shops = () => {
   return (
     <div className="shops-page">
       <h1>Shops</h1>
-      
+
       <div className="shops-page-overview">
-       {/* <p>Total Shops: {filteredShops.length}</p> */}
+        {/* <p>Total Shops: {filteredShops.length}</p> */}
         <div className="search-container">
           <input
             type="text"
@@ -63,15 +64,15 @@ const Shops = () => {
         {filteredShops.length > 0 ? (
           <div className="shops-grid">
             {filteredShops.map((shop) => (
-              <div 
-                key={shop._id} 
+              <div
+                key={shop._id}
                 className="shop-card"
-               onClick={() => handleShopClick(shop._id)}
+                onClick={() => handleShopClick(shop._id)}
               >
                 <div className="shop-logo-container">
                   {shop.logo ? (
-                    <img 
-                      src={shop.logo} 
+                    <img
+                      src={shop.logo}
                       alt={`${shop.name} logo`}
                       className="shop-logo-circle"
                     />
@@ -81,7 +82,7 @@ const Shops = () => {
                     </div>
                   )}
                 </div>
-                
+
                 <div className="shop-info">
                   <h3 className="shop-name">{shop.name}</h3>
                   <p className="shop-description">
@@ -93,7 +94,9 @@ const Shops = () => {
           </div>
         ) : (
           <div className="empty">
-            <p>{searchTerm ? "No shops match your search" : "No shops found."}</p>
+            <p>
+              {searchTerm ? "No shops match your search" : "No shops found."}
+            </p>
           </div>
         )}
       </div>

@@ -33,7 +33,6 @@ const SummaryView = ({ formData, handleChange }) => {
 
   const originCost = parseFloat(formData.originCost || 0)
 
-  // only calculating if one of the dependencies changed
   const preciousMaterialCost = useMemo(() => {
     if (!metalRates) return 0
     return calculatePreciousMaterialCost(formData.preciousMaterials, metalRates)

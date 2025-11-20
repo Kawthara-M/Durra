@@ -25,6 +25,7 @@
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* height: fit-content !important; */
 }
 
 .cart-item-list {
@@ -308,7 +309,6 @@
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
 }
 
-
 .cart-summary {
   width: 28vw;
   background: #fff;
@@ -382,7 +382,8 @@
     flex-direction: column;
   }
 
-  .cart-summary, .cart-notes {
+  .cart-summary,
+  .cart-notes {
     width: 100%;
   }
 

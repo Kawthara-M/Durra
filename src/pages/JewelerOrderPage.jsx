@@ -223,6 +223,13 @@ const JewelerOrderPage = () => {
                             <span>
                               <h6>Quantity:</h6> <p> {entry.quantity || 1}</p>
                             </span>
+                            {entry.size && (
+                              <span>
+                                <h6>Size:</h6>
+                                <p>{entry.size}</p>
+                              </span>
+                            )}
+
                             <span>
                               <h6>Total Price:</h6>
                               <p>{Number(entry.totalPrice).toFixed(3)} BHD</p>

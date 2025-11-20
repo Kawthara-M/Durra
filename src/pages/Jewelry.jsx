@@ -66,7 +66,7 @@ const Jewelry = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true) // start loading
+      setLoading(true)
       try {
         const [jewelryRes, collectionsRes, rates] = await Promise.all([
           User.get("/jewelry/"),
@@ -168,7 +168,7 @@ const Jewelry = () => {
     setFilteredCollections(filteredCollections)
   }
 
-  if (loading) return <div class="loader"></div>
+  if (loading) return <div className="loader"></div>
 
   return (
     <>
@@ -217,14 +217,14 @@ const Jewelry = () => {
 
           <div className="jewelry-grid">
             {filteredJewelry.map((j) => (
-              <Link key={j._id} to={`/jewelry/${j._id}`}>
-                <ProductCard
-                  item={j}
-                  type="jewelry"
-                  metalRates={metalRates}
-                  showActions={true}
-                />
-              </Link>
+              <ProductCard
+                key={j._id}
+                item={j}
+                type="jewelry"
+                metalRates={metalRates}
+                showActions={true}
+                showShopName
+              />
             ))}
 
             {filteredCollections.map((c) => (
@@ -234,6 +234,7 @@ const Jewelry = () => {
                   type="collection"
                   metalRates={metalRates}
                   showActions={true}
+                  showShopName
                 />
               </Link>
             ))}

@@ -1,4 +1,9 @@
-import { FaCheck, FaTimes, FaTimesCircle } from "react-icons/fa"
+import {
+  FaCheck,
+  FaTimes,
+  FaTimesCircle,
+  FaExclamationTriangle,
+} from "react-icons/fa"
 import "../../public/stylesheets/feedback-modal.css"
 
 const FeedbackModal = ({
@@ -24,39 +29,63 @@ const FeedbackModal = ({
           color: "#d10000",
           title: "Error",
         }
-
       case "confirm":
         return {
-          icon: <FaTimes className="icon" />,
+          icon: <FaExclamationTriangle className="icon" />,
           color: "#d8af09ff",
           title: "Confirmation",
+        }
+      default:
+        return {
+          icon: <FaCheck className="icon" />,
+          color: "#269b24",
+          title: "Notice",
         }
     }
   }
 
   const { icon, color, title } = getIconAndColor()
 
+  const stopAll = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
   return (
-    <div className="feedback-modal-overlay">
-      <div className="card">
-        <span className="modal-close-btn" onClick={onClose}>
-          <FaTimes />
+    <div
+      className="feedback-modal-overlay"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="card" onClick={(e) => e.stopPropagation()}>
+        <span
+          className="modal-close-btn"
+          onClick={(e) => {
+            stopAll(e)
+            onClose && onClose()
+          }}
+        >
+          ✕
         </span>
-        <div className="icon-container">{icon}</div>
+        <div className="icon-and-message">
+          <div className="icon-container">{icon}</div>
 
-        <div className="message-text-container">
-          <p className="message-text" style={{ color }}>
-            {title}
-          </p>
-          <p className="sub-text">{message}</p>
+          <div className="message-text-container">
+            <p className="message-text" style={{ color }}>
+              {title}
+            </p>
+            <p className="sub-text">{message}</p>
+          </div>
         </div>
-
         <div className="feedback-actions">
           {actions.map((action, index) => (
             <button
               key={index}
-              onClick={action.onClick}
-              className={`feedback-buttons`}
+              type="button"
+              className="feedback-buttons"
+              onClick={(e) => {
+                stopAll(e)
+                action.onClick && action.onClick(e)
+              }}
             >
               {action.label}
             </button>

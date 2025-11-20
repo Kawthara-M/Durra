@@ -10,7 +10,6 @@ const Reviews = ({
   readOnly = false,
 }) => {
   const { user } = useUser()
-  console.log(user)
   const userId = user?.id
 
   const [reviews, setReviews] = useState([])
@@ -44,14 +43,12 @@ const Reviews = ({
 
   useEffect(() => {
     if (readOnly || !userId || !reviewedItemId || !reviewedItemType) {
-      console.log(userId)
       setCanReview(false)
       return
     }
 
     const checkEligibility = async () => {
       try {
-        console.log(" we are here")
         const res = await User.get(
           `/reviews/can-review/${reviewedItemType}/${reviewedItemId}`
         )

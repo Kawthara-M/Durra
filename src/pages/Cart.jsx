@@ -1,20 +1,23 @@
 import { useState, useEffect, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import { useOrder } from "../context/OrderContext"
-import { getPendingOrder, updateOrder } from "../services/order"
+import { getPendingOrder, updateOrder, cancelOrder } from "../services/order"
 import {
-  fetchMetalRates,
   calculateCollectionPrice,
   calculatePreciousMaterialCost,
   calculateTotalCost,
+  fetchMetalRates,
 } from "../services/calculator"
 import User from "../services/api"
+import { useOrderWait } from "../services/useOrderWait"
+import FeedbackModal from "../components/FeedbackModal"
 import placeholder from "../assets/placeholder.png"
 import "../../public/stylesheets/cart.css"
 
 const Cart = () => {
   const navigate = useNavigate()
-  const { setOrderId } = useOrder()
+  const { setOrderId, order, resetOrder } = useOrder()
+
   const [items, setItems] = useState([])
   const [notes, setNotes] = useState("")
   const [loading, setLoading] = useState(true)
@@ -23,36 +26,62 @@ const Cart = () => {
   const [vatRate] = useState(0.1)
   const [orderId, setOrderIdState] = useState(null)
   const [expandedServices, setExpandedServices] = useState(true)
-  const [waitingForJeweler, setWaitingForJeweler] = useState(false)
 
-  const loadCartFromOrder = (order) => {
-    setOrderIdState(order._id)
-    setOrderId(order._id)
+  const {
+    waiting,
+    timedOut,
+    resultStatus,
+    resultOrder,
+    waitForJeweler,
+    cancelWait,
+    clearTimeoutFlag,
+    clearResultStatus,
+  } = useOrderWait()
 
-    setNotes(order.notes || "")
+  const loadCartFromOrder = async (orderDoc) => {
+    setOrderIdState(orderDoc._id)
+    setOrderId(orderDoc._id)
+    setNotes(orderDoc.notes || "")
 
-    const serviceItems = (order.serviceOrder || []).map((s) => ({
+    const serviceItems = (orderDoc.serviceOrder || []).map((s) => ({
       ...s,
       jewelry: s.jewelry && s.jewelry.length > 0 ? s.jewelry : [{}],
     }))
 
-    recalcJewelryPrices([...order.jewelryOrder]).then((recalculatedJewelry) => {
-      setItems([...recalculatedJewelry, ...serviceItems])
-      calcSubtotal([...recalculatedJewelry, ...serviceItems])
-    })
+    const rates = await fetchMetalRates()
+
+    const recalculatedJewelry = await recalcJewelryPrices(
+      [...orderDoc.jewelryOrder],
+      rates
+    )
+
+    const combined = [...recalculatedJewelry, ...serviceItems]
+    setItems(combined)
+    calcSubtotal(combined)
   }
 
   useEffect(() => {
     const init = async () => {
       try {
         const pending = await getPendingOrder()
-        if (pending) return loadCartFromOrder(pending)
+        if (pending) {
+          await loadCartFromOrder(pending)
+          return
+        }
 
         const stored = JSON.parse(localStorage.getItem("submittedOrder"))
-        if (stored && stored.status === "submitted") {
-          setWaitingForJeweler(true)
-          const order = await getPendingOrder()
-          return loadCartFromOrder(order)
+        if (stored && stored.status === "submitted" && stored.orderId) {
+          waitForJeweler(stored.orderId)
+
+          try {
+            const res = await User.get(`/orders/${stored.orderId}`)
+            if (res.data.order) {
+              await loadCartFromOrder(res.data.order)
+            }
+          } catch (err) {
+            console.error("Failed to fetch submitted order for cart:", err)
+          }
+          return
         }
 
         setItems([])
@@ -115,6 +144,22 @@ const Cart = () => {
     const filtered = items.filter((_, i) => i !== index)
     setItems(filtered)
     calcSubtotal(filtered)
+
+    if (filtered.length === 0) {
+      try {
+        if (orderId) {
+          await cancelOrder(orderId)
+        }
+      } catch (err) {
+        console.error("Failed to cancel order after last item removed:", err)
+      }
+
+      setOrderIdState(null)
+      setOrderId(null)
+      resetOrder()
+      return
+    }
+
     try {
       await updateOrderInDB(
         items.map((i, idx) => (idx === index ? { ...i, quantity: 0 } : i))
@@ -128,6 +173,22 @@ const Cart = () => {
     const filtered = items.filter((_, i) => i !== index)
     setItems(filtered)
     calcSubtotal(filtered)
+
+    if (filtered.length === 0) {
+      try {
+        if (orderId) {
+          await cancelOrder(orderId)
+        }
+      } catch (err) {
+        console.error("Failed to cancel order after last service removed:", err)
+      }
+
+      setOrderIdState(null)
+      setOrderId(null)
+      resetOrder()
+      return
+    }
+
     try {
       await updateOrderInDB(filtered)
     } catch (err) {
@@ -168,6 +229,7 @@ const Cart = () => {
         itemModel: i.itemModel,
         quantity: i.quantity,
         totalPrice: i.totalPrice,
+        ...(i.size ? { size: i.size } : {}),
       }))
 
     const serviceOrder = updatedItems
@@ -179,7 +241,12 @@ const Cart = () => {
         totalPrice: i.totalPrice || 0,
       }))
 
-    await updateOrder(orderId, { jewelryOrder, serviceOrder, notes })
+    await updateOrder(orderId, {
+      jewelryOrder,
+      serviceOrder,
+      notes,
+      shop: order.shop,
+    })
   }
 
   const debouncedUpdateOrderInDB = useMemo(
@@ -202,20 +269,19 @@ const Cart = () => {
   const handleCancelSubmission = async () => {
     try {
       const stored = JSON.parse(localStorage.getItem("submittedOrder"))
-      if (!stored?.orderId) return
+      const id = stored?.orderId
 
-      const updatedOrder = await User.put(
-        `/orders/update-status/${stored.orderId}`,
-        { status: "pending" }
-      )
-
-      localStorage.removeItem("submittedOrder")
-      setWaitingForJeweler(false)
-      setOrderIdState(null)
-      setOrderId(null)
+      await cancelWait(id)
 
       const pending = await getPendingOrder()
-      if (pending) loadCartFromOrder(pending)
+      if (pending) {
+        await loadCartFromOrder(pending)
+      } else {
+        setItems([])
+        setOrderIdState(null)
+        setOrderId(null)
+        resetOrder()
+      }
     } catch (err) {
       console.error("Failed to cancel submission", err)
     }
@@ -545,18 +611,70 @@ const Cart = () => {
         </div>
       </div>
 
-      {waitingForJeweler && (
+      {waiting && (
         <div className="waiting-overlay">
           <div className="waiting-box">
             <div className="waiting-loader"></div>
             <h4>Waiting for jeweler’s response...</h4>
             <p>You can continue browsing or cancel your submission.</p>
 
-            <button className="cancel-btn" onClick={handleCancelSubmission}>
+            <button className="cancel-btn" onClick={() => cancelWait(orderId)}>
               Cancel Order
             </button>
           </div>
         </div>
+      )}
+
+      {timedOut && (
+        <FeedbackModal
+          show={timedOut}
+          type="Confirmation"
+          message="The shop did not respond in time. Your order has been moved back to pending. You can try submitting again later."
+          onClose={() => {
+            clearTimeoutFlag()
+          }}
+          actions={[
+            {
+              label: "OK",
+              onClick: () => {
+                clearTimeoutFlag()
+              },
+            },
+          ]}
+        />
+      )}
+
+      {resultStatus && (
+        <FeedbackModal
+          show={!!resultStatus}
+          type={
+            resultStatus === "accepted"
+              ? "success"
+              : resultStatus === "rejected"
+              ? "error"
+              : "info"
+          }
+          message={
+            resultStatus === "accepted"
+              ? "Good news! The jeweler has accepted your order."
+              : resultStatus === "rejected"
+              ? "Unfortunately, the jeweler has rejected your order."
+              : `The order status was updated to "${resultStatus}".`
+          }
+          onClose={() => {
+            clearResultStatus()
+            // navigate("/profile")
+          }}
+          actions={[
+            {
+              label: "OK",
+              onClick: () => {
+                clearResultStatus()
+                // navigate("/profile")
+              },
+            },
+          ]}
+        />
       )}
     </div>
   )

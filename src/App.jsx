@@ -35,7 +35,7 @@ import Wishlist from "./pages/Wishlist"
 import ShopDetails from "./pages/ShopDetails"
 import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout"
-import Payment from "./components/Payment"
+import Payment from "./pages/Payment"
 
 import "./App.css"
 
@@ -72,7 +72,7 @@ function App() {
             <Route path="/collections/:collectionId" element={<CollectionPage />} />
             <Route path="/cart" element={<Cart/>} />
             <Route path="/checkout" element={<Checkout/>} />
-            <Route path="/payment" element={<Payment/>} />
+            <Route path="/payment/:orderId" element={<Payment/>} />
 
             <Route path="/jeweler-jewelry" element={<JewelerJewelryPage />} />
             <Route

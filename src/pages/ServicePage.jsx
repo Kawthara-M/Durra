@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import Reviews from "../components/Reviews"
+import FeedbackModal from "../components/FeedbackModal"
 import heartIcon from "../assets/heart.png"
 import User from "../services/api"
 import { createOrder, updateOrder } from "../services/order"
@@ -14,10 +15,13 @@ const ServicePage = () => {
   const [service, setService] = useState()
   const { serviceId } = useParams()
   const { user } = useUser()
-  const { order, addJewelryToOrder, setOrderId } = useOrder()
+
+  const { order, addServiceToOrder, setOrderId, setFullOrder } = useOrder()
 
   const [totalPrice, setTotalPrice] = useState(0)
-  const [quantity, setQuantity] = useState(1)
+
+  const [showShopModal, setShowShopModal] = useState(false)
+  const [shopModalMessage, setShopModalMessage] = useState("")
 
   const {
     currentIndex: currentImageIndex,
@@ -39,39 +43,103 @@ const ServicePage = () => {
   }, [serviceId])
 
   const handleAdd = async () => {
-    if (!user) if (!service) return
+    if (!user) return
+    if (!service) return
+
+    const currentOrder = order || {}
+    const currentOrderId = currentOrder.orderId
+
+    const currentShopId =
+      typeof currentOrder.shop === "object"
+        ? currentOrder.shop?._id
+        : currentOrder.shop
+
+    const itemShopId =
+      typeof service.shop === "object" ? service.shop?._id : service.shop
+
+    if (currentOrderId && currentShopId && itemShopId) {
+      if (String(currentShopId) !== String(itemShopId)) {
+        setShopModalMessage(
+          "Your cart currently contains items from another shop. To add this service, you need to clear your existing cart."
+        )
+        setShowShopModal(true)
+        return
+      }
+    }
 
     const newItem = {
       service: service._id,
-      jewelry: [],
-      totalPrice: totalPrice * (quantity || 1),
-      notes: "",
+      jewelry: [{}],
+      totalPrice: totalPrice,
     }
 
     try {
-      let currentOrderId = order?.orderId
       if (!currentOrderId) {
         const payload = {
           jewelryOrder: [],
           serviceOrder: [newItem],
           totalPrice: newItem.totalPrice,
           collectionMethod: "delivery",
+          notes: "",
         }
-        const res = await createOrder(payload)
-        const finalOrderId = res._id || res.data?.order?._id
-        setOrderId(finalOrderId)
-        addJewelryToOrder(newItem)
+
+        const createdOrder = await createOrder(payload) 
+        setOrderId(createdOrder._id)
+        setFullOrder(createdOrder)
+        addServiceToOrder(newItem)
         return
       }
 
-      const updatedServiceOrder = [...(order.serviceOrder || []), newItem]
-      await updateOrder(currentOrderId, {
-        jewelryOrder: order.jewelryOrder,
+      const updatedServiceOrder = [
+        ...(order.serviceOrder || []).map((entry) => ({
+          service:
+            typeof entry.service === "object"
+              ? entry.service._id
+              : entry.service,
+          jewelry: entry.jewelry || [],
+          totalPrice: Number(entry.totalPrice || 0),
+        })),
+        newItem,
+      ]
+
+      const updatedOrder = await updateOrder(currentOrderId, {
         serviceOrder: updatedServiceOrder,
       })
-      addJewelryToOrder(newItem)
+
+      setFullOrder(updatedOrder)
+      addServiceToOrder(newItem)
     } catch (err) {
       console.error("Failed to add to cart:", err)
+    }
+  }
+
+  const handleClearCartAndAdd = async () => {
+    try {
+      if (!order?.orderId || !service) return
+
+      const serviceOrder = [
+        {
+          service: service._id,
+          jewelry: [{}],
+          totalPrice: totalPrice,
+        },
+      ]
+
+      const jewelryOrder = []
+
+      const updatedOrder = await updateOrder(order.orderId, {
+        jewelryOrder,
+        serviceOrder,
+        shop:
+          typeof service.shop === "object" ? service.shop._id : service.shop,
+      })
+
+      setFullOrder(updatedOrder)
+      setOrderId(updatedOrder._id)
+      setShowShopModal(false)
+    } catch (err) {
+      console.error("Failed to clear cart and add:", err)
+      setShowShopModal(false)
     }
   }
 
@@ -132,6 +200,7 @@ const ServicePage = () => {
   return (
     <>
       {service && (
+      
         <div className="customer-jewelry-page">
           <div className="service-page-content">
             <div className="service-images">
@@ -169,7 +238,7 @@ const ServicePage = () => {
               <div className="jewelry-inputs">
                 <span className="add-or-wishlist">
                   <button
-                    onClick={user && handleAdd}
+                    onClick={user ? handleAdd : undefined}
                     disabled={!user}
                     title={user ? "Add to Cart" : "Sign in to Add"}
                   >
@@ -178,9 +247,13 @@ const ServicePage = () => {
                   <img
                     src={heartIcon}
                     alt="Wishlist"
-                    title={user ? "Add to Cart" : "Sign in to Add to Wishlist"}
-                    className="icon"
-                    onClick={user && handleWishlist}
+                    title={
+                      user
+                        ? "Add to Wishlist"
+                        : "Sign in to Add to Wishlist"
+                    }
+                    className={`icon ${!user && "disabled"}`}
+                    onClick={user ? handleWishlist : undefined}
                   />
                 </span>
               </div>
@@ -193,6 +266,27 @@ const ServicePage = () => {
           </div>
         </div>
       )}
+
+      <FeedbackModal
+        show={showShopModal}
+        type="confirm"
+        message={shopModalMessage}
+        onClose={() => {
+          setShowShopModal(false)
+        }}
+        actions={[
+          {
+            label: "Clear Cart and Add",
+            onClick: handleClearCartAndAdd,
+          },
+          {
+            label: "Cancel",
+            onClick: () => {
+              setShowShopModal(false)
+            },
+          },
+        ]}
+      />
     </>
   )
 }

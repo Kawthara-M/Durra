@@ -4,6 +4,8 @@ import { useUser } from "../context/UserContext"
 import { useOrder } from "../context/OrderContext"
 import { getPendingOrder, updateOrder } from "../services/order"
 import LocationMap from "../components/LocationMap"
+import FeedbackModal from "../components/FeedbackModal"
+
 import User from "../services/api"
 import { useOrderWait } from "../services/useOrderWait"
 
@@ -12,18 +14,17 @@ import "../../public/stylesheets/checkout.css"
 
 const Checkout = () => {
   const { user } = useUser()
-  const { order, setFullOrder, setOrderId, resetOrder } = useOrder()
+  const { order, setFullOrder } = useOrder()
   const orderId = order?.orderId
   const navigate = useNavigate()
 
-  // const [order, setOrder] = useState(null)
   const [fullUser, setFullUser] = useState(null)
   const [shop, setShop] = useState(null)
   const [deliveryMethod, setDeliveryMethod] = useState("delivery")
   const [addresses, setAddresses] = useState([])
   const [selectedAddress, setSelectedAddress] = useState("")
   const [paymentMethod, setPaymentMethod] = useState("Cash")
-  const [flatRate, setFlatRate] = useState(2)
+  const [flatRate] = useState(2)
   const [subtotal, setSubtotal] = useState(0)
   const [vatRate] = useState(0.1)
   const [loading, setLoading] = useState(true)
@@ -39,7 +40,16 @@ const Checkout = () => {
     coordinates: [],
   })
   const [showMap, setShowMap] = useState(false)
-  const { waiting, waitForJeweler, cancelWait } = useOrderWait()
+  const {
+    waiting,
+    timedOut,
+    resultStatus,
+    resultOrder,
+    waitForJeweler,
+    cancelWait,
+    clearTimeoutFlag,
+    clearResultStatus,
+  } = useOrderWait()
 
   const fetchProfile = async () => {
     try {
@@ -78,7 +88,7 @@ const Checkout = () => {
         if (pending) {
           setFullOrder(pending)
           setSubtotal(pending.totalPrice || 0)
-          if (pending.shop) await fetchShop(pending.shop._id)
+          if (pending.shop) await fetchShop(pending.shop._id || pending.shop)
         }
 
         await fetchProfile()
@@ -91,24 +101,6 @@ const Checkout = () => {
     }
     init()
   }, [user])
-
-  useEffect(() => {
-    if (!orderId) return
-
-    const interval = setInterval(async () => {
-      try {
-        const res = await User.get(`/orders/${orderId}`)
-        if (res.data.order.status !== "submitted") {
-          setWaitingForJeweler(false)
-          localStorage.removeItem("submittedOrder")
-        }
-      } catch (err) {
-        console.error("Failed to fetch order status:", err)
-      }
-    }, 10000) 
-
-    return () => clearInterval(interval)
-  }, [orderId])
 
   const vat = subtotal * vatRate
   const deliveryFee = deliveryMethod === "pickup" ? 0 : flatRate
@@ -150,22 +142,14 @@ const Checkout = () => {
 
   const isOrderValid = () => {
     if (!user) return false
-
     if (!order || subtotal === 0) return false
-
     if (!paymentMethod) return false
 
     if (deliveryMethod === "delivery") {
       const addr = addresses.find((a) => a._id === selectedAddress)
       if (!addr) return false
 
-      const requiredFields = [
-        // "road",
-        "building",
-        "house",
-        // "area",
-        // "governorate",
-      ]
+      const requiredFields = ["building", "house"]
       for (const field of requiredFields) {
         if (
           !addr[field] ||
@@ -182,7 +166,7 @@ const Checkout = () => {
   const handlePlaceOrder = async () => {
     try {
       const idToUse = orderId || order?._id
-      if (!idToUse) return
+      if (!idToUse || !order) return
 
       const addressToUse =
         deliveryMethod === "pickup"
@@ -193,12 +177,32 @@ const Checkout = () => {
       const seen = new Set()
 
       for (const item of order.jewelryOrder || []) {
-        const key = `${item.item}-${item.itemModel}`
-        if (!seen.has(key)) {
-          seen.add(key)
-          cleanedJewelryOrder.push(item)
-        }
+        const itemId = typeof item.item === "object" ? item.item._id : item.item
+
+        const key = `${itemId}-${item.itemModel}`
+        if (seen.has(key)) continue
+        seen.add(key)
+
+        cleanedJewelryOrder.push({
+          item: itemId,
+          itemModel: item.itemModel,
+          quantity: item.quantity || 1,
+          totalPrice: item.totalPrice || 0,
+          ...(item.size ? { size: item.size } : {}),
+        })
       }
+
+      const cleanedServiceOrder = (order.serviceOrder || []).map((s) => ({
+        _id: s._id,
+        service: typeof s.service === "object" ? s.service._id : s.service,
+        jewelry: (s.jewelry || []).map((j) => ({
+          name: j.name || "",
+          material: j.material || "",
+          type: j.type || "",
+          details: j.details || "",
+        })),
+        totalPrice: s.totalPrice || 0,
+      }))
 
       const body = {
         collectionMethod:
@@ -206,16 +210,8 @@ const Checkout = () => {
         paymentMethod,
         address: addressToUse,
         totalPrice: total,
-        jewelryOrder: cleanedJewelryOrder, // ← FIXED
-        serviceOrder: order.serviceOrder.map((s) => ({
-          ...s,
-          jewelry: s.jewelry.map((j) => ({
-            item: j.item || j,
-            itemModel: j.itemModel || "Jewelry",
-            quantity: j.quantity || 1,
-            totalPrice: j.totalPrice || 0,
-          })),
-        })),
+        jewelryOrder: cleanedJewelryOrder,
+        serviceOrder: cleanedServiceOrder,
         notes: order.notes || "",
       }
 
@@ -252,14 +248,6 @@ const Checkout = () => {
       <div className="checkout-page">
         <div>
           <h2>Checkout</h2>
-          {/* <button
-          onClick={() => {
-            navigate("/cart")
-          }}
-          className="back-to-cart"
-        >
-          ←   Cart
-        </button> */}
         </div>
 
         <div className="checkout-details">
@@ -517,7 +505,7 @@ const Checkout = () => {
 
             <button
               className="place-order-btn"
-              onClick={() => handlePlaceOrder()}
+              onClick={handlePlaceOrder}
               disabled={orderDisabled}
               title={orderTitle}
             >
@@ -588,6 +576,7 @@ const Checkout = () => {
           </div>
         )}
       </div>
+
       {waiting && (
         <div className="waiting-overlay">
           <div className="waiting-box">
@@ -599,6 +588,75 @@ const Checkout = () => {
             </button>
           </div>
         </div>
+      )}
+
+      {timedOut && (
+        <FeedbackModal
+          show={timedOut}
+          type="info"
+          message="The shop did not respond in time. You can try submitting again later."
+          onClose={() => {
+            clearTimeoutFlag()
+            navigate("/cart")
+          }}
+          actions={[
+            {
+              label: "OK",
+              onClick: () => {
+                clearTimeoutFlag()
+                navigate("/cart")
+              },
+            },
+          ]}
+        />
+      )}
+
+      {resultStatus && resultOrder && (
+        <FeedbackModal
+          show={!!resultStatus}
+          type={resultStatus === "accepted" ? "success" : "error"}
+          message={
+            resultStatus === "accepted"
+              ? "Good news! The jeweler has accepted your order."
+              : resultStatus === "rejected"
+              ? "Unfortunately, the jeweler has rejected your order."
+              : `The order status was updated to "${resultStatus}".`
+          }
+          onClose={() => {
+            clearResultStatus()
+          }}
+          actions={
+            resultStatus === "accepted" &&
+            resultOrder.paymentMethod === "Card" &&
+            resultOrder.paymentStatus !== "Paid"
+              ? [
+                  {
+                    label: "Go to Payment",
+                    onClick: () => {
+                      const totalPrice = resultOrder.totalPrice || 0
+                      clearResultStatus()
+                      navigate(`/payment/${resultOrder._id}`, {
+                        state: { totalPrice },
+                      })
+                    },
+                  },
+                  {
+                    label: "Later",
+                    onClick: () => {
+                      clearResultStatus()
+                    },
+                  },
+                ]
+              : [
+                  {
+                    label: "OK",
+                    onClick: () => {
+                      clearResultStatus()
+                    },
+                  },
+                ]
+          }
+        />
       )}
     </div>
   )

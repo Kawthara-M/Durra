@@ -3,37 +3,103 @@ import User from "../services/api"
 
 export const useOrderWait = () => {
   const [waiting, setWaiting] = useState(false)
-  const timeoutRef = useRef(null)
+  const [timedOut, setTimedOut] = useState(false)
+  const [resultStatus, setResultStatus] = useState(null)
+  const [resultOrder, setResultOrder] = useState(null)
+
+  const pollRef = useRef(null)
+  const lastStatusRef = useRef(null)
+
+  const clearPoll = () => {
+    if (pollRef.current) {
+      clearInterval(pollRef.current)
+      pollRef.current = null
+    }
+  }
 
   const waitForJeweler = (orderId) => {
+    if (!orderId) return
+
+    clearPoll()
     setWaiting(true)
+    setTimedOut(false)
+    setResultStatus(null)
+    setResultOrder(null)
+    lastStatusRef.current = "submitted" 
 
-    timeoutRef.current = setTimeout(async () => {
-      const res = await User.get(`/orders/${orderId}`)
-      const status = res.data.order.status
+    pollRef.current = setInterval(async () => {
+      try {
+        const res = await User.get(`/orders/${orderId}`)
+        const status = res.data.order.status
+        console.log("[useOrderWait] poll status:", status)
 
-      if (status === "submitted") {
-        await User.put(`/orders/update-status/${orderId}`, {
-          status: "pending",
-        })
-        alert("The shop might be busy. Please try again later.")
+        const prev = lastStatusRef.current
+        lastStatusRef.current = status
+
+        if (status !== "submitted" && status !== "pending") {
+          clearPoll()
+          setWaiting(false)
+          setResultStatus(status)
+          setResultOrder(res.data.order)
+          localStorage.removeItem("submittedOrder")
+          return
+        }
+
+        if (prev === "submitted" && status === "pending") {
+
+          clearPoll()
+          setWaiting(false)
+          setTimedOut(true)   
+          localStorage.removeItem("submittedOrder")
+          return
+        }
+
+      } catch (err) {
+        console.error("[useOrderWait] poll error:", err)
       }
-
-      setWaiting(false)
-      timeoutRef.current = null
-    }, 5 * 60 * 1000)
+    }, 15000)
   }
 
   const cancelWait = async (orderId) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
+    console.log("[useOrderWait] cancel wait", orderId)
+    clearPoll()
+
+    try {
+      if (orderId) {
+        await User.put(`/orders/update-status/${orderId}`, {
+          status: "pending",
+        })
+      }
+    } catch (err) {
+      console.error("[useOrderWait] cancelWait error:", err)
+    } finally {
+      setWaiting(false)
+      setTimedOut(false)
+      setResultStatus(null)
+      setResultOrder(null)
+      localStorage.removeItem("submittedOrder")
     }
-
-    await User.put(`/orders/update-status/${orderId}`, { status: "pending" })
-
-    setWaiting(false)
   }
 
-  return { waiting, waitForJeweler, cancelWait }
+  const clearTimeoutFlag = () => {
+    console.log("[useOrderWait] clearTimeoutFlag()")
+    setTimedOut(false)
+  }
+
+  const clearResultStatus = () => {
+    console.log("[useOrderWait] clearResultStatus()")
+    setResultStatus(null)
+    setResultOrder(null)
+  }
+
+  return {
+    waiting,
+    timedOut,
+    resultStatus,
+    resultOrder,
+    waitForJeweler,
+    cancelWait,
+    clearTimeoutFlag,
+    clearResultStatus,
+  }
 }

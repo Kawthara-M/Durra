@@ -8,50 +8,59 @@ export const OrderProvider = ({ children }) => {
     serviceOrder: [],
     shop: null,
     orderId: null,
+    notes: "",
+    totalPrice: 0,
   })
 
-  const setOrderId = (id) => {
+  const setOrderId = (id) =>
     setOrder((prev) => ({ ...prev, orderId: id }))
-  }
 
   const setFullOrder = (pending) => {
+    if (!pending) return
+
+    const shop = pending.shop || null
+
     setOrder({
       orderId: pending._id,
       jewelryOrder: pending.jewelryOrder || [],
       serviceOrder: pending.serviceOrder || [],
       notes: pending.notes || "",
+      shop,
+      totalPrice: pending.totalPrice || 0,
     })
   }
 
-  const addJewelryToOrder = ({
-    item,
-    itemModel,
-    quantity,
-    totalPrice,
-    shop,
-  }) => {
+  const addJewelryToOrder = ({ item, itemModel, quantity, totalPrice }) => {
     setOrder((prev) => ({
       ...prev,
-      shop,
       jewelryOrder: [
         ...prev.jewelryOrder,
         { item, itemModel, quantity, totalPrice },
       ],
+      totalPrice: prev.totalPrice + totalPrice,
     }))
   }
 
-  const addServiceToOrder = ({ service, price, jewelry }) => {
+  const addServiceToOrder = ({ service, totalPrice, jewelry }) => {
     setOrder((prev) => ({
       ...prev,
       serviceOrder: [
         ...prev.serviceOrder,
-        { service, totalPrice: price, jewelry },
+        { service, totalPrice, jewelry },
       ],
+      totalPrice: prev.totalPrice + totalPrice,
     }))
   }
 
   const resetOrder = () => {
-    setOrder({ jewelryOrder: [], serviceOrder: [], shop: null, orderId: null })
+    setOrder({
+      jewelryOrder: [],
+      serviceOrder: [],
+      shop: null,
+      orderId: null,
+      notes: "",
+      totalPrice: 0,
+    })
   }
 
   return (

@@ -15,3 +15,7 @@ export const PAYMENT_DISPLAY_MAP = {
   "not-paid": "Not Paid",
   paid: "Paid",
 }
+export const COLLECTION_DISPLAY_MAP = {
+  "at-shop-collection": "Pick up",
+  delivery: "Delivery",
+}
