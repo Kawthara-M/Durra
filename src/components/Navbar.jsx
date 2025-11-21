@@ -157,6 +157,15 @@ const Navbar = () => {
                   Orders
                 </Link>
               </>
+            ) : user?.role === "Admin" ? (
+              <>
+                <Link to="/dashboard" className="desktop-only">
+                  Dashboard
+                </Link>
+                <Link to="/requests" className="desktop-only">
+                  Requests
+                </Link>
+              </>
             ) : null}
           </div>
 
@@ -225,7 +234,10 @@ const Navbar = () => {
                   <>
                     <span className="menu-item-wrapper">
                       <img src={logoutIcon} className="icon" />
-                      <button className="menu-btn" onClick={()=>navigate("/sign-in")}>
+                      <button
+                        className="menu-btn"
+                        onClick={() => navigate("/sign-in")}
+                      >
                         Sign In
                       </button>
                     </span>
@@ -276,9 +288,9 @@ const Navbar = () => {
             {user?.role === "Customer" || !user ? (
               <>
                 <Link to="/jewelry" onClick={closeMenu}>
-                  All Jewelry
+                  Jewelry
                 </Link>
-                <Link to="/jewelry/rings" onClick={closeMenu}>
+                {/* <Link to="/jewelry/rings" onClick={closeMenu}>
                   Rings
                 </Link>
                 <Link to="/jewelry/earrings" onClick={closeMenu}>
@@ -289,12 +301,12 @@ const Navbar = () => {
                 </Link>
                 <Link to="/jewelry/necklaces" onClick={closeMenu}>
                   Necklaces
-                </Link>
+                </Link> */}
                 <Link to="/services" onClick={closeMenu}>
                   Services
                 </Link>
               </>
-            ) : (
+            ) : user?.role === "Jeweler" ? (
               <>
                 <Link to="/jeweler-jewelry" onClick={closeMenu}>
                   Jewelry
@@ -309,7 +321,16 @@ const Navbar = () => {
                   Orders
                 </Link>
               </>
-            )}
+            ) : user?.role === "Admin" ? (
+              <>
+                <Link to="/requests" className="desktop-only">
+                  Requests
+                </Link>
+                <Link to="/dashboard" className="desktop-only">
+                  Dashboard
+                </Link>
+              </>
+            ) : null}
           </nav>
         </div>
       </div>

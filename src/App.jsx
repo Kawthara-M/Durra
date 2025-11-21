@@ -36,6 +36,9 @@ import ShopDetails from "./pages/ShopDetails"
 import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout"
 import Payment from "./pages/Payment"
+import Requests from "./pages/Requests"
+import Request from "./pages/Request"
+import AdminDashboard from "./pages/AdminDashboard"
 
 import "./App.css"
 
@@ -69,10 +72,13 @@ function App() {
             <Route path="/services" element={<Services />} />
             <Route path="/jewelry/:jewelryId" element={<JewelryPage />} />
             <Route path="/services/:serviceId" element={<ServicePage />} />
-            <Route path="/collections/:collectionId" element={<CollectionPage />} />
-            <Route path="/cart" element={<Cart/>} />
-            <Route path="/checkout" element={<Checkout/>} />
-            <Route path="/payment/:orderId" element={<Payment/>} />
+            <Route
+              path="/collections/:collectionId"
+              element={<CollectionPage />}
+            />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/payment/:orderId" element={<Payment />} />
 
             <Route path="/jeweler-jewelry" element={<JewelerJewelryPage />} />
             <Route
@@ -107,6 +113,9 @@ function App() {
             />
             <Route path="/show-order/:orderId" element={<JewelerOrderPage />} />
             <Route path="/shop/:shopId" element={<ShopDetails />} />
+            <Route path="/requests" element={<Requests />} />
+            <Route path="/requests/:requestId" element={<Request />} />
+            <Route path="/dashboard" element={<AdminDashboard />} />
           </Routes>
         </main>
         <Footer />

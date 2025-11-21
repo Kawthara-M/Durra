@@ -22,7 +22,7 @@ export const UserProvider = ({ children }) => {
   const handleLogOut = () => {
     setUser(null)
     localStorage.clear()
-    navigate("/auth")
+    navigate("/sign-in")
   }
 
   useEffect(() => {

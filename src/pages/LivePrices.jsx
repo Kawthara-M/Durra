@@ -42,17 +42,17 @@ const LivePrices = () => {
     }
   }, [])
 
-  const handleKaratChange = (metal) => {
-    setKarats((prev) => {
-      const options = karatOptions[metal]
-      const currentIndex = options.indexOf(prev[metal])
-      const nextIndex = (currentIndex + 1) % options.length
-      return {
-        ...prev,
-        [metal]: options[nextIndex],
-      }
-    })
-  }
+  // const handleKaratChange = (metal) => {
+  //   setKarats((prev) => {
+  //     const options = karatOptions[metal]
+  //     const currentIndex = options.indexOf(prev[metal])
+  //     const nextIndex = (currentIndex + 1) % options.length
+  //     return {
+  //       ...prev,
+  //       [metal]: options[nextIndex],
+  //     }
+  //   })
+  // }
 
   const getPrice = (metal) => {
     const karat = karats[metal]
