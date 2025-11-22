@@ -27,7 +27,6 @@ const ProductCard = ({
     addJewelryToOrder,
     addServiceToOrder,
     setOrderId,
-    setShopId,
     setFullOrder,
     resetOrder,
   } = useOrder()
@@ -72,10 +71,9 @@ const ProductCard = ({
     const currentOrderId = currentOrder.orderId
 
     const currentShopId =
-      currentOrder.shopId ??
-      (typeof currentOrder.shop === "object"
+      typeof currentOrder.shop === "object"
         ? currentOrder.shop?._id
-        : currentOrder.shop)
+        : currentOrder.shop
 
     const itemShopId =
       (typeof item.shop === "object" ? item.shop?._id : item.shop) ||
@@ -200,11 +198,6 @@ const ProductCard = ({
         const finalOrderId = orderDoc._id
         setOrderId(finalOrderId)
         setFullOrder(orderDoc)
-
-        const shopIdFromBackend =
-          typeof orderDoc.shop === "object" ? orderDoc.shop?._id : orderDoc.shop
-
-        setShopId(shopIdFromBackend)
 
         if (effectiveType === "service") {
           addServiceToOrder(newItem)

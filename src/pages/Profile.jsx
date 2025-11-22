@@ -94,6 +94,9 @@ const Profile = () => {
   const [showModal, setShowModal] = useState(false)
   const [modalMessage, setModalMessage] = useState("")
 
+  const [modalType, setModalType] = useState("success")
+  const [modalActions, setModalActions] = useState([])
+
   useEffect(() => {
     const getProfile = async () => {
       const response = await User.get(`/profile/`)
@@ -130,8 +133,39 @@ const Profile = () => {
     getProfile()
   }, [userId])
 
+  // Modals handling
   const triggerSuccessModal = (msg) => {
+    setModalType("success")
     setModalMessage(msg)
+    setModalActions([])
+    setShowModal(true)
+  }
+
+  const openConfirmDeleteModal = (addressId, displayName) => {
+    setModalType("confirm")
+    setModalMessage(
+      `Are you sure you want to delete "${displayName || "this address"}"?`
+    )
+
+    setModalActions([
+      {
+        label: "Delete",
+        onClick: async () => {
+          await deleteAddress(addressId)
+          setShowModal(false)
+          setModalActions([])
+          triggerSuccessModal("Address deleted successfully.")
+        },
+      },
+      {
+        label: "Cancel",
+        onClick: () => {
+          setShowModal(false)
+          setModalActions([])
+        },
+      },
+    ])
+
     setShowModal(true)
   }
 
@@ -739,7 +773,12 @@ const Profile = () => {
                             src={deleteIcon}
                             alt="delete icon"
                             className="icon"
-                            onClick={() => deleteAddress(a._id)}
+                            onClick={() =>
+                              openConfirmDeleteModal(
+                                a._id,
+                                a.name || `Address ${index + 1}`
+                              )
+                            }
                           />
 
                           <span className="default-action">
@@ -966,9 +1005,13 @@ const Profile = () => {
       {showModal && (
         <FeedbackModal
           show={showModal}
-          type="success"
+          type={modalType}
           message={modalMessage}
-          onClose={() => setShowModal(false)}
+          actions={modalActions}
+          onClose={() => {
+            setShowModal(false)
+            setModalActions([])
+          }}
         />
       )}
     </>
