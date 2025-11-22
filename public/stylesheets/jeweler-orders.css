@@ -36,7 +36,7 @@
 }
 
 .orders-grid .order-card {
-  max-width: 20vw;
+  max-width: 22vw;
   width: 100%;
   margin: 0 auto;
   height: fit-content;
@@ -76,7 +76,7 @@
 
 .update-status button {
   padding: 0.6rem 1.5rem;
-  white-space: nowrap; 
+  white-space: nowrap;
   height: 80% !important;
   margin: auto 0 !important;
 }
@@ -380,20 +380,15 @@
   flex-direction: column;
 }
 
-@media (max-width: 700px) {
-  .order-page-content {
-    flex-direction: column;
-  }
-}
-
 @media (max-width: 1200px) {
-  .orders-page .orders-grid {
+  .orders-page .orders-grid,
+  .orders-page-container .orders-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 
   .orders-grid .order-card {
-    width: 30vw !important;
-    max-width: 30vw !important;
+    width: 28vw !important;
+    max-width: 28vw !important;
   }
 
   .orders-page-container + .filter-overlay .filter-wrapper,
@@ -402,14 +397,21 @@
   }
 }
 
+@media (max-width: 700px) {
+  .order-page-content {
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 900px) {
-  .orders-page .orders-grid {
+  .orders-page .orders-grid,
+  .orders-page-container .orders-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
   .orders-grid .order-card {
-    max-width: 40vw !important;
-    width: 40vw !important;
+    max-width: 36vw !important;
+    width: 36vw !important;
     margin: 0 auto;
   }
 
@@ -464,7 +466,8 @@
 }
 
 @media (max-width: 600px) {
-  .orders-page .orders-grid {
+  .orders-page .orders-grid,
+  .orders-page-container .orders-grid {
     grid-template-columns: 1fr !important;
   }
 

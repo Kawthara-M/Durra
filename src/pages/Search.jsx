@@ -73,6 +73,8 @@ const Search = () => {
                 item={item}
                 type="jewelry"
                 metalRates={metalRates}
+                showActions
+                showShopName
               />
             ))}
 
@@ -82,6 +84,8 @@ const Search = () => {
                 item={collection}
                 type="collection"
                 metalRates={metalRates}
+                showActions
+                showShopName
               />
             ))}
 
@@ -90,6 +94,8 @@ const Search = () => {
                 key={service._id}
                 item={service}
                 type="service"
+                showActions
+                showShopName
               />
             ))}
           </div>

@@ -63,14 +63,13 @@
   font-size: 1.5rem;
 }
 
-.search-card {
-  background-color: #fff6f6;
-  text-align: center;
+.jewelry-grid .search-card .price {
+  margin-bottom: 0;
 }
 
-.search-card p {
+/* .search-card p {
   text-align: center;
-}
+} */
 
 .jewelry-filter-sidebar {
   position: fixed;

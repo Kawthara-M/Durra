@@ -64,21 +64,21 @@ const Wishlist = () => {
       {hasItems ? (
         <div className="wishlist-grid">
           {wishlist.items.map((item) => {
+            console.log(item)
             const product = item.favouritedItem
-            const id = typeof product === "object" ? product._id : product
             const type = item.favouritedItemType.toLowerCase()
 
             return (
-              <Link to={`/${type}/${id}`} key={id}>
-                <ProductCard
-                  item={product}
-                  type={type}
-                  metalRates={metalRates}
-                  inWishlistPage
-                  onRemove={handleRemoveLocal}
-                  showActions
-                />
-              </Link>
+              <ProductCard
+                key={product._id}
+                item={product}
+                type={type}
+                metalRates={metalRates}
+                inWishlistPage
+                onRemove={handleRemoveLocal}
+                showActions
+                showShopName
+              />
             )
           })}
         </div>

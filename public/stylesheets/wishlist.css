@@ -29,6 +29,9 @@
 .wishlist-grid .search-card {
   max-width: 20vw;
 }
+.wishlist-grid .search-card .price {
+  margin-bottom: 0;
+}
 
 .wishlist-empty-container {
   flex: 1;
