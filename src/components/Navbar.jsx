@@ -261,7 +261,7 @@ const Navbar = () => {
               <input
                 type="text"
                 placeholder="Search . . ."
-                className="search-input"
+                id="search-in-navbar"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && fetchResults()}

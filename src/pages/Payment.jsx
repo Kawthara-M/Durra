@@ -173,6 +173,80 @@ const Payment = () => {
       <div className="payment-layout">
         <h2 className="payment-title">Payment</h2>
         <div className="payment-content">
+          <div className="payment-summary">
+            <h2 className="summary-title">Order Summary</h2>
+
+            <div className="summary-row">
+              <span>Order ID</span>
+              <span>{order._id}</span>
+            </div>
+
+            <div className="summary-row">
+              <span>Collection Method</span>
+              <span>
+                {COLLECTION_DISPLAY_MAP[order.collectionMethod] ||
+                  order.collectionMethod}
+              </span>
+            </div>
+
+            <hr className="summary-divider" />
+
+            <div className="summary-row">
+              <span>VAT (10%)</span>
+              <span>{vat.toFixed(3)} BHD</span>
+            </div>
+            {deliveryFee > 0 && (
+              <div className="summary-row">
+                <span>Delivery Fee</span>
+                <span>{deliveryFee.toFixed(3)} BHD</span>
+              </div>
+            )}
+
+            <div className="summary-row">
+              <span className="summary-subtotal">Subtotal</span>
+              <span>{subtotal.toFixed(3)} BHD</span>
+            </div>
+
+            <hr className="summary-divider" />
+
+            <div className="summary-items">
+              <h3>Items</h3>
+
+              {(order.jewelryOrder || []).map((j, idx) => (
+                <div key={`j-${idx}`} className="summary-item-row">
+                  <span className="summary-item-name">
+                    {formatItemName(j.item)}
+                    <span className="quantity-in-payment">
+                      x{j.quantity || 1}
+                    </span>
+                    {j.size ? ` (Size: ${j.size})` : ""}
+                  </span>
+                  <span className="summary-item-meta">
+                    {(j.totalPrice || 0).toFixed(3)} BHD
+                  </span>
+                </div>
+              ))}
+
+              {(order.serviceOrder || []).map((s, idx) => (
+                <div key={`s-${idx}`} className="summary-item-row">
+                  <span className="summary-item-name">
+                    {formatItemName(s.service)}
+                    <span className="quantity-in-payment">
+                      {s.jewelry?.length || 0} item(s)
+                    </span>
+                  </span>
+                  <span className="summary-item-meta">
+                    {(s.totalPrice || 0).toFixed(3)} BHD
+                  </span>
+                </div>
+              ))}
+
+              <div className="summary-total">
+                <span>Total Amount</span>
+                <span>{total.toFixed(3)} BHD</span>
+              </div>
+            </div>
+          </div>
           <div className="payment-left">
             <form className="payment-form" onSubmit={handleSubmit} noValidate>
               {errors.form && (
@@ -253,81 +327,6 @@ const Payment = () => {
               </button>
             </form>
           </div>
-
-          <div className="payment-summary">
-            <h2 className="summary-title">Order Summary</h2>
-
-            <div className="summary-row">
-              <span>Order ID</span>
-              <span>{order._id}</span>
-            </div>
-
-            <div className="summary-row">
-              <span>Collection Method</span>
-              <span>
-                {COLLECTION_DISPLAY_MAP[order.collectionMethod] ||
-                  order.collectionMethod}
-              </span>
-            </div>
-
-            <hr className="summary-divider" />
-
-            <div className="summary-row">
-              <span>VAT (10%)</span>
-              <span>{vat.toFixed(3)} BHD</span>
-            </div>
-            {deliveryFee > 0 && (
-              <div className="summary-row">
-                <span>Delivery Fee</span>
-                <span>{deliveryFee.toFixed(3)} BHD</span>
-              </div>
-            )}
-
-            <div className="summary-row">
-              <span className="summary-subtotal">Subtotal</span>
-              <span>{subtotal.toFixed(3)} BHD</span>
-            </div>
-
-            <hr className="summary-divider" />
-
-            <div className="summary-items">
-              <h3>Items</h3>
-
-              {(order.jewelryOrder || []).map((j, idx) => (
-                <div key={`j-${idx}`} className="summary-item-row">
-                  <span className="summary-item-name">
-                    {formatItemName(j.item)}
-                    <span className="quantity-in-payment">
-                      x{j.quantity || 1}
-                    </span>
-                    {j.size ? ` (Size: ${j.size})` : ""}
-                  </span>
-                  <span className="summary-item-meta">
-                    {(j.totalPrice || 0).toFixed(3)} BHD
-                  </span>
-                </div>
-              ))}
-
-              {(order.serviceOrder || []).map((s, idx) => (
-                <div key={`s-${idx}`} className="summary-item-row">
-                  <span className="summary-item-name">
-                    {formatItemName(s.service)}
-                    <span className="quantity-in-payment">
-                      {s.jewelry?.length || 0} item(s)
-                    </span>
-                  </span>
-                  <span className="summary-item-meta">
-                    {(s.totalPrice || 0).toFixed(3)} BHD
-                  </span>
-                </div>
-              ))}
-
-              <div className="summary-total">
-                <span>Total Amount</span>
-                <span>{total.toFixed(3)} BHD</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -341,13 +340,13 @@ const Payment = () => {
               label: "OK",
               onClick: () => {
                 setShowSuccessModal(false)
-                navigate("/") 
+                navigate("/")
               },
             },
           ]}
           onClose={() => {
             setShowSuccessModal(false)
-            navigate("/") 
+            navigate("/")
           }}
         />
       )}

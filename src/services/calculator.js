@@ -55,7 +55,6 @@ export const calculatePreciousMaterialCost = (materials, metalRates) => {
     const rate = metalRates[mat.name?.toLowerCase()] || 0
     total += rate * mat.weight
   }
-  console.log(total)
 
   return total
 }
@@ -71,13 +70,12 @@ export const calculateTotalCost = (
 export const calculateCollectionPrice = (collection, metalRates) => {
   if (!metalRates || !collection?.jewelry?.length) return null
   let jewelryCostSum = 0
-
+  
   for (const jewel of collection.jewelry) {
     const metalCost = calculatePreciousMaterialCost(
       jewel.preciousMaterials,
       metalRates
     )
-    console.log(metalCost)
 
     const jewelPrice = calculateTotalCost(metalCost, jewel.originPrice)
     jewelryCostSum += jewelPrice

@@ -39,6 +39,7 @@ const ProductCard = ({
   useEffect(() => {
     if (type === "collection" && metalRates) {
       const price = calculateCollectionPrice(item, metalRates)
+      console.log(calculateCollectionPrice(item, metalRates))
       setCollectionPrice(Number(price.toFixed(2)))
     }
   }, [type, item, metalRates])
@@ -57,10 +58,12 @@ const ProductCard = ({
   const displayPrice = () => {
     if (type === "jewelry") return `${getJewelryPrice()} BHD`
     if (type === "service") return `${item.price?.toFixed(2)} BHD`
-    if (type === "collection")
+    if (type === "collection") {
+      console.log("here")
       return collectionPrice !== null
         ? `${collectionPrice.toFixed(2)} BHD`
         : "—"
+    }
     return null
   }
   const handleAdd = async () => {
@@ -341,15 +344,15 @@ const ProductCard = ({
   const url =
     user?.role === "Jeweler"
       ? type === "collection"
-        ? `/jeweler-collections/${item._id}`
+        ? `/jeweler-collections/${item?._id}`
         : type === "service"
-        ? `/jeweler-services/${item._id}`
-        : `/jeweler-jewelry/${item._id}`
+        ? `/jeweler-services/${item?._id}`
+        : `/jeweler-jewelry/${item?._id}`
       : type === "collection"
-      ? `/collections/${item._id}`
+      ? `/collections/${item?._id}`
       : type === "service"
-      ? `/services/${item._id}`
-      : `/jewelry/${item._id}`
+      ? `/services/${item?._id}`
+      : `/jewelry/${item?._id}`
 
   return (
     <>
@@ -357,8 +360,8 @@ const ProductCard = ({
         <div className="search-image-wrapper">
           <Link to={url}>
             <img
-              src={item.images?.[0] || placeholder}
-              alt={item.name}
+              src={item?.images?.[0] || placeholder}
+              alt={item?.name}
               className="search-card-image"
             />
           </Link>
@@ -417,7 +420,9 @@ const ProductCard = ({
             <p className="shop-name">
               {typeof item.shop === "object"
                 ? item.shop?.name || "Shop"
-                : item.shopName || "Shop"}
+                : item.favouritedItem?.shop.name
+                ? item.favouritedItem.shop.name
+                : "Shop"}
             </p>
           )}
           <p className="price">{displayPrice()}</p>

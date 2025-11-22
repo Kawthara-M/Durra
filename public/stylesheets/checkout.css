@@ -110,10 +110,8 @@ select {
 
 .pickup-info {
   margin-top: 1rem;
-  background: #f8faff;
-  border-left: 3px solid #1f1f1f;
+  border-left: 3px solid var(--accent-color);
   padding: 0.8rem 1rem;
-  border-radius: 8px;
   font-size: 0.9rem;
   color: #333;
 }
