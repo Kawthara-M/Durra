@@ -1,0 +1,312 @@
+.accounts-management-page {
+  width: 100%;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.accounts-management-header,
+.accounts-management-body {
+  width: 100%;
+}
+
+.accounts-management-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.accounts-management-header-actions {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.accounts-management-header input {
+  width: 35%;
+  margin-bottom: 0;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  border-bottom: 2px solid var(--accent-color);
+  border-radius: 0;
+  text-align: center;
+}
+
+.accounts-management-header input:focus {
+  outline: none !important;
+  border: none !important;
+  border-bottom: 2px solid var(--accent-color) !important;
+}
+
+.accounts-management-header-actions button {
+  width: 15%;
+  background-color: transparent;
+  color: var(--accent-color);
+  border: 2px solid var(--accent-color);
+  align-self: flex-end;
+  padding: 0.6rem 1rem;
+}
+.accounts-management-header-actions button:hover {
+  background-color: var(--accent-color);
+  color: var(--btn-color);
+  padding: 0.6rem 1rem;
+}
+
+.users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+.user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 3px solid var(--accent-color);
+  padding: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-item:hover {
+  transform: scale(1.01);
+  box-shadow: 0px 2px 12px rgba(24, 24, 24, 0.2);
+}
+
+.user-item-left-side,
+.user-item-right-side {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-item h3 {
+  font-size: 1.5rem;
+}
+
+.email-link {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.email-link:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.admin-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
+.admin-actions p {
+  text-decoration: underline;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.admin-delete-action {
+  color: var(--accent-color);
+}
+
+/* Adding Overlay */
+
+.accounts-add-user-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.accounts-add-user-modal {
+  background: var(--bg-color, #fff);
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 40%;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+}
+
+.add-user-modal-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.add-user-modal-header h2 {
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.close-modal-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--accent-color);
+  width: fit-content;
+}
+
+.add-user-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-user-form-inputs {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-user-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.add-user-form label {
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.add-user-form input {
+  padding: 0.4rem 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.inline-row {
+  display: flex;
+  gap: 0.7rem;
+  height: fit-content;
+  width: 100%;
+}
+
+.inline-row .add-user-form-group {
+  width: 50%;
+}
+
+.add-user-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.cancel-add-user-btn,
+.confirm-add-user-btn {
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid var(--accent-color);
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cancel-add-user-btn {
+  background: transparent;
+  color: var(--accent-color) !important;
+}
+
+.confirm-add-user-btn {
+  background-color: var(--accent-color);
+  color: var(--btn-color);
+}
+
+.add-user-error {
+  color: #b00000;
+  font-size: 0.85rem;
+}
+
+.user-info-field {
+  display: flex;
+  align-items: center;
+  gap:.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.user-info-field h6 {
+  font-weight: 600;
+  margin: 0;
+  color: var(--accent-color);
+}
+
+.user-info-field p {
+  margin: 0;
+  color: var(--text-color);
+}
+
+@media (max-width: 1200px) {
+  .accounts-add-user-modal {
+    width: 50%;
+  }
+}
+
+@media (max-width: 1000px) {
+  .accounts-management-header {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .accounts-add-user-modal {
+    width: 60%;
+  }
+}
+
+@media (max-width: 800px) {
+  .accounts-add-user-modal {
+    width: 65%;
+  }
+  .accounts-management-header-actions input {
+    width: 45%;
+  }
+  .accounts-management-header-actions button {
+    width: 20%;
+  }
+}
+
+@media (max-width: 750px) {
+  .accounts-add-user-modal {
+    width: 70%;
+  }
+}
+
+@media (max-width: 720px) {
+  .accounts-add-user-modal {
+    width: 70%;
+  }
+
+  .accounts-management-header-actions input {
+    width: 55%;
+  }
+}
+
+@media (max-width: 600px) {
+  .accounts-add-user-modal {
+    width: 78%;
+  }
+  .accounts-management-header-actions {
+    gap: 1.5rem;
+  }
+  .accounts-management-header-actions input {
+    width: 60%;
+  }
+  .accounts-management-header-actions button {
+    padding: 0.6rem 0.8rem;
+  }
+}
+
+@media (max-width: 562px) {
+  .accounts-management-header-actions {
+    gap: 2rem;
+  }
+  .accounts-management-header-actions button {
+    padding: 0.6rem 0.4rem;
+  }
+}

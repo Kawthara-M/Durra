@@ -39,6 +39,7 @@ import Payment from "./pages/Payment"
 import Requests from "./pages/Requests"
 import Request from "./pages/Request"
 import AdminDashboard from "./pages/AdminDashboard"
+import AccountsManagement from "./pages/AccountsManagement"
 
 import "./App.css"
 
@@ -116,6 +117,10 @@ function App() {
             <Route path="/requests" element={<Requests />} />
             <Route path="/requests/:requestId" element={<Request />} />
             <Route path="/dashboard" element={<AdminDashboard />} />
+            <Route
+              path="/accounts-management"
+              element={<AccountsManagement />}
+            />
           </Routes>
         </main>
         <Footer />

@@ -165,20 +165,22 @@ const Navbar = () => {
                 <Link to="/requests" className="desktop-only">
                   Requests
                 </Link>
+                <Link to="/accounts-management" className="desktop-only">
+                  Accounts Management
+                </Link>
               </>
             ) : null}
           </div>
 
           <div className="topNav-right">
-            <button
-              onClick={() => setShowSearchInput(!showSearchInput)}
-              id="search"
-            >
-              <img src={searchIcon} alt="search" className="icon" />
-            </button>
-
             {user?.role === "Customer" && (
               <>
+                <button
+                  onClick={() => setShowSearchInput(!showSearchInput)}
+                  id="search"
+                >
+                  <img src={searchIcon} alt="search" className="icon" />
+                </button>
                 <Link to="/cart" className="icon-btn cart-btn">
                   <img src={cartIcon} alt="cart" className="icon" />
                   {(hasPendingOrder ||

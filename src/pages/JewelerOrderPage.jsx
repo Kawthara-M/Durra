@@ -142,6 +142,7 @@ const JewelerOrderPage = () => {
                       <button onClick={() => updateOrder("pickup")}>
                         Pickup Ready{" "}
                       </button>
+                      {/* at this point we should send an email to driver to come pick up the order */}
                       <button onClick={() => updateOrder("ready")}>
                         Delivery Ready
                       </button>
