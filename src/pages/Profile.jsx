@@ -16,12 +16,13 @@ import "../../public/stylesheets/profile.css"
 
 const Profile = () => {
   const { userId } = useParams()
-  const { user, handleLogOut } = useUser()
+  const { user } = useUser()
   const { toggleTheme } = useContext(ThemeContext)
 
   let [profile, setProfile] = useState()
   const [logoFile, setLogoFile] = useState(null)
   const [errorMessage, setErrorMessage] = useState("")
+
   const validate = (value) => {
     if (
       validator.isStrongPassword(value, {
@@ -55,15 +56,16 @@ const Profile = () => {
     governante: "",
     area: "",
     road: "",
-    building: "",
+    block: "",
     latitude: null,
     longitude: null,
   })
+
   const [customerAddress, setCustomerAddress] = useState({
     _id: null,
     name: "",
     road: "",
-    building: "",
+    block: "",
     house: "",
     governante: "",
     area: "",
@@ -75,6 +77,7 @@ const Profile = () => {
   const [addresses, setAddresses] = useState([])
   const [activeAddress, setActiveAddress] = useState(null)
   const [showAddressForm, setShowAddressForm] = useState(false)
+
   const [passwordValues, setPasswordValues] = useState({
     oldPassword: "",
     newPassword: "",
@@ -116,7 +119,7 @@ const Profile = () => {
         governante: jewelerAddress?.governante || "",
         area: jewelerAddress?.area || "",
         road: jewelerAddress?.road || "",
-        building: jewelerAddress?.building || "",
+        block: jewelerAddress?.block || "",
         latitude: jewelerAddress?.coordinates?.[0] || null,
         longitude: jewelerAddress?.coordinates?.[1] || null,
       })
@@ -137,7 +140,6 @@ const Profile = () => {
       await User.put("/profile/", userInfo)
 
       if (user.role === "Jeweler" && profile?.shop?._id) {
-
         if (logoFile) {
           const formData = new FormData()
           formData.append("name", shopInfo.name)
@@ -177,14 +179,13 @@ const Profile = () => {
     }
   }
 
-  // address handling
-
+  // Jeweler address handling
   const handleAddressUpdate = async () => {
     try {
       const addressPayload = {
         name: `${profile.shop.name} Address`,
         road: jewelerAddress.road,
-        building: jewelerAddress.building,
+        block: jewelerAddress.block,
         governante: jewelerAddress.governante,
         area: jewelerAddress.area,
         coordinates: [jewelerAddress.latitude, jewelerAddress.longitude],
@@ -204,13 +205,14 @@ const Profile = () => {
     }
   }
 
+  // Customer address handling
   const startAddAddress = () => {
     setActiveAddress(null)
     setCustomerAddress({
       _id: null,
       name: "",
       road: "",
-      building: "",
+      block: "",
       house: "",
       governante: "",
       area: "",
@@ -236,7 +238,7 @@ const Profile = () => {
       const payload = {
         name: customerAddress.name,
         road: customerAddress.road,
-        building: customerAddress.building,
+        block: customerAddress.block,
         house: customerAddress.house,
         governante: customerAddress.governante,
         area: customerAddress.area,
@@ -386,7 +388,6 @@ const Profile = () => {
                 : profile?.user?.fName + " " + profile?.user?.lName
               : null}
           </h2>
-          {/* {profile ? profile.user.email : null} */}
         </div>
 
         <div className="profile-right">
@@ -418,6 +419,7 @@ const Profile = () => {
           </div>
 
           <div className="profile-details">
+            {/* Account Address View */}
             {view === "Account Information" && (
               <div className="account-information">
                 <div className="account-information-inputs">
@@ -501,6 +503,8 @@ const Profile = () => {
                 </button>
               </div>
             )}
+
+            {/* Jeweler Address View */}
             {view === "Address" && user.role === "Jeweler" && (
               <div className="address-view">
                 <h3 className="address-view-title">Location</h3>
@@ -568,14 +572,14 @@ const Profile = () => {
                         })
                       }
                     />
-                    <label>Building</label>
+                    <label>Block</label>
                     <input
                       type="text"
-                      value={jewelerAddress.building}
+                      value={jewelerAddress.block}
                       onChange={(e) =>
                         setJewelerAddress({
                           ...jewelerAddress,
-                          building: e.target.value,
+                          block: e.target.value,
                         })
                       }
                     />
@@ -587,51 +591,12 @@ const Profile = () => {
                 </button>
               </div>
             )}
+
+            {/* Customer Addresses View */}
             {view === "Addresses" && user.role === "Customer" && (
               <div>
-                <h3>Addresses</h3>
-                <div className="customer-addresses">
-                  {addresses.map((a, index) => {
-                    return (
-                      <div key={a._id}>
-                        <span className="inline">
-                          <h4>{a.name || `Shipping Address ${index + 1}`}</h4>
-
-                          <img
-                            src={editIcon}
-                            alt="edit icon"
-                            className="icon"
-                            onClick={() => startEditAddress(a)}
-                          />
-                          <img
-                            src={deleteIcon}
-                            alt="delete icon"
-                            className="icon"
-                            onClick={() => deleteAddress(a._id)}
-                          />
-
-                          <span className="default-action">
-                            {profile?.user?.defaultAddress === a._id ? (
-                              <button className="default-label">Default</button>
-                            ) : (
-                              <button
-                                className="default-button"
-                                onClick={() => setAsDefault(a._id)}
-                              >
-                                Mark as Default
-                              </button>
-                            )}
-                          </span>
-                        </span>
-                        <div className="address-details">
-                          {a.governante && <p>{a.governante}</p>}
-                          {a.road && <p>{a.road}</p>}
-                          {a.building && <p>{a.building}</p>}
-                        </div>
-                      </div>
-                    )
-                  })}
-
+                <div className="customer-address-header">
+                  <h3>Addresses</h3>
                   {!showAddressForm && (
                     <button
                       onClick={() => {
@@ -641,15 +606,14 @@ const Profile = () => {
                       title="Add Address"
                       className="add-address"
                     >
-                      +
+                      Add Address
                     </button>
                   )}
-
-                  {showAddressForm && (
+                </div>
+                <div className="customer-addresses">
+                  {showAddressForm && !activeAddress && (
                     <div className="address-form">
-                      <h4>
-                        {activeAddress ? customerAddress.name : "New Address"}
-                      </h4>
+                      <h4>New Address</h4>
 
                       <input
                         type="text"
@@ -692,29 +656,31 @@ const Profile = () => {
                         }
                       />
 
-                      <input
-                        type="text"
-                        placeholder="Road"
-                        value={customerAddress.road}
-                        onChange={(e) =>
-                          setCustomerAddress({
-                            ...customerAddress,
-                            road: e.target.value,
-                          })
-                        }
-                      />
+                      <div className="road-block-row">
+                        <input
+                          type="text"
+                          placeholder="Road"
+                          value={customerAddress.road}
+                          onChange={(e) =>
+                            setCustomerAddress({
+                              ...customerAddress,
+                              road: e.target.value,
+                            })
+                          }
+                        />
 
-                      <input
-                        type="text"
-                        placeholder="Building"
-                        value={customerAddress.building}
-                        onChange={(e) =>
-                          setCustomerAddress({
-                            ...customerAddress,
-                            building: e.target.value,
-                          })
-                        }
-                      />
+                        <input
+                          type="text"
+                          placeholder="Block"
+                          value={customerAddress.block}
+                          onChange={(e) =>
+                            setCustomerAddress({
+                              ...customerAddress,
+                              block: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
 
                       <LocationMap
                         position={
@@ -739,7 +705,7 @@ const Profile = () => {
                           className="update-button"
                           onClick={handleCustomerAddressSubmit}
                         >
-                          {activeAddress ? "Update Address" : "Add Address"}
+                          Add Address
                         </button>
                         <button
                           className="cancel-button"
@@ -753,14 +719,178 @@ const Profile = () => {
                       </div>
                     </div>
                   )}
+
+                  {addresses.map((a, index) => {
+                    const isEditingThis =
+                      showAddressForm && activeAddress?._id === a._id
+
+                    return (
+                      <div key={a._id} style={{ marginBottom: "1rem" }}>
+                        <span className="inline">
+                          <h4>{a.name || `Address ${index + 1}`}</h4>
+
+                          <img
+                            src={editIcon}
+                            alt="edit icon"
+                            className="icon"
+                            onClick={() => startEditAddress(a)}
+                          />
+                          <img
+                            src={deleteIcon}
+                            alt="delete icon"
+                            className="icon"
+                            onClick={() => deleteAddress(a._id)}
+                          />
+
+                          <span className="default-action">
+                            {profile?.user?.defaultAddress === a._id ? (
+                              <button className="default-label">Default</button>
+                            ) : (
+                              <button
+                                className="default-button"
+                                onClick={() => setAsDefault(a._id)}
+                              >
+                                Mark as Default
+                              </button>
+                            )}
+                          </span>
+                        </span>
+
+                        <div className="address-details">
+                          {[
+                            a.governante && `${a.governante} Governante`,
+                            a.area && a.area,
+                            a.road && `Road: ${a.road}`,
+                            a.block && `Block: ${a.block}`,
+                          ]
+                            .filter(Boolean)
+                            .map((item, index, arr) => (
+                              <span key={index}>
+                                <h6>{item}</h6>
+                                {index < arr.length - 1 ? "," : ""}
+                              </span>
+                            ))}
+                        </div>
+
+                        {isEditingThis && (
+                          <div className="address-form">
+                            <input
+                              type="text"
+                              placeholder="Name"
+                              value={customerAddress.name}
+                              onChange={(e) =>
+                                setCustomerAddress({
+                                  ...customerAddress,
+                                  name: e.target.value,
+                                })
+                              }
+                            />
+
+                            <select
+                              value={customerAddress.governante}
+                              onChange={(e) =>
+                                setCustomerAddress({
+                                  ...customerAddress,
+                                  governante: e.target.value,
+                                })
+                              }
+                              className="governante-select"
+                            >
+                              <option value="">Select Governate</option>
+                              <option value="Capital">Capital</option>
+                              <option value="Muharraq">Muharraq</option>
+                              <option value="Northern">Northern</option>
+                              <option value="Southern">Southern</option>
+                            </select>
+
+                            <input
+                              type="text"
+                              placeholder="Area"
+                              value={customerAddress.area}
+                              onChange={(e) =>
+                                setCustomerAddress({
+                                  ...customerAddress,
+                                  area: e.target.value,
+                                })
+                              }
+                            />
+
+                            <div className="road-block-row">
+                              <input
+                                type="text"
+                                placeholder="Road"
+                                value={customerAddress.road}
+                                onChange={(e) =>
+                                  setCustomerAddress({
+                                    ...customerAddress,
+                                    road: e.target.value,
+                                  })
+                                }
+                              />
+
+                              <input
+                                type="text"
+                                placeholder="Block"
+                                value={customerAddress.block}
+                                onChange={(e) =>
+                                  setCustomerAddress({
+                                    ...customerAddress,
+                                    block: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+
+                            <LocationMap
+                              position={
+                                customerAddress.latitude &&
+                                customerAddress.longitude
+                                  ? [
+                                      customerAddress.latitude,
+                                      customerAddress.longitude,
+                                    ]
+                                  : null
+                              }
+                              onChange={(newPos) => {
+                                setCustomerAddress((prev) => ({
+                                  ...prev,
+                                  latitude: newPos[0],
+                                  longitude: newPos[1],
+                                }))
+                              }}
+                            />
+
+                            <div className="inline">
+                              <button
+                                className="update-button"
+                                onClick={handleCustomerAddressSubmit}
+                              >
+                                Update Address
+                              </button>
+                              <button
+                                className="cancel-button"
+                                onClick={() => {
+                                  setShowAddressForm(false)
+                                  setActiveAddress(null)
+                                }}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}
+
+            {/* Password View */}
             {view === "Password" && (
               <>
                 <div className="password-view">
                   <div>
-                    {" "}
                     <h3>Change password</h3>
                     <p className="clarification">
                       Your password must be at least 8 characters and should
@@ -811,7 +941,7 @@ const Profile = () => {
                     <button
                       className="change-password"
                       disabled={
-                        passwordValues.newPassword !=
+                        passwordValues.newPassword !==
                           passwordValues.confirmPassword || errorMessage
                       }
                       onClick={() => updatePassword()}
@@ -821,7 +951,9 @@ const Profile = () => {
                   </div>
                 </div>
               </>
-            )}{" "}
+            )}
+
+            {/* Orders View */}
             {view === "Orders" && (
               <>
                 <CustomerOrders />
@@ -830,6 +962,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
       {showModal && (
         <FeedbackModal
           show={showModal}

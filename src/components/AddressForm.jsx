@@ -5,7 +5,7 @@ const AddressForm = ({ onSave }) => {
   const [formData, setFormData] = useState({
     name: "",
     road: "",
-    building: "",
+    block: "",
     house: "",
     area: "",
     governorate: "",
@@ -47,10 +47,10 @@ const AddressForm = ({ onSave }) => {
           />
           <input
             type="text"
-            name="building"
-            value={formData.building}
+            name="block"
+            value={formData.block}
             onChange={handleChange}
-            placeholder="Building"
+            placeholder="Block"
           />
           <input
             type="text"

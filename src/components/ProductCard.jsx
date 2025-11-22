@@ -346,7 +346,7 @@ const ProductCard = ({
   }
 
   const url =
-    user.role === "Jeweler"
+    user?.role === "Jeweler"
       ? type === "collection"
         ? `/jeweler-collections/${item._id}`
         : type === "service"
