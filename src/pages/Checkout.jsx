@@ -33,7 +33,7 @@ const Checkout = () => {
   const [newAddress, setNewAddress] = useState({
     name: "",
     road: "",
-    building: "",
+    block: "",
     house: "",
     area: "",
     governorate: "",
@@ -111,7 +111,7 @@ const Checkout = () => {
     const parts = []
     if (addr.road) parts.push(`Road: ${addr.road}`)
     if (addr.area) parts.push(`Area: ${addr.area}`)
-    if (addr.building) parts.push(`Building: ${addr.building}`)
+    if (addr.block) parts.push(`Block: ${addr.block}`)
     if (addr.house) parts.push(`House: ${addr.house}`)
     if (addr.governorate) parts.push(`Governorate: ${addr.governorate}`)
     return parts.join(", ")
@@ -128,7 +128,7 @@ const Checkout = () => {
       setNewAddress({
         name: "",
         road: "",
-        building: "",
+        block: "",
         house: "",
         area: "",
         governorate: "",
@@ -149,7 +149,7 @@ const Checkout = () => {
       const addr = addresses.find((a) => a._id === selectedAddress)
       if (!addr) return false
 
-      const requiredFields = ["building", "house"]
+      const requiredFields = ["block", "house"]
       for (const field of requiredFields) {
         if (
           !addr[field] ||
@@ -401,13 +401,13 @@ const Checkout = () => {
                       />
                       <input
                         type="text"
-                        name="building"
-                        placeholder="Building"
-                        value={newAddress.building}
+                        name="block"
+                        placeholder="Block"
+                        value={newAddress.block}
                         onChange={(e) =>
                           setNewAddress({
                             ...newAddress,
-                            building: e.target.value,
+                            block: e.target.value,
                           })
                         }
                       />
