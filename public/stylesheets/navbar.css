@@ -33,9 +33,9 @@
   align-items: center;
 }
 
-.topNav-left {
+/* .topNav-left {
   flex: 0.5;
-}
+} */
 
 .topNav-right {
   flex: 1;
@@ -202,7 +202,7 @@
 .large-left {
   display: flex;
   align-items: center;
-  width: 50%;
+  width: fit-content;
   margin-bottom: 0.5rem;
 }
 

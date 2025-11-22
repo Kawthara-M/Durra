@@ -52,11 +52,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 2px solid var(--accent-color);
+  border-left: 3px solid var(--accent-color);
   padding: 1rem;
   cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border-radius: 8px;
 }
 
 .request-item:hover {
@@ -155,7 +155,7 @@
 }
 
 .request-page-body {
-  width: 90%;
+  width: 85%;
   margin: 0 auto;
   height: 100%;
   display: flex;
