@@ -159,8 +159,7 @@ select {
   justify-content: space-between;
 }
 
-.checkout-address-span select,
-.checkout-address-span-select {
+.checkout-address-span select{
   width: 100%;
 }
 
