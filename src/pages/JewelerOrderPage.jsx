@@ -68,7 +68,6 @@ const JewelerOrderPage = () => {
       setSliderImages([...jewelryImages, ...serviceJewelryImages])
 
       setOrder(formatted)
-      console.log(response.data.order)
     }
     getOrder()
   }, [])

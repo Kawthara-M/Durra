@@ -1,0 +1,204 @@
+.shipments-page {
+  width: 100%;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.shipments-header,
+.shipments-body {
+  width: 100%;
+}
+
+.shipments-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.shipments-header-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.shipments-header input {
+  margin-bottom: 0;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  border-bottom: 2px solid var(--accent-color);
+  border-radius: 0;
+  text-align: center;
+}
+
+.shipments-header input:focus {
+  outline: none !important;
+  border: none !important;
+  border-bottom: 2px solid var(--accent-color) !important;
+}
+
+.shipments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+.shipment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 3px solid var(--accent-color);
+  padding: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.shipment-item:hover {
+  transform: scale(1.01);
+  box-shadow: 0px 2px 12px rgba(24, 24, 24, 0.2);
+}
+
+.shipment-item-left-side,
+.shipment-item-right-side {
+  display: flex;
+  flex-direction: column;
+}
+
+.shipment-item-left-side h3 {
+  font-size: 1.4rem;
+  text-transform: capitalize;
+}
+
+.shipment-item-left-side p,
+.shipment-item-right-side p {
+  margin: 0.1rem 0;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.shipment-info-modal-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+}
+
+.shipments-modal {
+  background: var(--bg-color, #fff);
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 60%;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+  overflow-y: auto;
+}
+
+.shipment-info-modal-body .shipment-info-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.shipment-info-modal-body .shipment-info-field h6 {
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin: 0;
+  color: var(--accent-color);
+}
+
+.shipment-info-modal-body .shipment-info-field p {
+  margin: 0;
+  color: var(--text-color);
+}
+
+.shipment-address-section {
+  margin-top: 0.3rem;
+  margin-bottom: 0.8rem;
+}
+
+.shipment-address-section h5 {
+  margin: 0 0 0.3rem 0;
+  font-size: 1.2rem;
+  color: var(--accent-color);
+}
+
+.shipment-address-section p {
+  margin: 0 0 0.4rem 0;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.shipment-map-wrapper {
+  margin-top: 0.4rem;
+  overflow: hidden;
+}
+
+.shipment-secret-key-form {
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-bottom: 1rem;
+}
+
+.shipment-secret-key-form h5 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--accent-color);
+}
+
+.shipment-secret-key-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.shipment-secret-key-form input {
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.shipment-secret-key-form input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.shipment-secret-key-form .confirm-add-user-btn {
+  align-self: flex-end;
+}
+
+@media (max-width: 1200px) {
+  .shipments-modal {
+    width: 65%;
+  }
+}
+@media (max-width: 1100px) {
+  .shipments-modal {
+    width: 75%;
+  }
+}
+
+@media (max-width: 800px) {
+  .shipments-modal {
+    width: 65%;
+  }
+}
+
+@media (max-width: 750px) {
+  .shipments-modal {
+    width: 70%;
+  }
+}
+
+@media (max-width: 720px) {
+  .shipments-modal {
+    width: 85%;
+  }
+}
