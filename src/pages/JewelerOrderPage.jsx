@@ -139,13 +139,15 @@ const JewelerOrderPage = () => {
                   )}
                   {order._status === "processing" && (
                     <div className="update-status">
-                      <button onClick={() => updateOrder("pickup")}>
-                        Pickup Ready{" "}
-                      </button>
-                      {/* at this point we should send an email to driver to come pick up the order */}
                       <button onClick={() => updateOrder("ready")}>
                         Delivery Ready
                       </button>
+                      {/* at this point we should send an email to driver to come pick up the order */}
+                      {order.collectionMethod === "at-shop-collection" && (
+                        <button onClick={() => updateOrder("pickup")}>
+                          Pickup Ready{" "}
+                        </button>
+                      )}
                     </div>
                   )}
                   {order._status === "ready" && (
