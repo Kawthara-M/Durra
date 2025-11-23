@@ -169,6 +169,10 @@ const Navbar = () => {
                   Accounts Management
                 </Link>
               </>
+            ) : user?.role === "Driver" ? (
+              <Link to="/shipments" className="desktop-only">
+                Shipments
+              </Link>
             ) : null}
           </div>
 
@@ -325,13 +329,20 @@ const Navbar = () => {
               </>
             ) : user?.role === "Admin" ? (
               <>
-                <Link to="/requests" className="desktop-only">
+                <Link to="/requests" onClick={closeMenu}>
                   Requests
                 </Link>
-                <Link to="/dashboard" className="desktop-only">
+                <Link to="/dashboard" onClick={closeMenu}>
                   Dashboard
                 </Link>
+                <Link to="/accounts-management" onClick={closeMenu}>
+                  Accounts Management
+                </Link>
               </>
+            ) : user?.role === "Driver" ? (
+              <Link to="/shipments" onClick={closeMenu} >
+                Shipments
+              </Link>
             ) : null}
           </nav>
         </div>

@@ -45,16 +45,15 @@ const AccountsManagement = () => {
     vehiclePlateNumber: "",
   })
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await User.get("/profile/users")
-        setUsers(response.data.users)
-      } catch (error) {
-        console.error(error)
-      }
+  const fetchUsers = async () => {
+    try {
+      const response = await User.get("/profile/users")
+      setUsers(response.data.users)
+    } catch (error) {
+      console.error(error)
     }
-
+  }
+  useEffect(() => {
     fetchUsers()
   }, [])
 
@@ -114,17 +113,13 @@ const AccountsManagement = () => {
         vehiclePlateNumber: newUser.vehiclePlateNumber,
       }
 
-      const res = await User.post("/drivers", payload)
+      await User.post("/drivers", payload)
 
-      const createdUser = res.data?.user
+      await fetchUsers()
 
-      if (createdUser) {
-        setUsers((prev) => [...prev, createdUser])
-
-        setFeedbackType("success")
-        setFeedbackMessage("Driver has been added successfully.")
-        setShowFeedbackModal(true)
-      }
+      setFeedbackType("success")
+      setFeedbackMessage("Driver has been added successfully.")
+      setShowFeedbackModal(true)
 
       handleCloseModal()
     } catch (err) {

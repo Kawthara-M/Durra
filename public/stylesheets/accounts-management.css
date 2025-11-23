@@ -115,9 +115,7 @@
   color: var(--accent-color);
 }
 
-/* Adding Overlay */
-
-.accounts-add-user-overlay {
+.accounts-add-user-overlay, .shipments-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
@@ -226,7 +224,7 @@
 .user-info-field {
   display: flex;
   align-items: center;
-  gap:.5rem;
+  gap: 0.5rem;
   margin-bottom: 0.4rem;
 }
 
@@ -260,6 +258,9 @@
 }
 
 @media (max-width: 800px) {
+  .accounts-management-page .feedback-modal-overlay .card {
+    width: 65vw !important;
+  }
   .accounts-add-user-modal {
     width: 65%;
   }
@@ -272,6 +273,9 @@
 }
 
 @media (max-width: 750px) {
+  .accounts-management-page .feedback-modal-overlay .card {
+    width: 75vw !important;
+  }
   .accounts-add-user-modal {
     width: 70%;
   }
@@ -288,6 +292,9 @@
 }
 
 @media (max-width: 600px) {
+  .accounts-management-page .feedback-modal-overlay .card {
+    width: 65vw !important;
+  }
   .accounts-add-user-modal {
     width: 78%;
   }

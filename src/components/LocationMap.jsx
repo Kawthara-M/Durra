@@ -4,9 +4,13 @@ import "leaflet/dist/leaflet.css"
 
 const LocationMap = ({ position, onChange }) => {
   const [marker, setMarker] = useState(
-    Array.isArray(position) && position.length === 2 ? position : null
+    Array.isArray(position) &&
+      position.length === 2 &&
+      position[0] != null &&
+      position[1] != null
+      ? position
+      : null
   )
-
   useEffect(() => {
     if (position) setMarker(position)
   }, [position])
