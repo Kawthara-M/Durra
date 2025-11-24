@@ -177,7 +177,7 @@ const Navbar = () => {
           </div>
 
           <div className="topNav-right">
-            {(!user || user.role != "Customer") && (
+            {(!user || user.role === "Customer") && (
               <button
                 onClick={() => setShowSearchInput(!showSearchInput)}
                 id="search"
