@@ -86,7 +86,7 @@ const Navbar = () => {
     }
 
     fetchPendingOrder()
-
+    console.log(user)
     const handleOrderUpdate = () => fetchPendingOrder()
     window.addEventListener("order-updated", handleOrderUpdate)
 
@@ -177,14 +177,16 @@ const Navbar = () => {
           </div>
 
           <div className="topNav-right">
+            {(!user || user.role != "Customer") && (
+              <button
+                onClick={() => setShowSearchInput(!showSearchInput)}
+                id="search"
+              >
+                <img src={searchIcon} alt="search" className="icon" />
+              </button>
+            )}
             {user?.role === "Customer" && (
               <>
-                <button
-                  onClick={() => setShowSearchInput(!showSearchInput)}
-                  id="search"
-                >
-                  <img src={searchIcon} alt="search" className="icon" />
-                </button>
                 <Link to="/cart" className="icon-btn cart-btn">
                   <img src={cartIcon} alt="cart" className="icon" />
                   {(hasPendingOrder ||
@@ -340,7 +342,7 @@ const Navbar = () => {
                 </Link>
               </>
             ) : user?.role === "Driver" ? (
-              <Link to="/shipments" onClick={closeMenu} >
+              <Link to="/shipments" onClick={closeMenu}>
                 Shipments
               </Link>
             ) : null}
