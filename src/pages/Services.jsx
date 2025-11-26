@@ -3,7 +3,8 @@ import { Link } from "react-router-dom"
 import User from "../services/api"
 import Filter from "../components/Filter.jsx"
 import ProductCard from "../components/ProductCard"
-
+import filter from "../assets/filter.png"
+import jewelryImage from "../assets/services-page.jpg"
 import "../../public/stylesheets/jewelry-page.css"
 
 const Services = () => {
@@ -77,55 +78,94 @@ const Services = () => {
   return (
     <>
       {services.length > 0 && (
-        <div className="jewelry-page">
-          <h1>Services</h1>
-
-          <div className="jewelry-page-overview">
-            <p>{filteredServices.length} services</p>
-            <p className="filter-toggle" onClick={() => setShowFilter(true)}>
-              Filter
-            </p>
-
-            {showFilter && (
-              <div
-                className="jewelry-filter-backdrop"
-                onClick={() => setShowFilter(false)}
-              />
-            )}
-
-            <div
-              className={`jewelry-filter-sidebar ${showFilter ? "open" : ""}`}
+        <div className="jewelry-page-container">
+          <div
+            className="jewelry-page-header"
+            style={{
+              backgroundImage: `url(${jewelryImage})`,
+              backgroundPosition: "left",
+              backgroundSize: "cover",
+              color: "black",
+            }}
+          >
+            <h1
+              style={{
+                color: "black",
+                top: "14rem",
+              }}
             >
+              Services
+            </h1>
+            <p
+              style={{
+                top: "17rem",
+                color: "black",
+              }}
+            >
+              "Keep your jewelry as new as it was"
+            </p>
+          </div>
+          <div className="jewelry-page">
+            <div className="jewelry-page-overview">
               <button
-                className="jewelry-filter-close-btn"
-                onClick={() => setShowFilter(false)}
+                className="filter-toggle"
+                onClick={() => setShowFilter(true)}
               >
-                ✕
+                <img
+                  src={filter}
+                  alt="filter"
+                  className="icon"
+                  title="Filter"
+                />
               </button>
 
-              <Filter
-                filters={filters}
-                fields={filterFields}
-                showPrice={true}
-                onApply={(f) => {
-                  setFilters(f)
-                  applyFilters(f)
-                  setShowFilter(false)
-                }}
-              />
-            </div>
-          </div>
+              {showFilter && (
+                <div
+                  className="jewelry-filter-backdrop"
+                  onClick={() => setShowFilter(false)}
+                />
+              )}
 
-          <div className="jewelry-grid">
-            {filteredServices.map((s) => (
-                <ProductCard key={s._id} item={s} type="service" showActions showShopName />
-            ))}
+              <div
+                className={`jewelry-filter-sidebar ${showFilter ? "open" : ""}`}
+              >
+                <button
+                  className="jewelry-filter-close-btn"
+                  onClick={() => setShowFilter(false)}
+                >
+                  ✕
+                </button>
 
-            {filteredServices.length === 0 && (
-              <div className="empty-wrapper">
-                <p className="empty">No Services Available</p>
+                <Filter
+                  filters={filters}
+                  fields={filterFields}
+                  showPrice={true}
+                  onApply={(f) => {
+                    setFilters(f)
+                    applyFilters(f)
+                    setShowFilter(false)
+                  }}
+                />
               </div>
-            )}
+            </div>
+
+            <div className="jewelry-grid">
+              {filteredServices.map((s) => (
+                <ProductCard
+                  key={s._id}
+                  item={s}
+                  type="service"
+                  showActions
+                  showShopName
+                />
+              ))}
+
+              {filteredServices.length === 0 && (
+                <div className="empty-wrapper">
+                  <p className="empty">No Services Available</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
