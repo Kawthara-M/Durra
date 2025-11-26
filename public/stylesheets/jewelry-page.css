@@ -1,9 +1,24 @@
+.jewelry-page-container {
+  width: 100vw;
+}
+
 .jewelry-page {
   width: 100%;
   height: 100%;
   padding: 1.5rem;
+  padding-top: 0;
   display: flex;
   flex-direction: column;
+}
+
+.jewelry-page-header {
+  width: 100%;
+  height: 60vh;
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  background-repeat: no-repeat;
+  position: relative;
 }
 
 .jewelry-page h1 {
@@ -11,29 +26,39 @@
   margin-bottom: 2rem;
 }
 
+.jewelry-page-header h1 {
+  position: absolute;
+  top: 4rem;
+  margin-bottom: 0;
+  font-size: 3.2rem;
+  color: #fcf4f4;
+}
+.jewelry-page-header p {
+  position: absolute;
+  top: 8rem;
+  color: #fcf4f4;
+  font-style: italic;
+}
+
 .jewelry-page-overview {
   padding: 1rem;
-  border-bottom: 1px solid #1f1f1f;
-  border-top: 1px solid #1f1f1f;
   display: flex;
-  margin-bottom: 2rem;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
 }
 
-.jewelry-page-overview p {
-  text-align: center;
+.jewelry-page-overview .filter-toggle {
+  width: fit-content;
+  background-color: transparent;
+  color: var(--accent-color);
+  font-weight: 500;
+  text-align: right;
 }
 
-.jewelry-page-overview p:first-of-type {
-  border-right: 2px solid #343434;
-  width: 75%;
-}
-
-.jewelry-page-overview p:nth-of-type(2) {
-  width: 25%;
-  cursor: pointer;
-}
-.jewelry-page-overview p:nth-of-type(2):hover {
-  text-decoration: underline;
+.jewelry-page-overview .apply-filter-btn {
+  width: fit-content;
+  padding: 0.6rem 30%;
+  right: 15%;
 }
 
 .jewelry-page-main {
@@ -66,10 +91,6 @@
 .jewelry-grid .search-card .price {
   margin-bottom: 0;
 }
-
-/* .search-card p {
-  text-align: center;
-} */
 
 .jewelry-filter-sidebar {
   position: fixed;
@@ -123,7 +144,7 @@
     grid-template-columns: repeat(3, 1fr);
   }
 
-    .jewelry-page .jewelry-grid .search-card,
+  .jewelry-page .jewelry-grid .search-card,
   .jewelry-page .jewelry-grid a {
     width: 30vw !important;
     max-width: 30vw !important;
@@ -199,8 +220,16 @@
   .jewelry-filter-sidebar .filter-sidebar {
     width: 50vw !important;
   }
+
+  .jewelry-page-header h1 {
+    top:6rem;
+  }
+  .jewelry-page-header p {
+    top:10rem;
+  }
 }
-/* Search Styles */
+
+
 .search-container {
   width: 25%;
   display: flex;
@@ -228,35 +257,7 @@
   color: #999;
 }
 
-.jewelry-page-overview {
-  padding: 1rem;
-  border-bottom: 1px solid #1f1f1f;
-  border-top: 1px solid #1f1f1f;
-  display: flex;
-  margin-bottom: 2rem;
-  align-items: center;
-}
-
-.jewelry-page-overview p:first-of-type {
-  border-right: 2px solid #343434;
-  width: 75%;
-  margin: 0;
-}
-
-/* Responsive search */
 @media (max-width: 768px) {
-  .jewelry-page-overview {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .jewelry-page-overview p:first-of-type {
-    border-right: none;
-    border-bottom: 2px solid #343434;
-    width: 100%;
-    padding-bottom: 1rem;
-  }
-
   .search-container {
     width: 100%;
   }

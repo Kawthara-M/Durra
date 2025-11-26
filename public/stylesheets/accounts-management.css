@@ -115,7 +115,8 @@
   color: var(--accent-color);
 }
 
-.accounts-add-user-overlay, .shipments-overlay {
+.accounts-add-user-overlay,
+.shipments-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
@@ -127,6 +128,7 @@
 
 .accounts-add-user-modal {
   background: var(--bg-color, #fff);
+  border-top: 4px solid var(--accent-color);
   padding: 1.5rem;
   border-radius: 10px;
   width: 40%;
