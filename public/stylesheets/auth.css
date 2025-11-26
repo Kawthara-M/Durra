@@ -211,6 +211,11 @@
   margin-top: 0.5rem;
 }
 
+.registeration-wrapper .card {
+  width: fit-content;
+  padding:2rem;
+  padding-bottom: 1rem;
+}
 /* set password page */
 
 .set-password-wrapper .img-side {
