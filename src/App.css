@@ -33,7 +33,7 @@ body.light {
   --btn-contrast-color: rgb(39, 38, 38);
   --accent-color: #6f0101;
   --a-hover-color: #5f0f0f;
-  --card-bg-color: #fef7ee;
+  --card-bg-color: #fefdfc;
 }
 
 body.dark {
@@ -66,7 +66,7 @@ body {
 main {
   flex: 1;
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   /* align-items: center; */
 }
 

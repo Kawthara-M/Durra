@@ -4,7 +4,8 @@
   display: flex;
   gap: 1rem;
   align-items: stretch;
-  padding: 1.5rem;
+  padding: 1.5rem 3rem;
+  padding-left: 2.5rem;
 }
 
 .profile-left,

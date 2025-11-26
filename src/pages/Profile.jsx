@@ -142,7 +142,7 @@ const Profile = () => {
   }
 
   const openConfirmDeleteModal = (addressId, displayName) => {
-    setModalType("confirm")
+    setModalType("success")
     setModalMessage(
       `Are you sure you want to delete "${displayName || "this address"}"?`
     )

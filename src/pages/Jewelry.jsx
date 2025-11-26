@@ -10,7 +10,8 @@ import {
   calculateTotalCost,
   calculateCollectionPrice,
 } from "../services/calculator.js"
-
+import jewelryImage from "../assets/jewelry-page.jpg"
+import filter from "../assets/filter.png"
 import "../../public/stylesheets/jewelry-page.css"
 
 const Jewelry = () => {
@@ -173,80 +174,100 @@ const Jewelry = () => {
   return (
     <>
       {jewelry.length > 0 && (
-        <div className="jewelry-page">
-          <h1>Jewellery</h1>
-
-          <div className="jewelry-page-overview">
-            <p>
-              {filteredJewelry.length + filteredCollections.length} products
-            </p>
-            <p className="filter-toggle" onClick={() => setShowFilter(true)}>
-              Filter
-            </p>
-
-            {showFilter && (
-              <div
-                className="jewelry-filter-backdrop"
-                onClick={() => setShowFilter(false)}
-              />
-            )}
-
+        <>
+          <div className="jewelry-page-container">
             <div
-              className={`jewelry-filter-sidebar ${showFilter ? "open" : ""}`}
+              className="jewelry-page-header"
+              style={{
+                backgroundImage: `url(${jewelryImage})`,
+                backgroundPosition: "center",
+                backgroundSize: "cover",
+              }}
             >
-              <button
-                className="jewelry-filter-close-btn"
-                onClick={() => setShowFilter(false)}
-                title="Close"
-              >
-                ✕
-              </button>
+              <h1>Jewelry</h1>
+              <p>"The Finest of Jewelry and Selections"</p>
+            </div>
+            <div className="jewelry-page">
+              <div className="jewelry-page-overview">
+                <button
+                  className="filter-toggle"
+                  onClick={() => setShowFilter(true)}
+                >
+                  <img
+                    src={filter}
+                    alt="filter"
+                    className="icon"
+                    title="Filter"
+                  />
+                </button>
 
-              <Filter
-                filters={filters}
-                fields={filterFields}
-                showPrice={true}
-                onApply={(f) => {
-                  setFilters(f)
-                  applyFilters(f)
-                  setShowFilter(false)
-                }}
-              />
+                {showFilter && (
+                  <div
+                    className="jewelry-filter-backdrop"
+                    onClick={() => setShowFilter(false)}
+                  />
+                )}
+
+                <div
+                  className={`jewelry-filter-sidebar ${
+                    showFilter ? "open" : ""
+                  }`}
+                >
+                  <button
+                    className="jewelry-filter-close-btn"
+                    onClick={() => setShowFilter(false)}
+                    title="Close"
+                  >
+                    ✕
+                  </button>
+
+                  <Filter
+                    filters={filters}
+                    fields={filterFields}
+                    showPrice={true}
+                    onApply={(f) => {
+                      setFilters(f)
+                      applyFilters(f)
+                      setShowFilter(false)
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="jewelry-grid">
+                {filteredJewelry.map((j) => (
+                  <ProductCard
+                    key={j._id}
+                    item={j}
+                    type="jewelry"
+                    metalRates={metalRates}
+                    showActions={true}
+                    showShopName
+                  />
+                ))}
+
+                {filteredCollections.map((c) => (
+                  <Link key={c._id} to={`/collections/${c._id}`}>
+                    <ProductCard
+                      item={c}
+                      type="collection"
+                      metalRates={metalRates}
+                      showActions={true}
+                      showShopName
+                    />
+                  </Link>
+                ))}
+
+                {filteredJewelry.length === 0 &&
+                  filteredCollections.length === 0 && (
+                    <div className="empty-wrapper">
+                      <p className="empty">No Jewelry Available</p>
+                    </div>
+                  )}
+              </div>
             </div>
           </div>
-
-          <div className="jewelry-grid">
-            {filteredJewelry.map((j) => (
-              <ProductCard
-                key={j._id}
-                item={j}
-                type="jewelry"
-                metalRates={metalRates}
-                showActions={true}
-                showShopName
-              />
-            ))}
-
-            {filteredCollections.map((c) => (
-              <Link key={c._id} to={`/collections/${c._id}`}>
-                <ProductCard
-                  item={c}
-                  type="collection"
-                  metalRates={metalRates}
-                  showActions={true}
-                  showShopName
-                />
-              </Link>
-            ))}
-
-            {filteredJewelry.length === 0 &&
-              filteredCollections.length === 0 && (
-                <div className="empty-wrapper">
-                  <p className="empty">No Jewelry Available</p>
-                </div>
-              )}
-          </div>
-        </div>
+        </>
       )}
     </>
   )

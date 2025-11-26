@@ -30,7 +30,7 @@
   /* padding-bottom: 1rem; */
   cursor: pointer;
   border-radius: var(--border-radius);
-  background: var(--card-bg-color, #fff);
+  background-color: var(--card-bg-color, #fff);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.03);
   position: relative;
   box-sizing: border-box;
