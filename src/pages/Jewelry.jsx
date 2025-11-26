@@ -185,7 +185,7 @@ const Jewelry = () => {
               }}
             >
               <h1>Jewelry</h1>
-              <p>"The Finest of Jewelry and Selections"</p>
+              <p>"The Finest of Jewelry and Collections"</p>
             </div>
             <div className="jewelry-page">
               <div className="jewelry-page-overview">
