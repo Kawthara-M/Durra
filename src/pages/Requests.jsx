@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
 import User from "../services/api"
 import { useUser } from "../context/UserContext"
+import Request from "./Request" 
 import "../../public/stylesheets/requests.css"
 
 const statusPriority = {
@@ -18,9 +18,9 @@ const sortByStatus = (a, b) => {
 
 const Requests = () => {
   const { user } = useUser()
-  const navigate = useNavigate()
   const [requests, setRequests] = useState([])
   const [filterStatus, setFilterStatus] = useState("all")
+  const [selectedRequestId, setSelectedRequestId] = useState(null)
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -49,6 +49,15 @@ const Requests = () => {
   const filteredRequests = requests.filter((req) =>
     filterStatus === "all" ? req : req.status === filterStatus
   )
+
+  const handleRequestUpdatedFromModal = (updatedReq) => {
+    setRequests((prev) => {
+      const updated = prev.map((req) =>
+        req._id === updatedReq._id ? { ...req, ...updatedReq } : req
+      )
+      return [...updated].sort(sortByStatus)
+    })
+  }
 
   return (
     <>
@@ -83,7 +92,7 @@ const Requests = () => {
                   <div
                     className="request-item"
                     key={req._id}
-                    onClick={() => navigate(`/requests/${req._id}`)}
+                    onClick={() => setSelectedRequestId(req._id)}
                   >
                     <div className="request-item-overview">
                       <h3>{req.details.name}</h3>
@@ -121,7 +130,10 @@ const Requests = () => {
                         <button
                           className="overview-button"
                           title="Request Overview"
-                          onClick={() => navigate(`/requests/${req._id}`)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setSelectedRequestId(req._id)
+                          }}
                         >
                           Overview
                         </button>
@@ -132,6 +144,14 @@ const Requests = () => {
               </div>
             )}
           </div>
+
+          {selectedRequestId && (
+            <Request
+              requestId={selectedRequestId}
+              onClose={() => setSelectedRequestId(null)}
+              onRequestUpdated={handleRequestUpdatedFromModal}
+            />
+          )}
         </div>
       )}
     </>
