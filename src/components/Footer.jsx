@@ -26,18 +26,18 @@ const Footer = () => {
             <h6 onClick={() => navigate("/live-prices")}>Live Prices</h6>
           </div>
 
-          {user && (user?.role === "Customer") && (
+          {user && user?.role === "Customer" && (
             <>
               <div className="container">
                 <h6 onClick={() => navigate("/comparsion")}>Comparsion</h6>
               </div>
-              <div className="container">
-                <h6 onClick={() => navigate("/registeration")}>
-                  Join as a Jeweler
-                </h6>
-              </div>
             </>
           )}
+          <div className="container">
+            <h6 onClick={() => navigate("/registeration")}>
+              Join as a Jeweler
+            </h6>
+          </div>
 
           <div className="container">
             <h6>Privacy Policy</h6>
