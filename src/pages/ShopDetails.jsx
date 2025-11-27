@@ -87,13 +87,13 @@ const ShopDetails = () => {
       </div>
 
       <div className="shop-tabs">
-        <button 
+        <button
           className={`tab-button ${activeTab === "jewelry" ? "active" : ""}`}
           onClick={() => setActiveTab("jewelry")}
         >
           Jewelry ({jewelries.length})
         </button>
-        <button 
+        <button
           className={`tab-button ${activeTab === "services" ? "active" : ""}`}
           onClick={() => setActiveTab("services")}
         >
@@ -133,6 +133,8 @@ const ShopDetails = () => {
                   key={service._id}
                   item={service}
                   type="service"
+                  showShopName
+                  showActions
                   metalRates={null} // not needed for services
                   onClick={() => handleServiceClick(service._id)}
                 />
