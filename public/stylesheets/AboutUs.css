@@ -1,4 +1,7 @@
 .durra-about {
+  width: 100%;
+  display: flex;
+  justify-content: center;
   background: inherit;
   padding: 3rem 2rem;
 }
@@ -10,7 +13,7 @@
   flex-direction: column;
   gap: 5rem; 
 }
-/* ===== Hero Section ===== */
+
 .durra-hero {
   text-align: center;
   margin-bottom: 1rem;
@@ -68,7 +71,6 @@
   color: var(--primary-maroon);
 }
 
-/* ===== Values Section ===== */
 .durra-values {
   text-align: center;
 }
@@ -125,7 +127,6 @@
   font-size: 1.05rem;
 }
 
-/* ===== Team Section ===== */
 .durra-team {
   text-align: center;
 }

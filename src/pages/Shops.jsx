@@ -48,7 +48,6 @@ const Shops = () => {
       <h1>Shops</h1>
 
       <div className="shops-page-overview">
-        {/* <p>Total Shops: {filteredShops.length}</p> */}
         <div className="search-container">
           <input
             type="text"

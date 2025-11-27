@@ -112,6 +112,8 @@ const ShopDetails = () => {
                   type="jewelry"
                   metalRates={null}
                   onClick={() => handleJewelryClick(jewelry._id)}
+                  showShopName
+                  showActions
                 />
               ))}
             </div>
