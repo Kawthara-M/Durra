@@ -92,6 +92,7 @@ const JewelryPage = () => {
     const itemShopId =
       typeof jewelry.shop === "object" ? jewelry.shop?._id : jewelry.shop
 
+    // Prevent mixing items from different shops
     if (currentOrderId && currentShopId && itemShopId) {
       if (String(currentShopId) !== String(itemShopId)) {
         setShopModalMessage(
@@ -102,18 +103,18 @@ const JewelryPage = () => {
       }
     }
 
+    const quantityToUse = quantity || 1
     const newItem = {
       item: jewelry._id,
       itemModel: "Jewelry",
-      quantity: quantity || 1,
-      totalPrice: totalPrice * (quantity || 1),
+      quantity: quantityToUse,
+      totalPrice: totalPrice * quantityToUse,
       size: size || undefined,
       notes: "",
     }
 
     try {
-      let currentOrderId = currentOrder.orderId
-
+      // 🔹 NO existing order → create one (and send shop!)
       if (!currentOrderId) {
         const payload = {
           jewelryOrder: [newItem],
@@ -121,30 +122,38 @@ const JewelryPage = () => {
           totalPrice: newItem.totalPrice,
           collectionMethod: "delivery",
           notes: "",
+          shop: itemShopId || null, // ⭐ important to tie order to this shop
         }
 
-        const createdOrder = await createOrder(payload)
+        const createdOrder = await createOrder(payload) // returns order object
+        const orderDoc = createdOrder.order || createdOrder
 
-        setOrderId(createdOrder._id)
-        setFullOrder(createdOrder)
-        addJewelryToOrder(newItem)
+        setOrderId(orderDoc._id)
+        setFullOrder(orderDoc)
+        addJewelryToOrder({
+          item: newItem.item,
+          itemModel: newItem.itemModel,
+          quantity: newItem.quantity,
+          totalPrice: newItem.totalPrice,
+        })
         return
       }
 
+      // 🔹 Existing order → update jewelryOrder
       const updatedJewelryOrder = [
         ...(order.jewelryOrder || []).map((entry) => ({
           item: typeof entry.item === "object" ? entry.item._id : entry.item,
           itemModel: entry.itemModel,
           quantity: entry.quantity ?? 1,
           totalPrice: Number(entry.totalPrice ?? 0),
-          size: entry.size || undefined, 
+          size: entry.size || undefined,
         })),
         {
           item: jewelry._id,
           itemModel: "Jewelry",
-          quantity: quantity || 1,
-          totalPrice: totalPrice * (quantity || 1),
-          size: size || undefined, 
+          quantity: quantityToUse,
+          totalPrice: totalPrice * quantityToUse,
+          size: size || undefined,
         },
       ]
 
@@ -153,7 +162,12 @@ const JewelryPage = () => {
       })
 
       setFullOrder(updatedOrder)
-      addJewelryToOrder(newItem)
+      addJewelryToOrder({
+        item: newItem.item,
+        itemModel: newItem.itemModel,
+        quantity: newItem.quantity,
+        totalPrice: newItem.totalPrice,
+      })
     } catch (err) {
       console.error("Failed to add to cart:", err)
     }
@@ -172,7 +186,7 @@ const JewelryPage = () => {
           itemModel: "Jewelry",
           quantity: qty,
           totalPrice: total,
-          size: size || undefined, 
+          size: size || undefined,
         },
       ]
 

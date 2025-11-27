@@ -48,11 +48,25 @@ const JewelerOrderPage = () => {
     },
   ]
 
+  // status priority for sorting
+  const STATUS_PRIORITY = {
+    submitted: 0,   // Pending
+    accepted: 1,
+    processing: 2,
+    pickup: 3,      // Ready for Pickup
+    ready: 4,       // Ready for Delivery
+    out: 5,         // Out for Delivery
+    delivered: 6,
+    "picked-up": 7,
+    rejected: 8,
+  }
+
   useEffect(() => {
     const getOrders = async () => {
       const response = await User.get(`/orders/`)
-      setAllOrders(response.data.orders)
-      setFilteredOrders(response.data.orders)
+      const orders = response.data.orders || []
+      setAllOrders(orders)
+      setFilteredOrders(orders) // initial, will be sorted by next effect
     }
     getOrders()
   }, [])
@@ -60,18 +74,37 @@ const JewelerOrderPage = () => {
   useEffect(() => {
     const applyFilters = () => {
       let filtered = allOrders
-      if (filters.jewelryOrder)
+
+      if (filters.jewelryOrder) {
         filtered = filtered.filter((o) => o.jewelryOrder?.length > 0)
-      if (filters.serviceOrder)
+      }
+      if (filters.serviceOrder) {
         filtered = filtered.filter((o) => o.serviceOrder?.length > 0)
-      if (filters.status)
+      }
+      if (filters.status) {
         filtered = filtered.filter((o) => o.status === filters.status)
-      if (filters.collectionMethod)
+      }
+      if (filters.collectionMethod) {
         filtered = filtered.filter(
           (o) => o.collectionMethod === filters.collectionMethod
         )
-      setFilteredOrders(filtered)
+      }
+
+      const sorted = [...filtered].sort((a, b) => {
+        const pa =
+          STATUS_PRIORITY[a.status] !== undefined
+            ? STATUS_PRIORITY[a.status]
+            : Number.MAX_SAFE_INTEGER
+        const pb =
+          STATUS_PRIORITY[b.status] !== undefined
+            ? STATUS_PRIORITY[b.status]
+            : Number.MAX_SAFE_INTEGER
+        return pa - pb
+      })
+
+      setFilteredOrders(sorted)
     }
+
     applyFilters()
   }, [filters, allOrders])
 
@@ -138,6 +171,7 @@ const JewelerOrderPage = () => {
           </div>
         )}
       </div>
+
       {showFilter && (
         <div className="filter-overlay" onClick={() => setShowFilter(false)}>
           <div className="filter-wrapper" onClick={(e) => e.stopPropagation()}>

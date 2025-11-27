@@ -154,6 +154,7 @@ const ProductCard = ({
         if (existingIndex !== -1) {
           return
         } else {
+          console.log(newItem)
           updatedJewelryOrder.push(newItem)
         }
       } else if (effectiveType === "service") {
@@ -174,6 +175,12 @@ const ProductCard = ({
         }
       }
       if (!currentOrderId) {
+        const itemShopId =
+          (typeof item.shop === "object" ? item.shop?._id : item.shop) ||
+          (typeof item.service === "object"
+            ? item.service?.shop
+            : item.service?.shop)
+
         const payload = {
           jewelryOrder: updatedJewelryOrder,
           serviceOrder: updatedServiceOrder,
@@ -188,7 +195,10 @@ const ProductCard = ({
             ),
           collectionMethod: "delivery",
           notes: "",
+          shop: itemShopId || null, // 🔴 important: send the shop for the first time
         }
+
+        console.log("[CREATE ORDER PAYLOAD]", payload)
 
         const createdOrder = await createOrder(payload)
 

@@ -27,6 +27,12 @@ const Shipments = () => {
     delivered: "Delivered",
   }
 
+  const STATUS_PRIORITY = {
+    atShop: 0,
+    "out-for-shipping": 1,
+    delivered: 2,
+  }
+
   const formatStatus = (status) =>
     STATUS_LABELS[status] ||
     (status ? status.charAt(0).toUpperCase() + status.slice(1) : "")
@@ -44,14 +50,24 @@ const Shipments = () => {
       }
     }
 
-    if (user?.role === "Driver") {
-      fetchShipments()
-    }
+    if (user?.role === "Driver") fetchShipments()
   }, [user])
 
   const filteredShipments = shipments.filter((s) =>
     s?._id?.toLowerCase().includes(search.toLowerCase())
   )
+
+  const sortedShipments = [...filteredShipments].sort((a, b) => {
+    const pa =
+      STATUS_PRIORITY[a.status] !== undefined
+        ? STATUS_PRIORITY[a.status]
+        : Number.MAX_SAFE_INTEGER
+    const pb =
+      STATUS_PRIORITY[b.status] !== undefined
+        ? STATUS_PRIORITY[b.status]
+        : Number.MAX_SAFE_INTEGER
+    return pa - pb
+  })
 
   const openShipmentModal = (shipment) => {
     setSelectedShipment(shipment)
@@ -79,25 +95,17 @@ const Shipments = () => {
     return parts.join(", ") || "Address not available"
   }
 
-  const getPickupAddress = (shipment) => {
-    const pickupAddress = shipment.order?.shop?.user?.defaultAddress
-    return pickupAddress
-  }
-
-  const getDeliveryAddress = (shipment) => {
-    const deliveryAddress = shipment.order?.address
-    return deliveryAddress
-  }
+  const getPickupAddress = (shipment) => shipment.order?.shop?.user?.defaultAddress
+  const getDeliveryAddress = (shipment) => shipment.order?.address
 
   const getCoords = (addr) => {
-    if (!addr) return null
     if (
+      addr &&
       Array.isArray(addr.coordinates) &&
       addr.coordinates.length === 2 &&
       addr.coordinates[0] != null &&
       addr.coordinates[1] != null
     ) {
-      console.log(addr.coordinates)
       return addr.coordinates
     }
     return null
@@ -160,11 +168,11 @@ const Shipments = () => {
       </div>
 
       <div className="shipments-body">
-        {filteredShipments.length === 0 ? (
+        {sortedShipments.length === 0 ? (
           <p>No matching shipments.</p>
         ) : (
           <div className="shipments-list">
-            {filteredShipments.map((s) => (
+            {sortedShipments.map((s) => (
               <div
                 key={s._id}
                 className="shipment-item"
@@ -185,27 +193,22 @@ const Shipments = () => {
           <div className="shipments-modal" onClick={(e) => e.stopPropagation()}>
             <div className="add-user-modal-header">
               <h2>Shipment Details</h2>
-              <button
-                type="button"
-                className="close-modal-btn"
-                onClick={closeShipmentModal}
-              >
+              <button className="close-modal-btn" onClick={closeShipmentModal}>
                 ✕
               </button>
             </div>
 
             <div className="shipment-info-modal-body">
-              <div>
-                <span className="shipment-info-field">
-                  <h6>Shipment ID</h6>
-                  <p>{selectedShipment._id}</p>
-                </span>
+              <span className="shipment-info-field">
+                <h6>Shipment ID</h6>
+                <p>{selectedShipment._id}</p>
+              </span>
 
-                <span className="shipment-info-field">
-                  <h6>Status</h6>
-                  <p>{formatStatus(selectedShipment.status)}</p>{" "}
-                </span>
-              </div>
+              <span className="shipment-info-field">
+                <h6>Status</h6>
+                <p>{formatStatus(selectedShipment.status)}</p>
+              </span>
+
               {(() => {
                 const pickupAddr = getPickupAddress(selectedShipment)
                 const deliveryAddr = getDeliveryAddress(selectedShipment)
@@ -225,7 +228,7 @@ const Shipments = () => {
                     </div>
 
                     <div className="shipment-address-section">
-                      <h5>Delivery Location📍</h5>
+                      <h5>Delivery Location 📍</h5>
                       <p>{formatAddress(deliveryAddr)}</p>
                       {deliveryCoords && (
                         <div className="shipment-map-wrapper">
@@ -242,13 +245,11 @@ const Shipments = () => {
                   className="shipment-secret-key-form"
                   onSubmit={handleSubmitSecretKey}
                 >
-                  <div>
-                    <h5>Enter Delivery Secret Key</h5>
-                    <p className="shipment-secret-key-hint">
-                      Ask the customer for their delivery code and enter it
-                      below to confirm delivery.
-                    </p>
-                  </div>
+                  <h5>Enter Delivery Secret Key</h5>
+                  <p className="shipment-secret-key-hint">
+                    Ask the customer for their code and enter it below to
+                    confirm delivery.
+                  </p>
                   <input
                     type="text"
                     placeholder="Enter secret key"
