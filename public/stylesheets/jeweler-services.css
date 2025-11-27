@@ -39,6 +39,10 @@
   color: var(--accent-color);
   font-weight: bold;
 }
+.add-collections {
+  padding: .6rem 2rem !important;
+  margin-left: .8rem;
+}
 
 .jeweler-jewelry-header button:hover {
   background-color: var(--accent-color);

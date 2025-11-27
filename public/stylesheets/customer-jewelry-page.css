@@ -44,6 +44,10 @@
   width: 50%;
 }
 
+.jewelry-inputs input {
+  width: 50%;
+}
+
 .jewelry-inputs-select-and-size {
   display: flex;
   flex-direction: column;
@@ -193,7 +197,8 @@
   }
 
   .jewelry-inputs input[type="number"] {
-    min-width: 10vw;
+    min-width: 10%;
+    width: 35%;
     margin: 0;
   }
 

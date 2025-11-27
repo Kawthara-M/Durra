@@ -172,7 +172,7 @@ const JewelryPage = () => {
           itemModel: "Jewelry",
           quantity: qty,
           totalPrice: total,
-          size: size || undefined, // ✅ save size
+          size: size || undefined, 
         },
       ]
 

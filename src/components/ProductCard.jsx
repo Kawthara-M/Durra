@@ -28,7 +28,6 @@ const ProductCard = ({
     addServiceToOrder,
     setOrderId,
     setFullOrder,
-    resetOrder,
   } = useOrder()
   const [collectionPrice, setCollectionPrice] = useState(null)
 
@@ -39,7 +38,6 @@ const ProductCard = ({
   useEffect(() => {
     if (type === "collection" && metalRates) {
       const price = calculateCollectionPrice(item, metalRates)
-      console.log(calculateCollectionPrice(item, metalRates))
       setCollectionPrice(Number(price.toFixed(2)))
     }
   }, [type, item, metalRates])
@@ -157,7 +155,6 @@ const ProductCard = ({
           return
         } else {
           updatedJewelryOrder.push(newItem)
-          console.log("jewelry order after pushing", updatedJewelryOrder)
         }
       } else if (effectiveType === "service") {
         const existingServiceIndex = updatedServiceOrder.findIndex(
@@ -343,7 +340,7 @@ const ProductCard = ({
   const url =
     user?.role === "Jeweler"
       ? type === "collection"
-        ? `/jeweler-collections/${item?._id}`
+        ? `/show-collection/${item?._id}`
         : type === "service"
         ? `/jeweler-services/${item?._id}`
         : `/show-jewelry/${item?._id}`

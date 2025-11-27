@@ -25,7 +25,8 @@
   width: 100%;
 }
 
-.orders-page-container .empty, .jeweler-collections .empty {
+.orders-page-container .empty,
+.jeweler-collections .empty {
   display: flex;
   justify-content: center;
   margin-top: 13%;
@@ -34,8 +35,7 @@
 }
 
 .jeweler-collections .empty {
-    margin-top: 25%;
-
+  margin-top: 10%;
 }
 
 .orders-grid a:hover {
@@ -187,7 +187,7 @@
   position: absolute;
   right: 1rem;
   top: 5rem;
-  text-align:-right;
+  text-align: -right;
 }
 
 .toggle-filter-btn:hover {
@@ -405,6 +405,12 @@
   .orders-page-container + .filter-overlay .filter-wrapper,
   .orders-page-container + .filter-overlay .filter-sidebar {
     width: 43vw !important;
+  }
+}
+
+@media (max-width: 800px) {
+  .jeweler-collections .empty {
+    margin-top: 25%;
   }
 }
 
