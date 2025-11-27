@@ -65,24 +65,27 @@
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
-
 .customer-jewelry-page .reviews-error {
   color: #c0392b;
   font-size: 0.85rem;
 }
 
-.customer-jewelry-page .reviews-list {
+.reviews-list {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.customer-jewelry-page .reviews-list h4 {
+.service-page .no-reviews {
+  margin-top: 0.2rem;
+}
+
+.reviews-list h4 {
   margin: 0;
   font-size: 1rem;
 }
 
-.customer-jewelry-page .review-card {
+.review-card {
   padding: 0.8rem 1rem;
   padding-bottom: 0 !important;
   background-color: var(--bg-color);
@@ -92,15 +95,22 @@
   gap: 0.35rem;
 }
 
-.customer-jewelry-page .review-header {
+.jeweler-reviews .review-card {
+  padding: 1rem 1rem;
+  padding-bottom: 1.2rem !important;
+  gap: 0.1rem;
+}
+
+.review-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 0.9rem;
 }
 
-.customer-jewelry-page .review-author {
+.review-author {
   font-weight: 600;
+  font-size: 1.1rem;
   color: var(--text-color);
 }
 
@@ -115,7 +125,7 @@
   line-height: 1.4;
 }
 
-.customer-jewelry-page .review-card textarea {
+.review-card textarea {
   width: 100%;
   min-height: 4rem;
   resize: vertical;
@@ -166,7 +176,7 @@ textarea.textarea-disabled {
   }
 
   .customer-jewelry-page .reviews-form,
-  .customer-jewelry-page .review-card {
+  .review-card {
     padding: 0.75rem 0.85rem;
   }
 }

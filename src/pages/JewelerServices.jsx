@@ -37,9 +37,7 @@ const JewelerServices = () => {
       ) : (
         <div className="grid">
           {services.map((service) => (
-            <Link to={`/show-service/${service._id}`} key={service._id}>
               <ProductCard item={service} type="service" showActions={false} />
-            </Link>
           ))}
         </div>
       )}

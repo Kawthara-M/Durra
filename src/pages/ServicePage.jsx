@@ -231,10 +231,6 @@ const ServicePage = () => {
                 <h2 className="service-description">Description</h2>
                 <p id="jeweler-service-description">{service.description}</p>
 
-                {/* <div className="jeweler-service-details">
-                  <h3 className="service-price">Price</h3>
-                  <p id="jewelry-price">{totalPrice.toFixed(2)} BHD</p>
-                </div> */}
               </div>
 
               <div className="jewelry-inputs">
@@ -264,7 +260,7 @@ const ServicePage = () => {
             </div>
           </div>
 
-          <div>
+          <div >
             <h3 className="reviews-heading">Reviews</h3>
             <Reviews reviewedItemId={serviceId} reviewedItemType="Service" />
           </div>

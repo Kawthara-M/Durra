@@ -88,10 +88,19 @@
 }
 
 .update-status button {
-  padding: 0.6rem 1.5rem;
+  padding: 0.8rem 1.5rem;
   white-space: nowrap;
   height: 80% !important;
   margin: auto 0 !important;
+  background-color: transparent;
+  border: 2px solid var(--accent-color);
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+.update-status button:hover {
+  background-color: var(--accent-color);
+  color: var(--btn-color);
 }
 
 #accept,
@@ -263,6 +272,7 @@
   margin: 0;
   margin-top: 1rem;
   gap: 0 !important;
+  height: fit-content;
 }
 
 .contents-toggle-header {
