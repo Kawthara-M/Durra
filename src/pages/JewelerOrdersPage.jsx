@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 import Filter from "../components/Filter.jsx"
 import { STATUS_DISPLAY_MAP } from "../services/statusMap.js"
 import User from "../services/api.js"
-
+import filter from "../assets/filter.png"
 import "../../public/stylesheets/jeweler-orders.css"
 
 const JewelerOrderPage = () => {
@@ -81,18 +81,20 @@ const JewelerOrderPage = () => {
         <div className="orders-page-header">
           <h1>Orders</h1>
         </div>
-        <button
-          className="toggle-filter-btn"
-          onClick={() => setShowFilter(true)}
-        >
-          Filter
-        </button>
+        {filteredOrders.length > 0 && (
+          <button
+            className="toggle-filter-btn"
+            onClick={() => setShowFilter(true)}
+          >
+            <img src={filter} alt="filter" className="icon" title="Filter" />
+          </button>
+        )}
 
-        <div className="orders-grid">
-          {filteredOrders?.length === 0 ? (
-            <p className="empty">No Orders found.</p>
-          ) : (
-            filteredOrders.map((order) => (
+        {filteredOrders?.length === 0 ? (
+          <span className="empty">No Orders.</span>
+        ) : (
+          <div className="orders-grid">
+            {filteredOrders.map((order) => (
               <Link to={`/show-order/${order._id}`} key={order._id}>
                 <div className="order-card">
                   <div className="order-image">
@@ -120,18 +122,21 @@ const JewelerOrderPage = () => {
                         : "Order"}
                     </h3>
                     <div>
-                    <p>
-                      Status: {STATUS_DISPLAY_MAP[order.status] || order.status}
-                    </p>
-                    <p className="order-date">
-                      Placed on: {new Date(order.createdAt).toLocaleDateString()}
-                    </p></div>
+                      <p>
+                        Status:{" "}
+                        {STATUS_DISPLAY_MAP[order.status] || order.status}
+                      </p>
+                      <p className="order-date">
+                        Placed on:{" "}
+                        {new Date(order.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </Link>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
       {showFilter && (
         <div className="filter-overlay" onClick={() => setShowFilter(false)}>

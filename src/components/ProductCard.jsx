@@ -59,7 +59,6 @@ const ProductCard = ({
     if (type === "jewelry") return `${getJewelryPrice()} BHD`
     if (type === "service") return `${item.price?.toFixed(2)} BHD`
     if (type === "collection") {
-      console.log("here")
       return collectionPrice !== null
         ? `${collectionPrice.toFixed(2)} BHD`
         : "—"
@@ -347,7 +346,7 @@ const ProductCard = ({
         ? `/jeweler-collections/${item?._id}`
         : type === "service"
         ? `/jeweler-services/${item?._id}`
-        : `/jeweler-jewelry/${item?._id}`
+        : `/show-jewelry/${item?._id}`
       : type === "collection"
       ? `/collections/${item?._id}`
       : type === "service"

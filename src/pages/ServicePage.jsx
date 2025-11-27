@@ -83,7 +83,7 @@ const ServicePage = () => {
           notes: "",
         }
 
-        const createdOrder = await createOrder(payload) 
+        const createdOrder = await createOrder(payload)
         setOrderId(createdOrder._id)
         setFullOrder(createdOrder)
         addServiceToOrder(newItem)
@@ -200,7 +200,6 @@ const ServicePage = () => {
   return (
     <>
       {service && (
-      
         <div className="customer-jewelry-page">
           <div className="service-page-content">
             <div className="service-images">
@@ -226,16 +225,23 @@ const ServicePage = () => {
             <div className="service-information">
               <div className="information-top-wrapper">
                 <h1>{service.name}</h1>
+                <h2 className="shop-name-in-product-page">
+                  {service.shop.name}
+                </h2>
                 <h2 className="service-description">Description</h2>
                 <p id="jeweler-service-description">{service.description}</p>
 
+                {/* <div className="jeweler-service-details">
+                  <h3 className="service-price">Price</h3>
+                  <p id="jewelry-price">{totalPrice.toFixed(2)} BHD</p>
+                </div> */}
+              </div>
+
+              <div className="jewelry-inputs">
                 <div className="jeweler-service-details">
                   <h3 className="service-price">Price</h3>
                   <p id="jewelry-price">{totalPrice.toFixed(2)} BHD</p>
                 </div>
-              </div>
-
-              <div className="jewelry-inputs">
                 <span className="add-or-wishlist">
                   <button
                     onClick={user ? handleAdd : undefined}
@@ -248,9 +254,7 @@ const ServicePage = () => {
                     src={heartIcon}
                     alt="Wishlist"
                     title={
-                      user
-                        ? "Add to Wishlist"
-                        : "Sign in to Add to Wishlist"
+                      user ? "Add to Wishlist" : "Sign in to Add to Wishlist"
                     }
                     className={`icon ${!user && "disabled"}`}
                     onClick={user ? handleWishlist : undefined}

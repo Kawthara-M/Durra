@@ -234,6 +234,7 @@ button[type="submit"]:disabled {
 }
 
 .loader {
+  margin: 0 auto;
   width: 50px;
   aspect-ratio: 4;
   background: radial-gradient(

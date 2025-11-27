@@ -37,13 +37,13 @@ const JewelerJewelryPage = () => {
   return (
     <div className="jeweler-services">
       <div className="jeweler-jewelry-header">
-        <h1 className="jeweler-jewelry-heading">Jewellery</h1>
+        <h1 className="jeweler-jewelry-heading">Jewelry</h1>
         <button
           type="button"
           title="Add Jewelry"
           onClick={() => navigate("/add-jewelry")}
         >
-          Add Jewellery
+          Add Jewelry
         </button>
       </div>
 
@@ -52,14 +52,12 @@ const JewelerJewelryPage = () => {
       ) : (
         <div className="grid">
           {jewelry.map((j) => (
-            <Link to={`/show-jewelry/${j._id}`} key={j._id}>
               <ProductCard
                 item={j}
                 type="jewelry"
                 metalRates={metalRates}
                 showActions={false}
               />
-            </Link>
           ))}
         </div>
       )}
