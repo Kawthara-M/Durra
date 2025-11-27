@@ -43,7 +43,9 @@ const Footer = () => {
             <h6>Privacy Policy</h6>
           </div>
           <div className="container">
-            <h6>Terms and Conditions</h6>
+            <h6 onClick={() => navigate("/terms-and-conditions")}>
+              Terms and Conditions
+            </h6>
           </div>
           <div className="container">
             <h6 onClick={() => navigate("/sizeGuide")}>Size Guide</h6>
