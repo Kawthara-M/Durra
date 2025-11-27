@@ -28,6 +28,11 @@
   justify-content: space-between;
 }
 
+.shop-name-in-product-page {
+  opacity: .8;
+  font-size: 1.3rem !important;
+}
+
 .service-description {
   margin-top: 1rem;
 }
@@ -168,7 +173,7 @@
   .jewelry-inputs {
     margin-bottom: 0 !important;
     width: 100%;
-    flex-direction: row;
+    /* flex-direction: row; */
     gap: 0.5rem;
     align-items: flex-start;
     justify-content: flex-start;

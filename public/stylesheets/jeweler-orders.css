@@ -25,6 +25,14 @@
   width: 100%;
 }
 
+.orders-page-container .empty {
+  display: flex;
+  justify-content: center;
+  margin-top: 13%;
+  width: 100%;
+  height: 100%;
+}
+
 .orders-grid a:hover {
   text-decoration: none !important;
 }
@@ -170,13 +178,11 @@
 .toggle-filter-btn {
   background-color: transparent !important;
   color: var(--text-color);
-  border: solid 1px var(--text-color);
-  cursor: pointer;
-  font-size: 0.9rem;
-  width: 12%;
+  width: fit-content;
   position: absolute;
   right: 1rem;
-  top: 4.5rem;
+  top: 5rem;
+  text-align:-right;
 }
 
 .toggle-filter-btn:hover {
