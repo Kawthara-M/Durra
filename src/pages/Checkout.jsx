@@ -146,18 +146,11 @@ const Checkout = () => {
     if (!paymentMethod) return false
 
     if (deliveryMethod === "delivery") {
-      const addr = addresses.find((a) => a._id === selectedAddress)
+      const addr = addresses.find(
+        (a) => String(a._id) === String(selectedAddress)
+      )
       if (!addr) return false
 
-      const requiredFields = ["block", "house"]
-      for (const field of requiredFields) {
-        if (
-          !addr[field] ||
-          (Array.isArray(addr[field]) && addr[field].length === 0)
-        ) {
-          return false
-        }
-      }
     }
 
     return true

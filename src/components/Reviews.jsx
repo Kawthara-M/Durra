@@ -119,7 +119,7 @@ const Reviews = ({
         {loading ? (
           <p>Loading reviews . . .</p>
         ) : reviews.length === 0 ? (
-          <p>No reviews.</p>
+          <p className="no-reviews">No reviews.</p>
         ) : (
           <>
             {reviews.map((review) => (

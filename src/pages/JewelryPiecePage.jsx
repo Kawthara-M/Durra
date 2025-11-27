@@ -243,12 +243,12 @@ const JewelryPiecePage = () => {
               )}
             </div>
 
-            <div className="service-reviews">
+            <div className="jeweler-reviews">
               <h3 className="reviews-heading">Reviews</h3>
               <Reviews
                 reviewedItemId={jewelryId}
                 reviewedItemType="Jewelry"
-                readOnly={true} 
+                readOnly
               />
             </div>
           </div>

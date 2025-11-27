@@ -18,7 +18,6 @@
   
 }
 
-/* ===== Hero ===== */
 .tc-hero {
   text-align: center;
   margin-bottom: 2rem;
@@ -37,7 +36,6 @@
   line-height: 1.6;
 }
 
-/* ===== Timeline Sections ===== */
 .tc-timeline {
   display: flex;
   flex-direction: column;
@@ -74,7 +72,7 @@
   align-items: center;
   font-weight: bold;
   z-index: 1;
-  margin-left: -1rem; /* overlap timeline line */
+  margin-left: -1rem; 
 }
 
 .tc-timeline-content {
@@ -104,13 +102,11 @@
   line-height: 1.7;
 }
 
-/* ===== Highlight Partner Section ===== */
 .highlight .tc-timeline-content {
-  border-left: 4px solid #800020; /* maroon highlight instead of gold */
+  border-left: 4px solid #800020; 
   background-color: #fff; 
 }
 
-/* ===== Links ===== */
 .tc-link {
   color: #800020;
   text-decoration: underline;
@@ -121,7 +117,7 @@
   color: #aa3049;
 }
 
-/* ===== Responsive ===== */
+
 @media (max-width: 768px) {
   .tc-hero-title { font-size: 2.2rem; }
   .tc-timeline::before { left: 1.5rem; }

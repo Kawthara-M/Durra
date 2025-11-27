@@ -247,7 +247,6 @@ const Jewelry = () => {
                 ))}
 
                 {filteredCollections.map((c) => (
-                  <Link key={c._id} to={`/collections/${c._id}`}>
                     <ProductCard
                       item={c}
                       type="collection"
@@ -255,7 +254,6 @@ const Jewelry = () => {
                       showActions={true}
                       showShopName
                     />
-                  </Link>
                 ))}
 
                 {filteredJewelry.length === 0 &&

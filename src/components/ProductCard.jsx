@@ -342,7 +342,7 @@ const ProductCard = ({
       ? type === "collection"
         ? `/show-collection/${item?._id}`
         : type === "service"
-        ? `/jeweler-services/${item?._id}`
+        ? `/show-service/${item?._id}`
         : `/show-jewelry/${item?._id}`
       : type === "collection"
       ? `/collections/${item?._id}`
