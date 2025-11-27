@@ -11,7 +11,7 @@ import {
   calculateCollectionPrice,
   fetchMetalRates,
 } from "../services/calculator"
-import FeedbackModal from "../components/FeedbackModal" 
+import FeedbackModal from "../components/FeedbackModal"
 
 import "../../public/stylesheets/customer-jewelry-page.css"
 
@@ -19,13 +19,8 @@ const CollectionPage = () => {
   const { collectionId } = useParams()
   const { user } = useUser()
 
-  const {
-    order,
-    addJewelryToOrder,
-    setOrderId,
-    setShopId,
-    setFullOrder,
-  } = useOrder()
+  const { order, addJewelryToOrder, setOrderId, setShopId, setFullOrder } =
+    useOrder()
 
   const [metalRates, setMetalRates] = useState(null)
   const [collection, setCollection] = useState(null)
@@ -137,7 +132,7 @@ const CollectionPage = () => {
           notes: "",
         }
 
-        const createdOrder = await createOrder(payload) 
+        const createdOrder = await createOrder(payload)
         const orderDoc = createdOrder
         const finalOrderId = orderDoc._id
 
@@ -145,9 +140,7 @@ const CollectionPage = () => {
         setFullOrder(orderDoc)
 
         const shopIdFromBackend =
-          typeof orderDoc.shop === "object"
-            ? orderDoc.shop?._id
-            : orderDoc.shop
+          typeof orderDoc.shop === "object" ? orderDoc.shop?._id : orderDoc.shop
 
         if (shopIdFromBackend) {
           setShopId(shopIdFromBackend)
@@ -172,7 +165,10 @@ const CollectionPage = () => {
         shop: updatedOrderDoc.shop,
       })
     } catch (err) {
-      console.error("Failed to add collection to cart:", err.response?.data || err)
+      console.error(
+        "Failed to add collection to cart:",
+        err.response?.data || err
+      )
     }
   }
 
@@ -347,19 +343,21 @@ const CollectionPage = () => {
             <div className="service-information">
               <div className="information-top-wrapper">
                 <h1>{collection.name}</h1>
+                <h2 className="shop-name-in-product-page">
+                  {collection.shop.name}
+                </h2>
                 <h2 className="service-description">Description</h2>
-                <p id="jeweler-service-description">
-                  {collection.description}
-                </p>
-                <div className="jeweler-service-details">
-                  <h3 className="service-price">Price</h3>
-                  <p id="jewelry-price">
-                    {totalPrice.toFixed ? totalPrice.toFixed(2) : totalPrice} BHD
-                  </p>
-                </div>
+                <p id="jeweler-service-description">{collection.description}</p>
               </div>
 
               <div className="jewelry-inputs">
+                <div className="jeweler-service-details">
+                  <h3 className="service-price">Price</h3>
+                  <p id="jewelry-price">
+                    {totalPrice.toFixed ? totalPrice.toFixed(2) : totalPrice}{" "}
+                    BHD
+                  </p>
+                </div>
                 <input
                   type="number"
                   name="quantity"

@@ -70,7 +70,6 @@ export const calculateTotalCost = (
 export const calculateCollectionPrice = (collection, metalRates) => {
   if (!metalRates || !collection?.jewelry?.length) return null
   let jewelryCostSum = 0
-  
   for (const jewel of collection.jewelry) {
     const metalCost = calculatePreciousMaterialCost(
       jewel.preciousMaterials,
@@ -82,6 +81,7 @@ export const calculateCollectionPrice = (collection, metalRates) => {
   }
 
   const final = jewelryCostSum + collection.originPrice
+  
 
   return Math.max(final, 0)
 }

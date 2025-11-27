@@ -15,7 +15,7 @@ const JewelerCollectionsPage = () => {
   useEffect(() => {
     const getCollections = async () => {
       try {
-        const response = await User.get(`collections/shop`)
+        const response = await User.get(`/collections/shop`)
         setCollections(response.data.collections)
       } catch (err) {
         console.error("Failed to fetch collections", err)
@@ -36,7 +36,9 @@ const JewelerCollectionsPage = () => {
   }, [])
 
   if (user && user.role !== "Jeweler") {
-    return <span className="empty">You are not authorized to view this page.</span>
+    return (
+      <span className="empty">You are not authorized to view this page.</span>
+    )
   }
 
   return (
@@ -48,9 +50,10 @@ const JewelerCollectionsPage = () => {
             <button
               type="button"
               title="Add Collection"
+              className="add-collections"
               onClick={() => navigate("/add-collections")}
             >
-              Add Collection
+              Add
             </button>
           </div>
 
@@ -58,19 +61,16 @@ const JewelerCollectionsPage = () => {
             <span className="empty">No Collections.</span>
           ) : (
             <div className="grid">
-              {collections.map((collection) => (
-                <Link
-                  to={`/show-collection/${collection._id}`}
-                  key={collection._id}
-                >
+              {collections.map((collection) => {
+                return (
                   <ProductCard
                     item={collection}
                     type="collection"
                     metalRates={metalRates}
                     showActions={false}
                   />
-                </Link>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
