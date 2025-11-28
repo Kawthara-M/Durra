@@ -44,7 +44,7 @@ const CollectionForm = () => {
 
   useEffect(() => {
     const getJewelry = async () => {
-      const response = await User.get("/jewelry")
+      const response = await User.get("/jewelry/jeweler")
       setJewelry(response.data.jewelry)
     }
     getJewelry()
