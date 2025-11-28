@@ -26,6 +26,7 @@ const AccountsManagement = () => {
 
   const [showEditUserModal, setShowEditUserModal] = useState(false)
   const [editingUser, setEditingUser] = useState(null)
+  const [phoneError, setPhoneError] = useState("")
 
   const [newUser, setNewUser] = useState({
     fName: "",
@@ -77,6 +78,23 @@ const AccountsManagement = () => {
   // handling driver add
   const handleNewUserChange = (e) => {
     const { name, value } = e.target
+
+    if (name === "phone") {
+      if (!/^\d*$/.test(value)) return
+
+      setNewUser((prev) => ({ ...prev, [name]: value }))
+
+      if (value.length === 0) {
+        setPhoneError("")
+      } else if (value.length !== 8) {
+        setPhoneError("Phone number must be exactly 8 digits.")
+      } else {
+        setPhoneError("")
+      }
+
+      return
+    }
+
     setNewUser((prev) => ({ ...prev, [name]: value }))
   }
 
@@ -177,7 +195,9 @@ const AccountsManagement = () => {
     !newUser.email ||
     !newUser.phone ||
     !newUser.licenseNo ||
-    !newUser.vehiclePlateNumber
+    !newUser.vehiclePlateNumber ||
+    newUser.phone.length !== 8 ||
+    !!phoneError
 
   const askDeleteUser = (u) => {
     setDeleteTarget(u)
@@ -375,7 +395,11 @@ const AccountsManagement = () => {
                           onChange={handleNewUserChange}
                           required
                         />
+                        {phoneError && (
+                          <p className="add-user-error">{phoneError}</p>
+                        )}
                       </div>
+
                       <div className="add-user-form-group">
                         <label>Email</label>
                         <input

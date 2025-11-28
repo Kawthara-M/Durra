@@ -135,7 +135,6 @@ const SignUp = () => {
                 <span className="error">* Phone number must be 8 digits</span>
               )}
 
-
               <div className="password-group">
                 <div className="label-with-icon">
                   <label htmlFor="password">Password</label>
