@@ -177,10 +177,11 @@
     width: 48vw !important;
   }
 
-  /* .jewelry-page .jewelry-grid .search-card, .jewelry-page .jewelry-grid a {
-    width:36vw !important;
-    max-width:36vw !important;
-  } */
+  .jewelry-page .jewelry-grid .search-card,
+  .jewelry-page .jewelry-grid a {
+    width: 38vw !important;
+    max-width: 38vw !important;
+  }
 }
 @media (max-width: 800px) {
   .jewelry-filter-sidebar.open {
@@ -222,13 +223,12 @@
   }
 
   .jewelry-page-header h1 {
-    top:6rem;
+    top: 6rem;
   }
   .jewelry-page-header p {
-    top:10rem;
+    top: 10rem;
   }
 }
-
 
 .search-container {
   width: 25%;

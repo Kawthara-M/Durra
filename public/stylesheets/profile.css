@@ -124,6 +124,11 @@
   position: relative;
 }
 
+.order-card-in-profile h3 {
+  font-size: 1.6rem;
+  color: var(--accent-color);
+}
+
 .placed-on-date {
   position: absolute;
   right: 1rem;

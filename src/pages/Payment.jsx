@@ -80,10 +80,16 @@ const Payment = () => {
       if (name === "number") {
         v = value.replace(/[^\d]/g, "").slice(0, 16)
         v = v.replace(/(.{4})/g, "$1 ").trim()
-      }
-
-      if (name === "pin") {
+      } else if (name === "pin") {
         v = value.replace(/[^\d]/g, "").slice(0, 4)
+      } else if (name === "expiry") {
+        const digits = value.replace(/[^\d]/g, "").slice(0, 4)
+
+        if (digits.length <= 2) {
+          v = digits
+        } else {
+          v = digits.slice(0, 2) + "/" + digits.slice(2)
+        }
       }
 
       return { ...prev, [name]: v }
@@ -105,10 +111,28 @@ const Payment = () => {
     if (!paymentDetails.expiry) {
       newErrors.expiry = "Expiry date is required."
     } else {
-      const today = new Date()
-      const exp = new Date(paymentDetails.expiry)
-      if (exp < new Date(today.getFullYear(), today.getMonth(), 1)) {
-        newErrors.expiry = "This card is expired."
+      const expStr = paymentDetails.expiry
+      if (!/^\d{2}\/\d{2}$/.test(expStr)) {
+        newErrors.expiry = "Expiry date must be in MM/YY format."
+      } else {
+        const [mmStr, yyStr] = expStr.split("/")
+        const month = parseInt(mmStr, 10)
+        const year = 2000 + parseInt(yyStr, 10) 
+
+        if (month < 1 || month > 12 || isNaN(year)) {
+          newErrors.expiry = "Invalid expiry date."
+        } else {
+          const now = new Date()
+          const currentYear = now.getFullYear()
+          const currentMonth = now.getMonth() + 1 
+
+          if (
+            year < currentYear ||
+            (year === currentYear && month < currentMonth)
+          ) {
+            newErrors.expiry = "This card is expired."
+          }
+        }
       }
     }
 
@@ -286,12 +310,14 @@ const Payment = () => {
                   <label htmlFor="expiry">Expiry Date</label>
                   <input
                     placeholder="MM/YY"
-                    type="month"
+                    type="text"
                     name="expiry"
                     id="expiry"
                     value={paymentDetails.expiry}
                     onChange={handleChange}
+                    maxLength={5}
                   />
+
                   {errors.expiry && (
                     <p className="payment-error">{errors.expiry}</p>
                   )}

@@ -15,7 +15,7 @@ const SignIn = () => {
   const [errorMessage, setErrorMessage] = useState("")
   const [showModal, setShowModal] = useState(false)
   const [modalMessage, setModalMessage] = useState("")
-
+  const [modalType, setModalType] = useState("success")
   const [formValues, setFormValues] = useState(initialState)
 
   const handleChange = (e) => {
@@ -44,14 +44,14 @@ const SignIn = () => {
         email: formValues.email,
       })
 
+      setModalType("success")
       setModalMessage("A password reset link has been sent to your email.")
       setShowModal(true)
       setErrorMessage("")
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.error ||
-        error.response?.data?.msg ||
-        "Failed to send reset link."
+      const errorMsg = "Failed to send reset link."
+
+      setModalType("error")
       setModalMessage(errorMsg)
       setShowModal(true)
     }
@@ -59,7 +59,7 @@ const SignIn = () => {
 
   return (
     <>
-      <div className="wrapper" style = {{width:"100%"}}>
+      <div className="wrapper" style={{ width: "100%" }}>
         <div
           style={{
             position: "absolute",
@@ -123,7 +123,10 @@ const SignIn = () => {
 
             <div>
               {errorMessage && <span className="error">{errorMessage}</span>}
-              <button disabled={!formValues.email || !formValues.password} className="sign-in-button">
+              <button
+                disabled={!formValues.email || !formValues.password}
+                className="sign-in-button"
+              >
                 Sign In
               </button>
             </div>
@@ -144,7 +147,7 @@ const SignIn = () => {
       {showModal && (
         <FeedbackModal
           show={showModal}
-          type="success"
+          type={modalType}
           message={modalMessage}
           onClose={() => setShowModal(false)}
         />
