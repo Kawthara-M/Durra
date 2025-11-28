@@ -23,7 +23,9 @@ const Shipments = () => {
 
   const STATUS_LABELS = {
     atShop: "At Shop",
+    atCustomer: "At Customer",
     "out-for-shipping": "Out for Shipping",
+    "received-by-shop":"Received by Shop",
     delivered: "Delivered",
   }
 
@@ -95,8 +97,29 @@ const Shipments = () => {
     return parts.join(", ") || "Address not available"
   }
 
-  const getPickupAddress = (shipment) => shipment.order?.shop?.user?.defaultAddress
-  const getDeliveryAddress = (shipment) => shipment.order?.address
+  const getPickupAddress = (shipment) => {
+    if (!shipment?.order) return null
+
+    const { order } = shipment
+
+    if (shipment.status === "atCustomer") {
+      return order.address || null
+    }
+
+    return order.shop?.user?.defaultAddress || null
+  }
+
+  const getDeliveryAddress = (shipment) => {
+    if (!shipment?.order) return null
+
+    const { order } = shipment
+
+    if (shipment.status === "atCustomer") {
+      return order.shop?.user?.defaultAddress || null
+    }
+
+    return order.address || null
+  }
 
   const getCoords = (addr) => {
     if (
@@ -137,7 +160,6 @@ const Shipments = () => {
       setSecretKey("")
       setShowShipmentModal(false)
     } catch (error) {
-      console.error("Error verifying secret key:", error)
       const msg =
         error.response?.data?.msg ||
         error.response?.data?.error ||

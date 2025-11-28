@@ -116,18 +116,30 @@ const Profile = () => {
         description: data.shop?.description || "",
       })
 
-      const address = await User.get("/addresses/")
-      const jewelerAddress = address.data.addresses[0]
-      setJewelerAddress({
-        governante: jewelerAddress?.governante || "",
-        area: jewelerAddress?.area || "",
-        road: jewelerAddress?.road || "",
-        block: jewelerAddress?.block || "",
-        latitude: jewelerAddress?.coordinates?.[0] || null,
-        longitude: jewelerAddress?.coordinates?.[1] || null,
-      })
+      const addrRes = await User.get("/addresses/")
+      const allAddresses = addrRes.data.addresses || []
+      setAddresses(allAddresses)
 
-      setAddresses(address.data.addresses || [])
+      let jewelerAddrDoc = null
+
+      if (data.user.defaultAddress) {
+        jewelerAddrDoc = allAddresses.find(
+          (a) => a._id === data.user.defaultAddress
+        )
+      }
+
+      if (!jewelerAddrDoc && allAddresses.length > 0) {
+        jewelerAddrDoc = allAddresses[0]
+      }
+
+      setJewelerAddress({
+        governante: jewelerAddrDoc?.governante || "",
+        area: jewelerAddrDoc?.area || "",
+        road: jewelerAddrDoc?.road || "",
+        block: jewelerAddrDoc?.block || "",
+        latitude: jewelerAddrDoc?.coordinates?.[0] || null,
+        longitude: jewelerAddrDoc?.coordinates?.[1] || null,
+      })
     }
 
     getProfile()
@@ -189,13 +201,28 @@ const Profile = () => {
         }
       }
 
+      setModalType("success")
       setModalMessage("Profile updated successfully.")
+      setModalActions([])
       setShowModal(true)
     } catch (error) {
       console.error("Update failed:", error)
-      setModalMessage("Update failed. Please try again.")
+
+      const msg =
+        error.response?.data?.msg ||
+        error.response?.data?.error ||
+        "Update failed. Please try again."
+
+      setModalType("error")
+      setModalMessage(msg)
+      setModalActions([])
       setShowModal(true)
     }
+  }
+
+  const validatePhone = (value) => {
+    const isValid = /^[0-9]{8}$/.test(value)
+    return isValid
   }
 
   const handleLogoChange = (e) => {
@@ -223,15 +250,44 @@ const Profile = () => {
         governante: jewelerAddress.governante,
         area: jewelerAddress.area,
         coordinates: [jewelerAddress.latitude, jewelerAddress.longitude],
-        setDefault: true,
+        setDefault: true, 
       }
 
       const defaultAddressId = profile?.user?.defaultAddress
+
       if (!defaultAddressId) {
         await User.post("/addresses/", addressPayload)
-        profile = await User.get(`/profile/`)
+
+        const [profileRes, addrRes] = await Promise.all([
+          User.get("/profile/"),
+          User.get("/addresses/"),
+        ])
+
+        setProfile(profileRes.data)
+        setAddresses(addrRes.data.addresses || [])
+
+        const allAddresses = addrRes.data.addresses || []
+        const defaultAddr = allAddresses.find(
+          (a) => a._id === profileRes.data.user.defaultAddress
+        )
+        if (defaultAddr) {
+          setJewelerAddress({
+            governante: defaultAddr.governante || "",
+            area: defaultAddr.area || "",
+            road: defaultAddr.road || "",
+            block: defaultAddr.block || "",
+            latitude: defaultAddr.coordinates?.[0] || null,
+            longitude: defaultAddr.coordinates?.[1] || null,
+          })
+        }
+
+        triggerSuccessModal("Your address has been added successfully.")
       } else {
         await User.put(`/addresses/${defaultAddressId}`, addressPayload)
+
+        const addrRes = await User.get("/addresses/")
+        setAddresses(addrRes.data.addresses || [])
+
         triggerSuccessModal("Your address has been updated successfully.")
       }
     } catch (error) {
@@ -333,35 +389,36 @@ const Profile = () => {
   const updatePassword = async () => {
     try {
       const response = await User.put("/auth/update-password", passwordValues)
+
       setErrorMessage("")
 
       if (response.status === 200) {
-        setErrorMessage("")
-        setModalMessage("Your password has been updated successfully.")
-        setShowModal(true)
+        setPasswordValues({
+          oldPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        })
+
+        triggerSuccessModal("Your password has been updated successfully.")
       }
+    } catch (error) {
+      const serverMessage =
+        error.response?.data?.msg ||
+        error.response?.data?.error ||
+        "Something went wrong."
+
+      setErrorMessage("")
+
       setPasswordValues({
         oldPassword: "",
         newPassword: "",
         confirmPassword: "",
       })
 
-      triggerSuccessModal("Your password has been updated successfully.")
-    } catch (error) {
-      if (error.response) {
-        const serverMessage =
-          error.response.data?.msg ||
-          error.response.data?.error ||
-          "Something went wrong."
-        setErrorMessage(serverMessage)
-      } else {
-        setErrorMessage("Network error or server did not respond.")
-      }
-      setPasswordValues({
-        oldPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      })
+      setModalType("error")
+      setModalMessage(serverMessage)
+      setModalActions([])
+      setShowModal(true)
     }
   }
 
@@ -381,6 +438,11 @@ const Profile = () => {
       setErrorMessage(errorMsg)
     }
   }
+
+  const passwordsMismatch =
+    passwordValues.newPassword &&
+    passwordValues.confirmPassword &&
+    passwordValues.newPassword !== passwordValues.confirmPassword
 
   return (
     <>
@@ -502,9 +564,23 @@ const Profile = () => {
                   <input
                     type="text"
                     value={userInfo.phone}
-                    onChange={(e) =>
-                      setUserInfo({ ...userInfo, phone: e.target.value })
-                    }
+                    maxLength={8}
+                    onChange={(e) => {
+                      const value = e.target.value
+
+                      if (!/^\d*$/.test(value)) return
+
+                      setUserInfo({ ...userInfo, phone: value })
+                    }}
+                    onBlur={() => {
+                      if (!validatePhone(userInfo.phone)) {
+                        setErrorMessage(
+                          "Phone number must be exactly 8 digits."
+                        )
+                      } else {
+                        setErrorMessage("")
+                      }
+                    }}
                   />
 
                   {user?.role === "Jeweler" && (
@@ -532,7 +608,11 @@ const Profile = () => {
                   )}
                 </div>
 
-                <button className="update-button" onClick={handleUpdate}>
+                <button
+                  className="update-button"
+                  disabled={!validatePhone(userInfo.phone)}
+                  onClick={handleUpdate}
+                >
                   Update
                 </button>
               </div>
@@ -944,9 +1024,7 @@ const Profile = () => {
                       name="oldPassword"
                       value={passwordValues.oldPassword}
                       placeholder="Old password"
-                      onChange={(e) => {
-                        handlePasswordChange(e)
-                      }}
+                      onChange={handlePasswordChange}
                     />
                     <input
                       type="password"
@@ -965,25 +1043,32 @@ const Profile = () => {
                       placeholder="Re-type new password"
                       onChange={handlePasswordChange}
                     />
-                    <a
-                      className="forgot-password"
-                      onClick={() => forgetPassword()}
-                    >
+                    <a className="forgot-password" onClick={forgetPassword}>
                       Forgot your password?
                     </a>
                   </div>
+
                   <div className="password">
                     {errorMessage && (
                       <span className="error">{errorMessage}</span>
                     )}
 
+                    {passwordsMismatch && !errorMessage && (
+                      <span className="error">
+                        New password and confirmation do not match.
+                      </span>
+                    )}
+
                     <button
                       className="change-password"
                       disabled={
-                        passwordValues.newPassword !==
-                          passwordValues.confirmPassword || errorMessage
+                        !passwordValues.oldPassword ||
+                        !passwordValues.newPassword ||
+                        !passwordValues.confirmPassword ||
+                        !!errorMessage ||
+                        passwordsMismatch
                       }
-                      onClick={() => updatePassword()}
+                      onClick={updatePassword}
                     >
                       Change Password
                     </button>

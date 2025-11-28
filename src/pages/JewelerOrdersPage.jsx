@@ -48,7 +48,6 @@ const JewelerOrderPage = () => {
     },
   ]
 
-  // status priority for sorting
   const STATUS_PRIORITY = {
     submitted: 0,   // Pending
     accepted: 1,
@@ -66,7 +65,7 @@ const JewelerOrderPage = () => {
       const response = await User.get(`/orders/`)
       const orders = response.data.orders || []
       setAllOrders(orders)
-      setFilteredOrders(orders) // initial, will be sorted by next effect
+      setFilteredOrders(orders) 
     }
     getOrders()
   }, [])
