@@ -8,6 +8,13 @@
   padding-left: 2.5rem;
 }
 
+.profile + .feedback-modal-overlay .card {
+  width: fit-content;
+  padding: .6rem 7rem;
+  padding-left: .6rem;
+}
+
+
 .profile-left,
 .profile-right {
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);

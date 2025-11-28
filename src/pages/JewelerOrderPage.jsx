@@ -24,20 +24,21 @@ const JewelerOrderPage = () => {
 
   const updateOrder = async (status) => {
     try {
-      const response = await User.put(`/orders/update-status/${orderId}`, {
-        status,
-      })
-
-      const updatedStatus = response.data.order.status
+      await User.put(`/orders/update-status/${orderId}`, { status })
 
       setOrder((prevOrder) => ({
         ...prevOrder,
-        status: STATUS_DISPLAY_MAP[updatedStatus] || updatedStatus,
-        _status: updatedStatus,
+        _status: status,
+        status: STATUS_DISPLAY_MAP[status] || status,
       }))
+      console.log("Current status:", order._status)
     } catch (error) {
       console.error("Error updating status:", error)
-      alert(error.response?.data?.message || "Failed to update order status.")
+      alert(
+        error.response?.data?.message ||
+          error.response?.data?.msg ||
+          "Failed to update order status."
+      )
     }
   }
 
@@ -50,34 +51,35 @@ const JewelerOrderPage = () => {
         ...raw,
         status: STATUS_DISPLAY_MAP[raw.status] || raw.status,
         _status: raw.status,
-        collectionMethod: capitalize(raw.collectionMethod),
+        collectionMethod: raw.collectionMethod,
         paymentMethod: capitalize(raw.paymentMethod),
         paymentStatus:
           PAYMENT_DISPLAY_MAP[raw.paymentStatus] || raw.paymentStatus,
       }
-      const jewelryImages =
-        raw.jewelryOrder?.flatMap((i) => i.item?.images[0] || []) || []
 
-      const serviceJewelryImages =
-        raw.serviceOrder?.flatMap((serviceItem) =>
-          (serviceItem.jewelry || []).flatMap((j) => j.images || [])
+      const jewelryImages =
+        raw.jewelryOrder?.flatMap((i) => i.item?.images?.[0] || []) || []
+
+      const serviceImages =
+        raw.serviceOrder?.flatMap(
+          (serviceItem) => serviceItem.service?.images || []
         ) || []
 
       formatted.jewelryImageCount = jewelryImages.length
 
-      setSliderImages([...jewelryImages, ...serviceJewelryImages])
+      setSliderImages([...jewelryImages, ...serviceImages].filter(Boolean))
 
       setOrder(formatted)
     }
+
     getOrder()
-  }, [])
+  }, [orderId])
 
   return (
     <>
       {order && (
         <>
           <div className="order-page">
-            {" "}
             <div className="order-page-content">
               <div className="service-images">
                 {sliderImages.length > 0 && (
@@ -102,12 +104,14 @@ const JewelerOrderPage = () => {
                   </div>
                 )}
               </div>
+
               <div className="order-general">
                 <div className="order-page-heading">
                   <div>
-                    <h1>Order </h1>
+                    <h1>Order</h1>
                     <p>#{order._id}</p>
                   </div>
+
                   {order._status === "submitted" && (
                     <div className="update-status">
                       <p
@@ -126,29 +130,34 @@ const JewelerOrderPage = () => {
                       </p>
                     </div>
                   )}
+
                   {order._status === "accepted" && (
                     <div className="update-status">
                       <button
-                        title={`Update Order Status to Processing`}
+                        title="Start processing"
                         onClick={() => updateOrder("processing")}
                       >
                         Start Processing
                       </button>
                     </div>
                   )}
+
                   {order._status === "processing" && (
                     <div className="update-status">
-                      <button onClick={() => updateOrder("ready")}>
-                        Delivery Ready
-                      </button>
-                      {/* at this point we should send an email to driver to come pick up the order */}
+                      {order.collectionMethod === "delivery" && (
+                        <button onClick={() => updateOrder("ready")}>
+                          Delivery Ready
+                        </button>
+                      )}
+
                       {order.collectionMethod === "at-shop-collection" && (
                         <button onClick={() => updateOrder("pickup")}>
-                          Pickup Ready{" "}
+                          Pickup Ready
                         </button>
                       )}
                     </div>
                   )}
+
                   {order._status === "ready" && (
                     <div className="update-status">
                       <button onClick={() => updateOrder("out")}>
@@ -156,6 +165,7 @@ const JewelerOrderPage = () => {
                       </button>
                     </div>
                   )}
+
                   {order._status === "pickup" && (
                     <div className="update-status">
                       <button
@@ -167,43 +177,49 @@ const JewelerOrderPage = () => {
                     </div>
                   )}
                 </div>
+
                 <div className="order-details">
                   <div>
-                    <h4>Customer </h4>
-                    <p className="customer-email"> {order.user.email}</p>
+                    <h4>Customer</h4>
+                    <p className="customer-email">{order.user?.email}</p>
                   </div>
+
                   <div>
-                    <h4>Status </h4>
-                    {order.status}
+                    <h4>Status</h4>
+                    <p>{order.status}</p>
                   </div>
-                  <div className="">
-                    <h4>Collection Method </h4>
+
+                  <div>
+                    <h4>Collection Method</h4>
                     <p>
-                      {order.collectionMethod === "out"
-                        ? "Out for Delivery"
-                        : order.collectionMethod === "pickup"
-                        ? "Ready for Pickup"
+                      {order.collectionMethod === "delivery"
+                        ? "Delivery"
+                        : order.collectionMethod === "at-shop-collection"
+                        ? "At Shop Collection"
                         : order.collectionMethod}
                     </p>
-                  </div>{" "}
-                  <div>
-                    <h4>Payment Method </h4>
-                    <p> {order.paymentMethod}</p>
                   </div>
+
                   <div>
-                    <h4>Payment Status </h4>
-                    <p> {order.paymentStatus}</p>
+                    <h4>Payment Method</h4>
+                    <p>{order.paymentMethod}</p>
                   </div>
+
                   <div>
-                    <h4>Total Price </h4>
+                    <h4>Payment Status</h4>
+                    <p>{order.paymentStatus}</p>
+                  </div>
+
+                  <div>
+                    <h4>Total Price</h4>
                     <p className="price" id="order-price">
-                      {" "}
                       {order.totalPrice.toFixed(2)} BHD
                     </p>
                   </div>
                 </div>
               </div>
             </div>
+
             <div className="order-information">
               <div
                 className="contents-toggle-header"
@@ -223,8 +239,10 @@ const JewelerOrderPage = () => {
                           <h5>{entry.item.name}</h5>
                           <div className="contents-item-details">
                             <span>
-                              <h6>Quantity:</h6> <p> {entry.quantity || 1}</p>
+                              <h6>Quantity:</h6>
+                              <p>{entry.quantity || 1}</p>
                             </span>
+
                             {entry.size && (
                               <span>
                                 <h6>Size:</h6>
@@ -276,11 +294,11 @@ const JewelerOrderPage = () => {
                             )}{" "}
                             BHD
                           </p>
-                          <p>Notes: {serviceItem.notes || "-"}</p>
                         </div>
                       ))}
                     </>
                   )}
+
                   {order.notes && (
                     <div className="contents-item">
                       <h5>Notes</h5>
@@ -291,40 +309,6 @@ const JewelerOrderPage = () => {
               )}
             </div>
           </div>
-
-          {/* <FeedbackModal
-            show={showDeleteModal}
-            type={errorMessage ? "error" : "confirm"}
-            message={
-              errorMessage || "Are you sure you want to delete this service?"
-            }
-            onClose={() => {
-              setShowDeleteModal(false)
-              setErrorMessage("")
-            }}
-            actions={
-              errorMessage
-                ? [
-                    {
-                      label: "Close",
-                      onClick: () => {
-                        setShowDeleteModal(false)
-                        setErrorMessage("")
-                      },
-                    },
-                  ]
-                : [
-                    {
-                      label: "Delete",
-                      onClick: deleteService,
-                    },
-                    {
-                      label: "Cancel",
-                      onClick: () => setShowDeleteModal(false),
-                    },
-                  ]
-            }
-          /> */}
         </>
       )}
     </>
