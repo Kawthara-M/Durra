@@ -84,6 +84,15 @@
 .jewelry-grid .search-card {
   width: 20vw;
 }
+
+.jewelry-grid .search-card .card-info {
+  align-items: center;
+  justify-content: space-between;
+  text-align: center !important;
+}
+.jewelry-grid .search-card .card-info div p {
+  text-align: center !important;
+}
 .jewelry-grid .search-card h3 {
   font-size: 1.5rem;
 }

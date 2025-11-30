@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
 import User from "../services/api"
 import Filter from "../components/Filter.jsx"
 import ProductCard from "../components/ProductCard"

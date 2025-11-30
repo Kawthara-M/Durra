@@ -201,6 +201,20 @@ const Profile = () => {
         }
       }
 
+      setProfile((prev) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          ...userInfo,
+        },
+        shop: prev.shop
+          ? {
+              ...prev.shop,
+              ...shopInfo,
+            }
+          : prev.shop,
+      }))
+
       setModalType("success")
       setModalMessage("Profile updated successfully.")
       setModalActions([])
@@ -250,7 +264,7 @@ const Profile = () => {
         governante: jewelerAddress.governante,
         area: jewelerAddress.area,
         coordinates: [jewelerAddress.latitude, jewelerAddress.longitude],
-        setDefault: true, 
+        setDefault: true,
       }
 
       const defaultAddressId = profile?.user?.defaultAddress
