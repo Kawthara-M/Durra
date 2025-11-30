@@ -419,6 +419,7 @@ const ProductCard = ({
         </div>
 
         <div className="card-info">
+          <div>
           <Link to={url}>
             <h3 className="service-card__title">{item.name}</h3>
           </Link>
@@ -430,7 +431,7 @@ const ProductCard = ({
                 ? item.favouritedItem.shop.name
                 : "Shop"}
             </p>
-          )}
+          )}</div>
           <p className="price">{displayPrice()}</p>
         </div>
       </div>
