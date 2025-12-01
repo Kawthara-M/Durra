@@ -311,7 +311,7 @@ const AdminDashboard = () => {
             </div>
           )}
         </div>
-        <div className="dashboard-card">
+        <div className="dashboard-card wide-card">
           <h2>Orders by Status</h2>
           {isOrdersLoading ? (
             <p>Loading chart...</p>
@@ -335,7 +335,7 @@ const AdminDashboard = () => {
           )}
         </div>
 
-        <div className="dashboard-card">
+        <div className="dashboard-card wide-card">
           <h2>Orders per Shop</h2>
           {isOrdersLoading ? (
             <p>Loading chart...</p>
