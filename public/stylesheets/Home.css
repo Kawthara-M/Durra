@@ -1,7 +1,6 @@
-
 .hp-home-page {
   color: #222;
-  background-color: transparent; 
+  background-color: transparent;
   overflow-x: hidden;
   line-height: 1.5;
 }
@@ -57,14 +56,14 @@
 
 .hp-hero-text h1 {
   font-size: 2rem;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: "Times New Roman", Times, serif;
   font-weight: 700;
   background: linear-gradient(90deg, #f5e6d3, #e8d7c1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 1.2px;
   line-height: 1.2;
-  text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 .hp-hero-text p {
@@ -98,7 +97,6 @@
   transform: scale(1.4);
 }
 
-
 .hp-models-section {
   display: flex;
   justify-content: center;
@@ -118,16 +116,14 @@
   transform: translateY(-5px);
 }
 
-
 .hp-model-image-placeholder {
-  position: relative; 
+  position: relative;
   width: 100%;
   height: 450px;
   border-radius: 12px;
   overflow: hidden;
-  background-color: #000; 
+  background-color: #000;
 }
-
 
 .hp-model-image-placeholder img {
   position: absolute;
@@ -140,15 +136,13 @@
   z-index: 1; /* below overlay */
 }
 
-
 .hp-model-image-placeholder::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   z-index: 2;
 }
-
 
 .hp-shop-now {
   position: absolute;
@@ -169,14 +163,12 @@
   transform: translateY(-3px);
 }
 
-
 .hp-model-card p {
   margin-top: 15px;
   font-style: italic;
   font-size: 1.2rem;
   color: #333;
 }
-
 
 .hp-info-strip {
   display: flex;
@@ -206,7 +198,6 @@
   margin: 0;
 }
 
-
 .hp-trending-section {
   text-align: center;
   padding: 70px 20px;
@@ -231,7 +222,7 @@
   background: #fff;
   border: 1px solid #eee;
   border-radius: 12px;
-  padding: 30px;
+  padding-bottom: 30px;
   transition: all 0.3s ease;
 }
 
@@ -263,10 +254,11 @@
 }
 
 .hp-price {
+  font-size: 1.1rem;
   font-weight: 700;
-  color: #4e0606;
+  text-align: center;
+  color: var(--accent-color);
 }
-
 
 @media (max-width: 1024px) {
   .hp-model-card {

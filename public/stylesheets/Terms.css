@@ -15,6 +15,7 @@
   display: flex;
   flex-direction: column;
   gap: 3rem;
+  padding: 1rem;
   
 }
 
@@ -56,7 +57,7 @@
 .tc-timeline-item {
   display: flex;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: 2rem;
   position: relative;
 }
 

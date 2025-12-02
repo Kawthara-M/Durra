@@ -1,5 +1,6 @@
 .durra-about {
   width: 100%;
+  min-height: 100vh; 
   display: flex;
   justify-content: center;
   background: inherit;
@@ -11,7 +12,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 5rem; 
+  gap: 5rem;
 }
 
 .durra-hero {
@@ -20,8 +21,8 @@
 }
 
 .durra-hero-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 3.8rem; 
+  font-family: "Playfair Display", serif;
+  font-size: 3.8rem;
   color: var(--primary-maroon);
   margin-bottom: 0.8rem;
   letter-spacing: 1px;
@@ -45,12 +46,11 @@
   border-radius: 3px;
 }
 
-
 .durra-story {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem; 
+  gap: 2rem;
   padding: 2rem 0;
 }
 
@@ -64,7 +64,7 @@
   line-height: 1.8;
   color: var(--text-dark);
   text-align: justify;
-  margin-bottom: 1rem; 
+  margin-bottom: 1rem;
 }
 
 .durra-story-text strong {
@@ -76,7 +76,7 @@
 }
 
 .durra-section-title {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   font-size: 2.3rem;
   color: var(--primary-maroon);
   margin-bottom: 2rem;
@@ -96,26 +96,26 @@
 .durra-values-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem; 
+  gap: 2rem;
   justify-items: center;
 }
 
 .durra-value-card {
   background: var(--surface);
-  padding: 2.2rem 1.8rem; 
+  padding: 2.2rem 1.8rem;
   border-radius: 18px;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.07);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.07);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   max-width: 340px;
 }
 
 .durra-value-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
 }
 
 .durra-value-card h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   color: var(--primary-maroon);
   font-size: 1.4rem;
   margin-bottom: 0.6rem;
@@ -144,14 +144,14 @@
   background: var(--surface);
   padding: 1.8rem;
   border-radius: 18px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   text-align: center;
 }
 
 .durra-team-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
 }
 
 .durra-team-card img {
@@ -165,14 +165,14 @@
 
 .durra-team-card h3 {
   font-size: 1.15rem;
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   color: var(--primary-maroon);
   margin-bottom: 0.3rem;
 }
 
 .durra-team-card p {
-  font-size: 0.95rem;
-  color: var(--text-light);
+  font-size: 1rem;
+  text-align: center;
 }
 
 .durra-testimonials {
@@ -192,7 +192,7 @@
   background: var(--surface);
   padding: 1.8rem;
   border-radius: 18px;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.07);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.07);
   font-style: italic;
 }
 
@@ -211,41 +211,77 @@
   font-size: 1.2rem;
   line-height: 1.8;
   font-style: italic;
+  text-align: center;
   color: var(--text-light);
   max-width: 750px;
   margin: 0 auto;
 }
 
 @keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInLeft {
-  from { opacity: 0; transform: translateX(-30px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes fadeInRight {
-  from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @media (max-width: 1024px) {
+  .durra-container {
+    gap: 3rem;
+  }
   .durra-story {
     flex-direction: column;
     text-align: center;
+    align-self: center;
+    width: 80%;
+    gap: 1rem;
+  }
+  .durra-story .durra-section-title {
+    margin-bottom: 0;
   }
 
   .durra-story-text {
     order: 2;
   }
-
+  .durra-story-text p {
+    text-align: center;
+  }
   .durra-story-image img {
     margin: 0 auto;
   }
