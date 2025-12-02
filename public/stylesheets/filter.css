@@ -65,10 +65,23 @@
   align-items: flex-start;
 }
 
-.filter-group label {
+.filter-group label,
+.filter-section label,
+.range-values span {
   font-weight: 500;
+  font-size: 1.4rem;
   display: block;
 }
+
+.range-values span {
+  font-size: 1.260rem;
+}
+
+.filter-section input {
+  border: solid 2px var(--accent-color);
+  background-color: transparent;
+}
+
 
 .filter-group select,
 .filter-group input[type="checkbox"] {
@@ -107,10 +120,10 @@
 }
 
 .filter-group select {
+  padding: 0.5rem 0.8rem;
   background-color: transparent;
-  border: solid 1px #ccc;
-  border-radius: 6px;
-  width: 75% !important;
+  border: solid 2px var(--accent-color);
+  width: 100% !important;
 }
 
 .apply-filter-btn {

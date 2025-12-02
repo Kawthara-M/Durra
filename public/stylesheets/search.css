@@ -140,6 +140,8 @@
 
 .search-card .card-info .shop-name {
   margin-bottom: 1.2rem;
+  margin-top: .2rem;
+  text-align: center;
 }
 
 @media (max-width: 1300px) {

@@ -48,8 +48,8 @@
 }
 
 .metal-card.selected {
-  box-shadow: rgba(29, 29, 29, 0.2) 0px 8px 20px;
   transform: scale(1.06);
+  border: 3px solid var(--accent-color);
 }
 
 .silver-prices,

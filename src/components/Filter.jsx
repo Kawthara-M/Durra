@@ -89,7 +89,7 @@ const Filter = ({ filters, onApply, fields, showPrice = true }) => {
 
       {showPrice && (
         <div className="filter-section">
-          <label className="filter-title">Price Range (BHD)</label>
+          <label >Price Range (BHD)</label>
 
           <Box sx={{ width: "90%", mt: "0.7rem", mb: "1rem" }}>
             <Slider

@@ -23,9 +23,10 @@
 }
 
 body.light {
-  --bg-color: #f9f3f3; /*the background color of the main content*/
-  --footer-bg: #f9f3f3;
-  --nav-bg: #f9f3f3;
+  --bg-color: #fffaf0; /*the background color of the main content*/
+  /* old color: #f9f3f3*/
+  --footer-bg: #420202;
+  --nav-bg: #fffaf0;
   --text-color: rgb(39, 38, 38);
   --text-contrast-color: #f1f1f1;
   --btn-bg: #6f0101;
@@ -44,7 +45,7 @@ body.dark {
 }
 
 html,
-body {
+body, #root {
   background-color: var(--bg-color);
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -54,6 +55,7 @@ body {
   font-weight: 300;
   overflow-x: hidden;
   min-height: 100vh;
+  height: 100%;
 }
 
 .app-container {
@@ -208,7 +210,7 @@ textarea {
 
 .error {
   color: #bc0202;
-  font-size: .95rem;
+  font-size: 0.95rem;
   font-weight: 500;
   margin-bottom: 0.6rem;
 }

@@ -38,7 +38,7 @@ const AboutUs = () => (
           <div className="durra-value-card">
             <h3>Transparent Trust</h3>
             <p>
-              DANAT and GIA certified pieces ensuring complete transparency and
+              DANAT certified pieces ensuring complete transparency and
               confidence.
             </p>
           </div>
