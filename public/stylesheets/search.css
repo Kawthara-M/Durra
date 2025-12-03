@@ -115,11 +115,11 @@
   opacity: 0.85;
 }
 
-.shop-logo {
+.search-card-image.shop-logo {
   border-radius: 50%;
   width: 70%;
   height: 55%;
-  border: 1px solid black;
+  /* border: 2px solid var(--accent-color); */
   margin: 1rem auto;
   margin-bottom: 0;
 }
@@ -140,8 +140,90 @@
 
 .search-card .card-info .shop-name {
   margin-bottom: 1.2rem;
-  margin-top: .2rem;
+  margin-top: 0.2rem;
   text-align: center;
+}
+
+/* search related styles */
+
+.shop-address {
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  text-align: center;
+}
+
+.address-map-button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.address-map-icon {
+  margin-top: 0.5rem;
+  font-size: 1.4rem;
+  color: var(--accent-color);
+}
+
+.map-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* above cards */
+}
+
+.map-modal {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  max-width: 720px;
+  width: 95%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 0.6rem 1.2rem rgba(0, 0, 0, 0.18);
+}
+
+.map-modal-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.map-modal-header h4 {
+  margin-bottom: 0.25rem;
+  font-size: 1.2rem;
+}
+
+.map-modal-header p {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.map-modal-close {
+  width: fit-content;
+  color: var(--accent-color);
+  border-radius: 0;
+  background-color: transparent;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.map-modal-close:hover {
+  font-size: 1.3rem;
+}
+
+.map-modal .leaflet-container {
+  border-radius: 0.5rem;
 }
 
 @media (max-width: 1300px) {

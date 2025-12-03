@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import FeedbackModal from "./FeedbackModal"
 import placeholder from "../assets/placeholder.png"
 import { useUser } from "../context/UserContext"
@@ -34,6 +34,9 @@ const ProductCard = ({
   const [showShopModal, setShowShopModal] = useState(false)
   const [shopModalMessage, setShopModalMessage] = useState("")
   const [pendingAddType, setPendingAddType] = useState(null)
+
+  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [loginModalMessage, setLoginModalMessage] = useState("")
 
   useEffect(() => {
     if (type === "collection" && metalRates) {
@@ -378,10 +381,16 @@ const ProductCard = ({
                   className={!user ? "disabled-link" : null}
                   title={!user ? "Sign in to add to Cart" : "Add to Cart"}
                   onClick={(e) => {
-                    if (!user) return
-
                     e.preventDefault()
                     e.stopPropagation()
+
+                    if (!user) {
+                      setLoginModalMessage(
+                        "Please sign in to add items to your cart."
+                      )
+                      setShowLoginModal(true)
+                      return
+                    }
 
                     handleAdd()
                   }}
@@ -399,10 +408,16 @@ const ProductCard = ({
                       : "Add to Wishlist"
                   }
                   onClick={(e) => {
-                    if (!user) return
-
                     e.preventDefault()
                     e.stopPropagation()
+
+                    if (!user) {
+                      setLoginModalMessage(
+                        "Please sign in to manage your wishlist."
+                      )
+                      setShowLoginModal(true)
+                      return
+                    }
 
                     handleWishlist()
 
@@ -420,18 +435,19 @@ const ProductCard = ({
 
         <div className="card-info">
           <div>
-          <Link to={url}>
-            <h3 className="service-card__title">{item.name}</h3>
-          </Link>
-          {showShopName && (
-            <p className="shop-name">
-              {typeof item.shop === "object"
-                ? item.shop?.name || "Shop"
-                : item.favouritedItem?.shop.name
-                ? item.favouritedItem.shop.name
-                : "Shop"}
-            </p>
-          )}</div>
+            <Link to={url}>
+              <h3 className="service-card__title">{item.name}</h3>
+            </Link>
+            {showShopName && (
+              <p className="shop-name">
+                {typeof item.shop === "object"
+                  ? item.shop?.name || "Shop"
+                  : item.favouritedItem?.shop.name
+                  ? item.favouritedItem.shop.name
+                  : "Shop"}
+              </p>
+            )}
+          </div>
           <p className="price">{displayPrice()}</p>
         </div>
       </div>
@@ -454,6 +470,26 @@ const ProductCard = ({
               setShowShopModal(false)
               setPendingAddType(null)
             },
+          },
+        ]}
+      />
+
+      <FeedbackModal
+        show={showLoginModal}
+        type="warning" 
+        message={loginModalMessage}
+        onClose={() => setShowLoginModal(false)}
+        actions={[
+          {
+            label: "Sign in",
+            onClick: () => {
+              setShowLoginModal(false)
+              navigate("/sign-in")
+            },
+          },
+          {
+            label: "Cancel",
+            onClick: () => setShowLoginModal(false),
           },
         ]}
       />

@@ -8,6 +8,7 @@
 
 .shops-page h1 {
   text-align: center;
+  margin-bottom: 0.5rem;
 }
 
 .shops-page-overview {
@@ -55,10 +56,10 @@
   border: 1px solid #e0e0e0;
   text-align: center;
   height: 100%;
-  min-height: 48vh;
+  min-height: 45vh;
   background-color: #fffafa;
   border-radius: 12px;
-  gap:1rem;
+  gap: 1rem;
 }
 
 .shop-card:hover {
@@ -67,8 +68,8 @@
 }
 
 .shop-logo-circle {
-  width: 150px;
-  height: 150px;
+  width: 10vw;
+  height: 10vh;
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid #d0d0d0;
@@ -93,12 +94,9 @@
   justify-content: center;
 }
 
-.shop-name {
+.shop-info .shop-name {
   font-size: 1.6rem;
-  font-weight: 600;
   color: var(--text-color);
-  /* margin: 0 0 1rem 0; */
-  line-height: 1.3;
 }
 
 .shop-description {
@@ -113,8 +111,8 @@
   text-align: center;
 }
 
-/* Search Styles */
-.search-container {
+/* Shops Page Search Styles */
+.shops-page-overview.search-container {
   width: 25%;
   display: flex;
   justify-content: center;
@@ -151,18 +149,28 @@
   color: #666;
 }
 
+@media (max-width: 1300px) {
+  .shop-logo-circle {
+    width: 14vw;
+    height: 22vh;
+  }
+}
 @media (max-width: 1200px) {
   .shops-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .shop-logo-circle {
-    width: 130px;
-    height: 130px;
+    width: 16vw;
+    height: 22vh;
   }
-  
+
   .shop-name {
     font-size: 1.2rem;
+  }
+
+  .shop-card {
+    width: 26vw !important;
   }
 }
 
@@ -171,52 +179,61 @@
     grid-template-columns: repeat(2, 1fr);
   }
   .shop-card {
-    width:28vw !important;
+    width: 28vw !important;
   }
 }
+
 @media (max-width: 1000px) {
-
   .shop-card {
-    width:30vw !important;
+    width: 30vw !important;
   }
 }
-@media (max-width: 900px) {
 
+@media (max-width: 900px) {
   .shop-card {
-    width:32vw !important;
+    width: 32vw !important;
+  }
+
+  .shops-page-overview .search-container {
+    width: 50%;
+  }
+
+  .shop-logo-circle {
+    width: 22vw;
+    height: 23vh;
   }
 }
 
 @media (max-width: 768px) {
   .shops-page-overview {
     flex-direction: column;
+    align-items: center;
     gap: 1rem;
   }
-  
+
   .shops-page-overview p:first-of-type {
     border-right: none;
     border-bottom: 2px solid #343434;
     width: 100%;
     padding-bottom: 1rem;
   }
-  
-  .search-container {
-    width: 100%;
-  }
-  
-  .shop-logo-circle {
-    width: 120px;
-    height: 120px;
-  }
-  
 
-  
-  .shop-card {
-    padding: 1.5rem 1rem;
-    width:36vw !important;
-    min-height: 45vh;
+  .shops-page-overview .search-container {
+    width: 75%;
   }
-  
+
+  .shop-logo-circle {
+    width: 23vw;
+    height: 23vh;
+  }
+
+  .shop-card {
+    padding: 3rem 1rem;
+    padding-bottom: 4rem;
+    width: 36vw !important;
+    min-height: fit-content;
+  }
+
   .shop-description {
     font-size: 0.9rem;
   }
@@ -226,12 +243,22 @@
   .shops-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .shop-card {
     margin: 0 auto;
     width: 50vw !important;
-    min-height: fit-content;
-    padding: 2.5rem 1rem;
     justify-content: space-between;
+  }
+
+  .shop-logo-circle {
+    width: 28vw;
+    height: 23vh;
+  }
+}
+
+@media (max-width: 600px) {
+  .shop-logo-circle {
+    width: 32vw;
+    height: 23vh;
   }
 }
