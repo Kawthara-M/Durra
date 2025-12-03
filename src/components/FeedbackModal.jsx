@@ -29,6 +29,13 @@ const FeedbackModal = ({
           color: "#d10000",
           title: "Error",
         }
+      case "warning": 
+        return {
+          icon: <FaExclamationTriangle className="icon" />,
+          color: "#daa402ff", 
+          title: "Warning",
+        }
+
       case "confirm":
         return {
           icon: <FaExclamationTriangle className="icon" />,

@@ -15,6 +15,7 @@ const Shops = () => {
         const response = await User.get("/shops/")
         setShops(response.data.shops)
         setFilteredShops(response.data.shops)
+        console.log(response.data)
       } catch (error) {
         console.error("Failed to fetch shops", error)
       }
@@ -29,7 +30,9 @@ const Shops = () => {
       const filtered = shops.filter(
         (shop) =>
           shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          shop.description.toLowerCase().includes(searchTerm.toLowerCase())
+          (shop.description || "")
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
       )
       setFilteredShops(filtered)
     }
@@ -62,34 +65,53 @@ const Shops = () => {
       <div className="shops-page-main">
         {filteredShops.length > 0 ? (
           <div className="shops-grid">
-            {filteredShops.map((shop) => (
-              <div
-                key={shop._id}
-                className="shop-card"
-                onClick={() => handleShopClick(shop._id)}
-              >
-                <div className="shop-logo-container">
-                  {shop.logo ? (
-                    <img
-                      src={shop.logo}
-                      alt={`${shop.name} logo`}
-                      className="shop-logo-circle"
-                    />
-                  ) : (
-                    <div className="shop-logo-circle placeholder">
-                      {shop.name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                </div>
+            {filteredShops.map((shop) => {
+              const address = shop.user?.defaultAddress
 
-                <div className="shop-info">
-                  <h3 className="shop-name">{shop.name}</h3>
-                  <p className="shop-description">
-                    {shop.description || "No description available"}
-                  </p>
+              const formattedAddress =
+                address &&
+                [
+                  address.road && `Road ${address.road.trim()}`,
+                  address.block && `Block ${address.block}`,
+                  address.governante &&
+                    ` ${address.governante.trim()}  Governate`,
+                  address.area && `Area ${address.area.trim()}`,
+                ]
+                  .filter(Boolean)
+                  .join(", ")
+
+              return (
+                <div
+                  key={shop._id}
+                  className="shop-card"
+                  onClick={() => handleShopClick(shop._id)}
+                >
+                  <div className="shop-logo-container">
+                    {shop.logo ? (
+                      <img
+                        src={shop.logo}
+                        alt={`${shop.name} logo`}
+                        className="shop-logo-circle"
+                      />
+                    ) : (
+                      <div className="shop-logo-circle placeholder">
+                        {shop.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="shop-info">
+                    <h3 className="shop-name">{shop.name}</h3>
+
+                    {formattedAddress && (
+                      <p className="shop-description shop-address">
+                        {formattedAddress}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         ) : (
           <div className="empty">
