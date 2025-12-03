@@ -67,7 +67,7 @@ const CollectionForm = () => {
 
         setFormData({
           name: data.name || "",
-          price: "", 
+          price: "",
           limitPerOrder: data.limitPerOrder || 1,
           description: data.description || "",
           images: imageObjects || [],
@@ -308,16 +308,41 @@ const CollectionForm = () => {
   return (
     <>
       <div className="collection-add-form">
-        <AddNavigation views={views} activeView={view} setView={setView} />
+        <AddNavigation
+          type="Collection"
+          views={views}
+          activeView={view}
+          setView={setView}
+        />
         <div className="service-main-content">
           {view === "General" && (
             <>
               <div>
-                <h2 className="view-title">General Information</h2>
+                <h2 className="view-title">Core Information</h2>
                 <p className="clarification">
                   The following are the core information about this jewelry
-                  collection.
+                  collection. Please provide name, limit per order, the jewelry
+                  pieces in this collection, any price adjustments, and a
+                  description. The limit per order is how many of this
+                  collections do you accept per order.
                 </p>
+                {formData?.images?.length < 5 && (
+                  <>
+                    <input
+                      type="file"
+                      id="service-images"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageChange}
+                      disabled={formData.images.length >= 5}
+                      className="image-input-hidden"
+                    />
+
+                    <label htmlFor="service-images" className="image-add">
+                      Add Image
+                    </label>
+                  </>
+                )}
               </div>
               <div className="service-form">
                 <div>
@@ -411,12 +436,29 @@ const CollectionForm = () => {
           {view === "Images" && (
             <>
               <div className="images-view">
-                <h2 className="view-title">Images</h2>{" "}
+                <h2 className="view-title">Collection Images</h2>{" "}
                 <p className="clarification">
                   Images of collection provide customer of unspoken details and
                   speak of your work. Please provide at least 1 image, and at
                   most 5.
                 </p>
+                {formData?.images?.length < 5 && (
+                  <>
+                    <input
+                      type="file"
+                      id="service-images"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageChange}
+                      disabled={formData.images.length >= 5}
+                      className="image-input-hidden"
+                    />
+
+                    <label htmlFor="service-images" className="image-add">
+                      Add Image
+                    </label>
+                  </>
+                )}
                 {formData.images.length > 0 && (
                   <>
                     <button
@@ -455,19 +497,7 @@ const CollectionForm = () => {
                   </>
                 )}
               </div>
-              {formData?.images?.length < 5 && (
-                <label className="image-add-label" title="Add Image">
-                  +
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageChange}
-                    disabled={formData.images.length >= 5}
-                    className="image-add"
-                  />
-                </label>
-              )}
+
               {errors?.imagesError && (
                 <p className="error">{errors.imagesError}</p>
               )}
