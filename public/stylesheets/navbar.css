@@ -236,18 +236,19 @@
 .profile-menu {
   position: absolute;
   right: 1rem;
-  top: 4rem;
+  top: 3.5rem;
   background: var(--nav-bg);
-  border: 1px solid var(--accent-color);
-  border-radius: 6px;
+  border: 2px solid var(--accent-color);
+  border-radius: 2px;
   padding: 0.6rem;
   display: flex;
   flex-direction: column;
   gap: 0;
   z-index: 2000;
-  min-width: 150px;
+  min-width: 140px;
   padding-bottom: 0.4rem;
   padding-top: 0.4rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12)
 }
 
 .menu-item-wrapper {

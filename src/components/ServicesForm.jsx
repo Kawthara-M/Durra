@@ -11,7 +11,7 @@ import "../../public/stylesheets/jewelery-add.css"
 const ServicesForm = () => {
   const { serviceId } = useParams()
   const navigate = useNavigate()
-  const views = ["General", "Images", "Upload"]
+  const views = ["General", "Images", "Submit"]
   const [view, setView] = useState("General")
 
   const initialState = {
@@ -121,7 +121,7 @@ const ServicesForm = () => {
   }
 
   useEffect(() => {
-    if (view === "Upload") {
+    if (view === "Submit") {
       const missingFields = []
       if (!formData.name) missingFields.push("Name")
       if (!formData.price) missingFields.push("Price")
@@ -226,15 +226,22 @@ const ServicesForm = () => {
   return (
     <>
       <div className="services-add-form">
-        <AddNavigation views={views} activeView={view} setView={setView} />
+        <AddNavigation
+          type="Service"
+          views={views}
+          activeView={view}
+          setView={setView}
+        />
         <div className="service-main-content">
           {view === "General" && (
             <>
               <div>
                 <h2 className="view-title">General Information</h2>
                 <p className="clarification">
-                  The following are the core information about this jewelry
-                  service.
+                  The following are the core information about the Service.
+                  Please Provide name, limit per order, price, and description.
+                  Limit Per Order is how many jewelry pieces do you accept to
+                  service per order.
                 </p>
               </div>
               <div className="service-form">
@@ -298,7 +305,7 @@ const ServicesForm = () => {
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    placeholder="Provide a description"
+                    placeholder="Service Description"
                     rows="10"
                   />
                 </div>
@@ -309,12 +316,29 @@ const ServicesForm = () => {
           {view === "Images" && (
             <>
               <div className="images-view">
-                <h2 className="view-title">Images</h2>{" "}
+                <h2 className="view-title">Service Images</h2>{" "}
                 <p className="clarification">
                   Images of services provide customer of unspoken details and
                   speak of your work. Please provide at least 1 image, and at
                   most 5.
                 </p>
+                {formData?.images?.length < 5 && (
+                  <>
+                    <input
+                      type="file"
+                      id="service-images"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageChange}
+                      disabled={formData.images.length >= 5}
+                      className="image-input-hidden"
+                    />
+
+                    <label htmlFor="service-images" className="image-add">
+                      Add Image
+                    </label>
+                  </>
+                )}
                 {formData.images.length > 0 && (
                   <>
                     <button
@@ -353,26 +377,14 @@ const ServicesForm = () => {
                   </>
                 )}
               </div>
-              {formData?.images?.length < 5 && (
-                <label className="image-add-label" title="Add Image">
-                  +
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageChange}
-                    disabled={formData.images.length >= 5}
-                    className="image-add"
-                  />
-                </label>
-              )}
+
               {errors?.imagesError && (
                 <p className="error">{errors.imagesError}</p>
               )}
             </>
           )}
 
-          {view === "Upload" && (
+          {view === "Submit" && (
             <div className="summary-view">
               <div className="summary-head">
                 <h2>Service Summary</h2>

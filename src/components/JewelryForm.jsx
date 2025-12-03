@@ -24,7 +24,7 @@ const JewelryForm = () => {
     "Diamonds",
     "Other Materials",
     "Certifications",
-    "Upload",
+    "Submit",
   ]
 
   const karatOptionsByMaterial = {
@@ -398,7 +398,7 @@ const JewelryForm = () => {
   }
 
   useEffect(() => {
-    if (view === "Upload") {
+    if (view === "Submit") {
       const validationErrors = validateForm(formData)
 
       if (Object.keys(validationErrors).length > 0) {
@@ -471,19 +471,15 @@ const JewelryForm = () => {
           data.append("images", imageObj.file)
         })
 
-        console.log("Submitting to backend...", data)
-console.log("User baseURL:", User.defaults?.baseURL)
-
+      console.log("Submitting to backend...", data)
 
       const response = isEdit
         ? await User.put(`/jewelry/${jewelryId}`, data, {
             headers: { "Content-Type": "multipart/form-data" },
           })
-        : (
-          await User.post(`/jewelry/`, data, {
+        : await User.post(`/jewelry/`, data, {
             headers: { "Content-Type": "multipart/form-data" },
-          }))
-                  
+          })
 
       setShowModal(true)
       setModalMessage(
@@ -533,16 +529,24 @@ console.log("User baseURL:", User.defaults?.baseURL)
   return (
     <>
       <div className="jewelry-add-form">
-        <AddNavigation views={views} setView={setView} activeView={view} />
+        <AddNavigation
+          type="Jewelry"
+          views={views}
+          setView={setView}
+          activeView={view}
+        />
         <div className="main-content">
           {view === "General" ? (
             <>
-              <h2 className="view-title">General Information</h2>{" "}
-              <p className="clarification">
-                The following are the core information about this jewelry piece.
-                Provide them and then provide the other information relative to
-                your piece, you may skip sections that do not apply.
-              </p>
+              <div>
+                <h2 className="view-title">General Information</h2>{" "}
+                <p className="clarification">
+                  The following are the core information about this jewelry
+                  piece. Provide them and then provide the other information
+                  relative to your piece, you may skip sections that do not
+                  apply.
+                </p>
+              </div>
               <div className="general-inputs">
                 <div className="label-and-input">
                   <label htmlFor="name">
@@ -647,6 +651,7 @@ console.log("User baseURL:", User.defaults?.baseURL)
                   </div>
                   <textarea
                     name="description"
+                    placeholder="Jewelry Description"
                     value={formData.description}
                     onChange={handleChange}
                     rows="8"
@@ -1217,12 +1222,29 @@ console.log("User baseURL:", User.defaults?.baseURL)
           {view === "Images" ? (
             <>
               <div className="images-view">
-                <h2 className="view-title">Images</h2>{" "}
+                <h2 className="view-title">Jewelry Images</h2>{" "}
                 <p className="clarification">
                   Images of jewelry provide customer of unspoken details and
                   speak of your work. Please provide at least 1 image, and at
                   most 5.
                 </p>
+                {formData?.images?.length < 5 && (
+                  <>
+                    <input
+                      type="file"
+                      id="service-images"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageChange}
+                      disabled={formData.images.length >= 5}
+                      className="image-input-hidden"
+                    />
+
+                    <label htmlFor="service-images" className="image-add">
+                      Add Image
+                    </label>
+                  </>
+                )}
                 {formData.images.length > 0 && (
                   <>
                     <button
@@ -1261,7 +1283,7 @@ console.log("User baseURL:", User.defaults?.baseURL)
                   </>
                 )}
               </div>
-              {formData?.images?.length < 5 && (
+              {/* {formData?.images?.length < 5 && (
                 <label className="image-add-label" title="Add Image">
                   +
                   <input
@@ -1273,11 +1295,11 @@ console.log("User baseURL:", User.defaults?.baseURL)
                     className="image-add"
                   />
                 </label>
-              )}
+              )} */}
               {/* {errors?.images && <p className="error">{errors.images}</p>} */}
             </>
           ) : null}
-          {view === "Upload" && (
+          {view === "Submit" && (
             <>
               <SummaryView formData={formData} handleChange={handleChange} />
               <div className="errors-in-summary">
