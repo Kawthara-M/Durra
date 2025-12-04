@@ -33,15 +33,14 @@ const JewelerServices = () => {
         </button>
       </div>
       {services?.length === 0 ? (
-        <p>No services found.</p>
+        <span className="empty">No Services.</span>
       ) : (
         <div className="grid">
           {services.map((service) => (
-              <ProductCard item={service} type="service" showActions={false} />
+            <ProductCard item={service} type="service" showActions={false} />
           ))}
         </div>
       )}
-
     </div>
   )
 }

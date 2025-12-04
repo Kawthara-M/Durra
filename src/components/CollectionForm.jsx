@@ -16,7 +16,7 @@ import "../../public/stylesheets/collection-form.css"
 const CollectionForm = () => {
   const { collectionId } = useParams()
   const navigate = useNavigate()
-  const views = ["General", "Images", "Upload"]
+  const views = ["General", "Images", "Submit"]
   const [view, setView] = useState("General")
   const [jewelry, setJewelry] = useState()
   const [originPrice, setOriginPrice] = useState(0) // the difference set by jeweler
@@ -198,7 +198,7 @@ const CollectionForm = () => {
   }
 
   useEffect(() => {
-    if (view === "Upload") {
+    if (view === "Submit") {
       const missingFields = []
       if (!formData.name) missingFields.push("Name")
       if (!formData.price) missingFields.push("Price")
@@ -324,25 +324,9 @@ const CollectionForm = () => {
                   collection. Please provide name, limit per order, the jewelry
                   pieces in this collection, any price adjustments, and a
                   description. The limit per order is how many of this
-                  collections do you accept per order.
+                  collections do you accept per order. Jewelry must be added
+                  through the jewelry form before adding them in a collection.
                 </p>
-                {formData?.images?.length < 5 && (
-                  <>
-                    <input
-                      type="file"
-                      id="service-images"
-                      accept="image/*"
-                      multiple
-                      onChange={handleImageChange}
-                      disabled={formData.images.length >= 5}
-                      className="image-input-hidden"
-                    />
-
-                    <label htmlFor="service-images" className="image-add">
-                      Add Image
-                    </label>
-                  </>
-                )}
               </div>
               <div className="service-form">
                 <div>
@@ -504,22 +488,43 @@ const CollectionForm = () => {
             </>
           )}
 
-          {view === "Upload" && (
+          {view === "Submit" && (
             <div className="summary-view">
               <div className="summary-head">
                 <h2>Collection Summary</h2>
                 <p className="clarification">
-                  Review your information before submitting.
+                  Please review your entered information carefully before
+                  submitting. The Submit button will remain disabled until all
+                  required information are entered.{" "}
                 </p>
               </div>
-
+              <section className="summary-images">
+                <h3>Images</h3>
+                {formData.images && formData.images.length > 0 ? (
+                  <div className="summary-images-grid">
+                    {formData.images.map((img, index) => (
+                      <div className="summary-image-wrapper" key={index}>
+                        <img
+                          src={img.src}
+                          alt={`${formData.name || "Collection"} image ${
+                            index + 1
+                          }`}
+                          className="summary-image"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>No images added.</p>
+                )}
+              </section>
               <section>
                 <h3>Description of {formData.name || "Collection"}</h3>
                 <p>{formData.description || "No description provided."}</p>
               </section>
 
               <section className="cost-section">
-                <h3>Price</h3>
+                <h3>Price (BHD)</h3>
                 <input
                   type="number"
                   name="price"

@@ -48,16 +48,16 @@ const JewelerJewelryPage = () => {
       </div>
 
       {jewelry?.length === 0 ? (
-        <p>No Jewelry found.</p>
+        <span className="empty">No Jewelry.</span>
       ) : (
         <div className="grid">
           {jewelry.map((j) => (
-              <ProductCard
-                item={j}
-                type="jewelry"
-                metalRates={metalRates}
-                showActions={false}
-              />
+            <ProductCard
+              item={j}
+              type="jewelry"
+              metalRates={metalRates}
+              showActions={false}
+            />
           ))}
         </div>
       )}

@@ -53,7 +53,7 @@ const JewelerCollectionsPage = () => {
               className="add-collections"
               onClick={() => navigate("/add-collections")}
             >
-              Add
+              Add Collection
             </button>
           </div>
 
