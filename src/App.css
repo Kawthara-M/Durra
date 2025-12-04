@@ -30,6 +30,7 @@ body.light {
   --text-color: rgb(39, 38, 38);
   --text-contrast-color: #f1f1f1;
   --btn-bg: #6f0101;
+  --btn-hover: #6f0101;
   --btn-color: #f1f1f1;
   --btn-contrast-color: rgb(39, 38, 38);
   --accent-color: #6f0101;
@@ -40,12 +41,18 @@ body.light {
 body.dark {
   --bg-color: #1a1a1a;
   --footer-bg: #242424;
-  --text-color: #f3e6e6;
+  --text-color: #f1f1f1;
   --nav-bg: #2c2c2c;
+  --btn-bg: #6f0101;
+  --btn-hover:#1a1a1a;
+  --accent-color: #f1f1f1;
+  --btn-color: #f1f1f1;
+  --card-bg-color: #1f1f1f;
 }
 
 html,
-body, #root {
+body,
+#root {
   background-color: var(--bg-color);
   color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -101,6 +108,7 @@ h6 {
 p {
   text-align: justify;
   font-size: var(--font-size-text-s);
+  color:var(--text-color);
   line-height: 1.4rem;
 }
 
@@ -171,6 +179,7 @@ input {
   border-radius: 5px;
   margin-bottom: 1rem;
   box-sizing: border-box;
+  background-color: var(--bg-color);
 }
 
 input[type="radio"],
@@ -182,15 +191,22 @@ button,
 input,
 select {
   font-family: "Playfair", serif;
+  color: var(--text-color);
 }
 
 textarea {
   padding: 0.5rem;
   border: 1px solid #bbb;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 .inline {
   display: flex;
+}
+
+.bold {
+  font-weight: bold;
 }
 
 .price {
@@ -252,4 +268,8 @@ button[type="submit"]:disabled {
   to {
     clip-path: inset(0 -34% 0 0);
   }
+}
+
+body.dark .icon {
+  filter: invert(1) brightness(1.2);
 }

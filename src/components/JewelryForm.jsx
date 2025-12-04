@@ -50,7 +50,7 @@ const JewelryForm = () => {
     originPrice: "",
     totalPrice: "",
     productionCost: "",
-    limitPerOrder: 1,
+    limitPerOrder: 0,
     description: "",
     images: [],
     preciousMaterials: [],
@@ -87,7 +87,7 @@ const JewelryForm = () => {
           originPrice: data.originPrice || "",
           totalPrice: data.totalPrice || "",
           productionCost: data.productionCost || "",
-          limitPerOrder: data.limitPerOrder || 1,
+          limitPerOrder: data.limitPerOrder || 0,
           description: data.description || "",
           images: (data.images || []).map((url, idx) => ({
             src: url,
@@ -337,7 +337,7 @@ const JewelryForm = () => {
       )
       if (!allValid)
         newErrors.preciousMaterials =
-          "Fill all required fields in precious materials."
+          "Fill all required fields in precious metals."
     }
 
     if (form.pearls.length > 0) {
@@ -633,7 +633,7 @@ const JewelryForm = () => {
                   <input
                     type="number"
                     name="limitPerOrder"
-                    min="1"
+                    min="0"
                     value={formData.limitPerOrder}
                     onChange={handleChange}
                   />
@@ -666,16 +666,20 @@ const JewelryForm = () => {
               <div className="precious-material-form">
                 <h2 className="view-title">Precious Metals</h2>{" "}
                 <p className="clarification">
-                  According to the Ministry of Industry and Commerce, Gold,
-                  Silver, and Platinium are the Precious Metals in the Kingdom
-                  of Bahrain. Please specify the precious metals composing this
-                  jewelry piece along with its karat and weight. If the jewelry
-                  piece contains no precious metals, simply leave this section
-                  empty.{" "}
+                  According to the{" "}
+                  <span className="bold">
+                    Ministry of Industry and Commerce
+                  </span>
+                  , Gold, Silver, and Platinium are the Precious Metals in the
+                  Kingdom of Bahrain. Please specify the precious metals
+                  composing this jewelry piece along with its karat and weight.
+                  If the jewelry piece contains no precious metals, simply leave
+                  this section empty.{" "}
                 </p>
                 {formData?.preciousMaterials?.length > 0 &&
                   formData.preciousMaterials.map((entry, index) => (
                     <div key={index} className="material-group">
+                      <h4>Precious Metal {index + 1}</h4>
                       <div className="selection">
                         <div className="label-and-selector">
                           <label htmlFor="name">
@@ -735,35 +739,32 @@ const JewelryForm = () => {
                           />{" "}
                           g
                         </div>
+                        <button
+                          type="button"
+                          className="icon-btn delete-material"
+                          onClick={() =>
+                            removeEntry("preciousMaterials", index)
+                          }
+                        >
+                          Remove
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        className="icon-btn delete-material"
-                        onClick={() => removeEntry("preciousMaterials", index)}
-                      >
-                        <img
-                          src={deleteIcon}
-                          alt="delete icon"
-                          className="icon"
-                        />
-                      </button>
                     </div>
                   ))}
+                <button
+                  type="button"
+                  className="add"
+                  onClick={() =>
+                    addEntry("preciousMaterials", {
+                      name: "gold",
+                      karat: "24",
+                      weight: "",
+                    })
+                  }
+                >
+                  +
+                </button>
               </div>
-
-              <button
-                type="button"
-                className="add"
-                onClick={() =>
-                  addEntry("preciousMaterials", {
-                    name: "gold",
-                    karat: "24",
-                    weight: "",
-                  })
-                }
-              >
-                +
-              </button>
             </>
           ) : null}
           {view === "Pearls" ? (
@@ -771,30 +772,27 @@ const JewelryForm = () => {
               <div className="pearls-form">
                 <h2 className="view-title">Pearls</h2>{" "}
                 <p className="clarification">
-                  According to the Ministry of Industry and Commerce, displaying
-                  uncertified pearls isn't an illegal act, but it must be
-                  accompanied with a description of the pearl and its nature.
-                  Please specify the details of each pearl type composing this
-                  piece. If the jewelry piece conatins no pearls, simply leave
-                  this section empty.
+                  According to the{" "}
+                  <span className="bold">
+                    Ministry of Industry and Commerce
+                  </span>
+                  , displaying uncertified pearls isn't an illegal act, but it
+                  must be accompanied with a description of the pearl and its
+                  nature. Please specify the details of each pearl type
+                  composing this piece. If the jewelry piece conatins no pearls,
+                  simply leave this section empty.
                 </p>
                 {formData?.pearls?.map((entry, index) => (
                   <div key={index} className="pearl-group">
                     <span className="inline">
                       {" "}
-                      <h4 className="pearl-group-heading">
-                        Pearl Type {index + 1}
-                      </h4>
+                      <h4>Pearl Type {index + 1}</h4>
                       <button
                         type="button"
                         className="icon-btn delete-material"
                         onClick={() => removeEntry("pearls", index)}
                       >
-                        <img
-                          src={deleteIcon}
-                          alt="delete icon"
-                          className="icon"
-                        />
+                        Remove
                       </button>
                     </span>
                     <div className="pearl-inputs">
@@ -871,23 +869,23 @@ const JewelryForm = () => {
                     </div>
                   </div>
                 ))}
+                <button
+                  type="button"
+                  className="add"
+                  onClick={() =>
+                    addEntry("pearls", {
+                      type: "",
+                      weight: "",
+                      shape: "",
+                      color: "",
+                      number: "",
+                    })
+                  }
+                  title="Add Another Pearl"
+                >
+                  +
+                </button>
               </div>
-              <button
-                type="button"
-                className="add"
-                onClick={() =>
-                  addEntry("pearls", {
-                    type: "",
-                    weight: "",
-                    shape: "",
-                    color: "",
-                    number: "",
-                  })
-                }
-                title="Add Another Pearl"
-              >
-                +
-              </button>
             </>
           ) : null}
           {view === "Diamonds" ? (
@@ -895,30 +893,27 @@ const JewelryForm = () => {
               <div className="diamonds-form">
                 <h2 className="view-title">Diamonds</h2>{" "}
                 <p className="clarification">
-                  According to the Ministry of Industry and Commerce, Jewelry
-                  pieces that contain diamonds, must provide a description of
-                  the weight and purity (clarity). The other characteristics
-                  mentioned, provide your customers with a better informed
-                  expirence. If the piece contains no diamonds, simply leave
-                  this section empty.
+                  According to the{" "}
+                  <span className="bold">
+                    Ministry of Industry and Commerce
+                  </span>
+                  , Jewelry pieces that contain diamonds, must provide a
+                  description of the weight and purity (clarity). The other
+                  characteristics mentioned, provide your customers with a
+                  better informed expirence. If the piece contains no diamonds,
+                  simply leave this section empty.
                 </p>
                 {formData?.diamonds?.map((entry, index) => (
                   <div key={index} className="diamond-group">
                     <span className="inline">
                       {" "}
-                      <h4 className="diamond-group-heading">
-                        Diamond Type {index + 1}
-                      </h4>
+                      <h4>Diamond Type {index + 1}</h4>
                       <button
                         type="button"
                         className="icon-btn delete-material"
                         onClick={() => removeEntry("diamonds", index)}
                       >
-                        <img
-                          src={deleteIcon}
-                          alt="delete icon"
-                          className="icon"
-                        />
+                        Remove
                       </button>
                     </span>
 
@@ -1055,19 +1050,13 @@ const JewelryForm = () => {
                   <div key={index} className="other-material-group">
                     <span className="inline">
                       {" "}
-                      <h4 className="diamond-group-heading">
-                        Material {index + 1}
-                      </h4>
+                      <h4>Material {index + 1}</h4>
                       <button
                         type="button"
                         className="icon-btn delete-material"
                         onClick={() => removeEntry("otherMaterials", index)}
                       >
-                        <img
-                          src={deleteIcon}
-                          alt="delete icon"
-                          className="icon"
-                        />
+                        Remove
                       </button>
                     </span>
                     <div className="other-material-row">
@@ -1107,19 +1096,19 @@ const JewelryForm = () => {
                     </div>
                   </div>
                 ))}
+                <button
+                  type="button"
+                  className="add"
+                  onClick={() =>
+                    addEntry("otherMaterials", {
+                      name: "",
+                      weight: "",
+                    })
+                  }
+                >
+                  +
+                </button>
               </div>{" "}
-              <button
-                type="button"
-                className="add"
-                onClick={() =>
-                  addEntry("otherMaterials", {
-                    name: "",
-                    weight: "",
-                  })
-                }
-              >
-                +
-              </button>
             </>
           ) : null}
           {view === "Certifications" ? (
@@ -1136,19 +1125,13 @@ const JewelryForm = () => {
                     <div key={index} className="certification-group">
                       <span className="inline">
                         {" "}
-                        <h4 className="diamond-group-heading">
-                          Certification {index + 1}
-                        </h4>
+                        <h4>Certification {index + 1}</h4>
                         <button
                           type="button"
                           className="icon-btn delete-material"
                           onClick={() => removeEntry("certifications", index)}
                         >
-                          <img
-                            src={deleteIcon}
-                            alt="delete icon"
-                            className="icon"
-                          />
+                          Remove
                         </button>
                       </span>
                       <div className="certification-name">
@@ -1167,7 +1150,7 @@ const JewelryForm = () => {
                       </div>
                       <div className="certifications-details">
                         {" "}
-                        <div className="label-and-">
+                        <div className="label-and-input">
                           {" "}
                           <label htmlFor="reportNumber">
                             <span className="required">*</span> Report Number
@@ -1201,22 +1184,22 @@ const JewelryForm = () => {
                     </div>
                   </>
                 ))}
+                <button
+                  type="button"
+                  className="add"
+                  onClick={() =>
+                    addEntry("certifications", {
+                      name: "",
+                      weight: "",
+                    })
+                  }
+                >
+                  +
+                </button>
                 {/* <p className="error">
                   {errors?.certifications ? errors["certifications"] : null}
                 </p> */}
               </div>{" "}
-              <button
-                type="button"
-                className="add"
-                onClick={() =>
-                  addEntry("certifications", {
-                    name: "",
-                    weight: "",
-                  })
-                }
-              >
-                +
-              </button>
             </>
           ) : null}
           {view === "Images" ? (
@@ -1302,44 +1285,48 @@ const JewelryForm = () => {
           {view === "Submit" && (
             <>
               <SummaryView formData={formData} handleChange={handleChange} />
-              <div className="errors-in-summary">
-                {errors?.generalError && (
-                  <p className="error">{errors.generalError}</p>
-                )}{" "}
-                {errors?.images && <p className="error">{errors.images}</p>}{" "}
-                {errors?.materials && (
-                  <p className="error">{errors.materials}</p>
-                )}
-                {errors?.preciousMaterials && (
-                  <p className="error">{errors.preciousMaterials}</p>
-                )}
-                {errors?.preciousMaterialsFields && (
-                  <p className="error">{errors.preciousMaterialsFields}</p>
-                )}
-                {errors?.pearls && <p className="error">{errors.pearls}</p>}
-                {errors?.diamonds && <p className="error">{errors.diamonds}</p>}
-                {errors?.otherMaterials && (
-                  <p className="error">{errors.otherMaterials}</p>
-                )}
-                {errors?.certifications && (
-                  <p className="error">{errors.certifications}</p>
-                )}
+              <div>
+                <div className="errors-in-summary">
+                  {errors?.generalError && (
+                    <p className="error">{errors.generalError}</p>
+                  )}{" "}
+                  {errors?.images && <p className="error">{errors.images}</p>}{" "}
+                  {errors?.materials && (
+                    <p className="error">{errors.materials}</p>
+                  )}
+                  {errors?.preciousMaterials && (
+                    <p className="error">{errors.preciousMaterials}</p>
+                  )}
+                  {errors?.preciousMaterialsFields && (
+                    <p className="error">{errors.preciousMaterialsFields}</p>
+                  )}
+                  {errors?.pearls && <p className="error">{errors.pearls}</p>}
+                  {errors?.diamonds && (
+                    <p className="error">{errors.diamonds}</p>
+                  )}
+                  {errors?.otherMaterials && (
+                    <p className="error">{errors.otherMaterials}</p>
+                  )}
+                  {errors?.certifications && (
+                    <p className="error">{errors.certifications}</p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSubmit()
+                  }}
+                  className={
+                    errors && Object.values(errors).some((err) => err)
+                      ? "disabled"
+                      : ""
+                  }
+                  id="submit-jewelry"
+                  disabled={errors && Object.values(errors).some((err) => err)}
+                >
+                  Submit Jewelry Info
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  handleSubmit()
-                }}
-                className={
-                  errors && Object.values(errors).some((err) => err)
-                    ? "disabled"
-                    : ""
-                }
-                id="submit-jewelry"
-                disabled={errors && Object.values(errors).some((err) => err)}
-              >
-                Submit Jewelry Info
-              </button>
             </>
           )}
         </div>

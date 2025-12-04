@@ -59,18 +59,21 @@ const SummaryView = ({ formData, handleChange }) => {
 
   return (
     <div className="summary-view">
-      <h2>Jewelry Summary</h2>
-      <p className="clarification">
-        The following are the details of your new jewelry piece. The total price
-        is estimated based on your production cost and the current prices of
-        precious metals; if your piece includes any. You may adjust the price.{" "}
-      </p>
+      <div className="summary-view-head">
+        <h2>Jewelry Summary</h2>
+        <p className="clarification">
+          The following are the details of your new jewelry piece. The total
+          price is estimated based on your production cost and the current
+          prices of precious metals (if your piece includes any), uou may adjust
+          the price according to your needs. The Submit button will remain disabled until all required information are provided.{" "}
+        </p>
+      </div>
 
       <section className="summary-description">
         <h3>Description</h3>
         <p>
           {formData.description ||
-            "Providing a description enriches your customer expirence and speak your work."}
+            "Providing a description enriches your customer expirence and speak of your work."}
         </p>
       </section>
 

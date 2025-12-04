@@ -319,8 +319,8 @@ const ServicesForm = () => {
                 <h2 className="view-title">Service Images</h2>{" "}
                 <p className="clarification">
                   Images of services provide customer of unspoken details and
-                  speak of your work. Please provide at least 1 image, and at
-                  most 5.
+                  speak of your work. Please provide aa minimum of 1 image, and
+                  a maximum of 5 images.
                 </p>
                 {formData?.images?.length < 5 && (
                   <>
@@ -389,17 +389,40 @@ const ServicesForm = () => {
               <div className="summary-head">
                 <h2>Service Summary</h2>
                 <p className="clarification">
-                  Review your information before submitting.
+                  Please review your entered information carefully before submitting. The Submit button will remain disabled until all required information are entered.
                 </p>
               </div>
-
+              <section className="summary-images">
+                <h3>Images</h3>
+                {formData.images && formData.images.length > 0 ? (
+                  <div className="summary-images-grid">
+                    {formData.images.map((img, index) => (
+                      <div className="summary-image-wrapper" key={index}>
+                        <img
+                          src={img.src}
+                          alt={`${formData.name || "Service"} image ${
+                            index + 1
+                          }`}
+                          className="summary-image"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p>No images added.</p>
+                )}
+              </section>
               <section>
                 <h3>Description of {formData.name || "Service"}</h3>
                 <p>{formData.description || "No description provided."}</p>
               </section>
+              <section>
+                <h3>Limit per Order</h3>
+                <p>{formData.limitPerOrder + ` Unit per Order` || "0"}</p>
+              </section>
 
               <section className="cost-section">
-                <h3>Price</h3>
+                <h3>Price (BHD)</h3>
                 <input
                   type="number"
                   name="price"
