@@ -145,6 +145,10 @@
   text-align: right;
 }
 
+.remove-btn:hover {
+  background-color: transparent;
+}
+
 .service-extra .remove-btn {
   width: fit-content;
   align-self: flex-end;

@@ -29,7 +29,7 @@
 }
 
 .shop-name-in-product-page {
-  opacity: .8;
+  opacity: 0.8;
   font-size: 1.3rem !important;
 }
 
@@ -132,7 +132,8 @@
   padding-left: 1.2rem;
 }
 
-.jewelry-page .feedback-modal-overlay .card, .wishlist-page .card {
+.jewelry-page .feedback-modal-overlay .card,
+.wishlist-page .card {
   width: 35%;
 }
 
@@ -143,12 +144,14 @@
 }
 
 @media (max-width: 1200px) {
-  .jewelry-page .feedback-modal-overlay .card, .wishlist-page .card {
+  .jewelry-page .feedback-modal-overlay .card,
+  .wishlist-page .card {
     width: 45%;
   }
 }
 @media (max-width: 1000px) {
-  .jewelry-page .feedback-modal-overlay .card, .wishlist-page .card {
+  .jewelry-page .feedback-modal-overlay .card,
+  .wishlist-page .card {
     width: 50%;
   }
 }
@@ -157,7 +160,8 @@
   .customer-jewelry-page .card,
   .customer-jewelry-page + .feedback-modal-overlay .card,
   .checkout-wrapper .card,
-  .cart-wrapper .card, .wishlist-page .card {
+  .cart-wrapper .card,
+  .wishlist-page .card {
     width: 55%;
   }
 }
@@ -204,7 +208,8 @@
   .customer-jewelry-page .service-page-content {
     height: fit-content !important;
   }
-  .jewelry-page .feedback-modal-overlay .card, .wishlist-page .card{
+  .jewelry-page .feedback-modal-overlay .card,
+  .wishlist-page .card {
     width: 70%;
   }
 }
@@ -213,7 +218,8 @@
   .customer-jewelry-page .card,
   .customer-jewelry-page + .feedback-modal-overlay .card,
   .checkout-wrapper .card,
-  .cart-wrapper .card, .wishlist-page .card {
+  .cart-wrapper .card,
+  .wishlist-page .card {
     width: 60%;
   }
 }
@@ -222,7 +228,8 @@
   .customer-jewelry-page .card,
   .customer-jewelry-page + .feedback-modal-overlay .card,
   .checkout-wrapper .card,
-  .cart-wrapper .card, .wishlist-page .card {
+  .cart-wrapper .card,
+  .wishlist-page .card {
     width: 69%;
   }
 }
@@ -260,7 +267,8 @@
   .customer-jewelry-page .card,
   .customer-jewelry-page + .feedback-modal-overlay .card,
   .checkout-wrapper .card,
-  .cart-wrapper .card, .wishlist-page .card {
+  .cart-wrapper .card,
+  .wishlist-page .card {
     width: 78%;
   }
 }

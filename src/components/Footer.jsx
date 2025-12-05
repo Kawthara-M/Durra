@@ -19,7 +19,8 @@ const Footer = () => {
             <h2 className="footer-logo">DURRA</h2>
             <p className="footer-tagline">
               Representing the perfect harmony of Bahrain's jewelry legacy and
-              contemporary sophistication, a symbol of heritage, trust, and innovation.
+              contemporary sophistication, a symbol of heritage, trust, and
+              innovation.
             </p>
 
             <button
@@ -39,12 +40,21 @@ const Footer = () => {
               </p>
               <p
                 className="footer-link"
+                onClick={() => navigate("/contact-us")}
+              >
+                Contact Us
+              </p>
+              <p
+                className="footer-link"
                 onClick={() => navigate("/live-prices")}
               >
                 Live Prices
               </p>
-              {!user && (
-                <>
+            </div>
+            {!user && (
+              <>
+                <div className="footer-column">
+                  <h6>Account Management</h6>
                   <p
                     className="footer-link"
                     onClick={() => navigate("/sign-in")}
@@ -56,10 +66,10 @@ const Footer = () => {
                     onClick={() => navigate("/registeration")}
                   >
                     Join as a Jeweler
-                  </p>
-                </>
-              )}
-            </div>
+                  </p>{" "}
+                </div>
+              </>
+            )}
 
             <div className="footer-column">
               <h6>Legal</h6>
