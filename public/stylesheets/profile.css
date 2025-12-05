@@ -258,9 +258,9 @@
 }
 
 .default-button,
-.default-label {
+.default-label, .default-label:hover {
   background-color: transparent !important;
-  color: red;
+  color: red !important;
   text-align: right;
 }
 .default-label {

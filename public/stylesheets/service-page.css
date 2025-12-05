@@ -124,7 +124,7 @@
   flex-direction: column;
   justify-content: flex-start;
   gap: 1.5rem;
-  padding-top: .5rem;
+  padding-top: 0.5rem;
 }
 
 .service-information {
@@ -135,7 +135,7 @@
   font-size: 1.9rem;
   font-weight: 700;
   letter-spacing: 0.3px;
-  opacity: .8;
+  opacity: 0.8;
 }
 
 #jeweler-service-description {

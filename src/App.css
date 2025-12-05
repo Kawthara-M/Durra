@@ -30,8 +30,9 @@ body.light {
   --text-color: rgb(39, 38, 38);
   --text-contrast-color: #f1f1f1;
   --btn-bg: #6f0101;
-  --btn-hover: #6f0101;
+  --btn-hover: #970a0a;
   --btn-color: #f1f1f1;
+  --btn-hover-color: #f1f1f1;
   --btn-contrast-color: rgb(39, 38, 38);
   --accent-color: #6f0101;
   --a-hover-color: #5f0f0f;
@@ -44,8 +45,9 @@ body.dark {
   --text-color: #f1f1f1;
   --nav-bg: #2c2c2c;
   --btn-bg: #6f0101;
-  --btn-hover: #1a1a1a;
-  --accent-color: #f1f1f1;
+  --btn-hover: #1a1a1a; /* ? */
+  --btn-hover-color: #f1f1f1;
+  --accent-color: #6f0101;
   --btn-color: #f1f1f1;
   --card-bg-color: #1f1f1f;
 }
@@ -131,6 +133,11 @@ button {
 button:disabled {
   cursor: not-allowed;
   opacity: 0.8;
+}
+
+button:hover {
+  background-color: var(--btn-hover);
+  color: var(--btn-hover-color);
 }
 
 /* icon images styling */

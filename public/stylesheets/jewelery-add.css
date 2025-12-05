@@ -26,7 +26,7 @@
   box-sizing: border-box;
 }
 
-.add-sidebar-back {
+.add-sidebar-back, .add-sidebar-back:hover {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -208,7 +208,7 @@
   padding: 0.5rem 0;
 }
 
-.delete-material {
+.delete-material, .delete-material:hover {
   width: 10%;
   color: var(--accent-color);
   text-decoration: underline;

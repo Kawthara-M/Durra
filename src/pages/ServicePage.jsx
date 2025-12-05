@@ -97,7 +97,6 @@ const ServicePage = () => {
         setOrderId(orderDoc._id)
         setFullOrder(orderDoc)
         addServiceToOrder(newItem)
-
       } else {
         const updatedServiceOrder = [
           ...(order.serviceOrder || []).map((entry) => ({

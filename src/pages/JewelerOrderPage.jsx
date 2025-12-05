@@ -236,7 +236,7 @@ const JewelerOrderPage = () => {
                       <h4>Jewelry</h4>
                       {order.jewelryOrder.map((entry) => (
                         <div key={entry._id} className="contents-item">
-                          <h5>{entry.item.name}</h5>
+                          <h5>{entry.item?.name}</h5>
                           <div className="contents-item-details">
                             <span>
                               <h6>Quantity:</h6>

@@ -25,8 +25,7 @@ const JewelryPage = () => {
   const { jewelryId } = useParams()
   const { user } = useUser()
 
-  const { order, addJewelryToOrder, setOrderId, setFullOrder } =
-    useOrder()
+  const { order, addJewelryToOrder, setOrderId, setFullOrder } = useOrder()
 
   const [totalPrice, setTotalPrice] = useState(0)
   const [metalRates, setMetalRates] = useState()
@@ -87,8 +86,7 @@ const JewelryPage = () => {
     getRates()
   }, [jewelry])
 
-  const handleChange = (e) =>
-    setQuantity(parseInt(e.target.value || 1))
+  const handleChange = (e) => setQuantity(parseInt(e.target.value || 1))
 
   const handleAdd = async () => {
     if (!user || !jewelry) return
@@ -102,9 +100,7 @@ const JewelryPage = () => {
         : currentOrder.shop
 
     const itemShopId =
-      typeof jewelry.shop === "object"
-        ? jewelry.shop?._id
-        : jewelry.shop
+      typeof jewelry.shop === "object" ? jewelry.shop?._id : jewelry.shop
 
     if (currentOrderId && currentShopId && itemShopId) {
       if (String(currentShopId) !== String(itemShopId)) {
@@ -145,14 +141,10 @@ const JewelryPage = () => {
         setOrderId(orderDoc._id)
         setFullOrder(orderDoc)
         addJewelryToOrder(newItem)
-
       } else {
         const updatedJewelryOrder = [
           ...(order.jewelryOrder || []).map((entry) => ({
-            item:
-              typeof entry.item === "object"
-                ? entry.item._id
-                : entry.item,
+            item: typeof entry.item === "object" ? entry.item._id : entry.item,
             itemModel: entry.itemModel,
             quantity: entry.quantity ?? 1,
             totalPrice: Number(entry.totalPrice ?? 0),
@@ -175,7 +167,6 @@ const JewelryPage = () => {
       console.error("Failed to add to cart", err)
       setAddModalMessage("An error occurred while adding to cart.")
       setShowAddModal(true)
-
     } finally {
       setIsAdding(false)
     }
@@ -201,9 +192,7 @@ const JewelryPage = () => {
         jewelryOrder,
         serviceOrder: [],
         shop:
-          typeof jewelry.shop === "object"
-            ? jewelry.shop._id
-            : jewelry.shop,
+          typeof jewelry.shop === "object" ? jewelry.shop._id : jewelry.shop,
       })
 
       setFullOrder(updated)
@@ -253,7 +242,6 @@ const JewelryPage = () => {
         )
 
         setAddModalMessage("Removed from your wishlist.")
-
       } else {
         updatedItems = [
           ...wishlist.items.map((it) => ({
@@ -275,7 +263,6 @@ const JewelryPage = () => {
 
       window.dispatchEvent(new Event("wishlist-updated"))
       setShowAddModal(true)
-
     } catch (err) {
       if (err.response?.status === 404) {
         await User.post("/wishlist", { items: [newEntry] })
@@ -291,7 +278,6 @@ const JewelryPage = () => {
     }
   }
 
-
   const formatCertificationName = (name) => {
     if (!name) return ""
     if (name.toUpperCase() === "GIA") {
@@ -304,12 +290,13 @@ const JewelryPage = () => {
     <>
       {jewelry && (
         <div className="customer-jewelry-page">
-
           <div className="service-page-content">
             <div className="service-images">
               {jewelry.images.length > 0 && (
                 <div className="service-image-slider">
-                  <button className="left-arrow" onClick={handlePrev}>←</button>
+                  <button className="left-arrow" onClick={handlePrev}>
+                    ←
+                  </button>
 
                   <div className="image-box">
                     <img
@@ -319,18 +306,17 @@ const JewelryPage = () => {
                     />
                   </div>
 
-                  <button className="right-arrow" onClick={handleNext}>→</button>
+                  <button className="right-arrow" onClick={handleNext}>
+                    →
+                  </button>
                 </div>
               )}
             </div>
 
             <div className="service-information">
-
               <div className="information-top-wrapper">
                 <h1>{jewelry.name}</h1>
-                <p id="jeweler-service-description">
-                  {jewelry.description}
-                </p>
+                <p id="jeweler-service-description">{jewelry.description}</p>
 
                 <div className="jewelry-certifications">
                   {jewelry.certifications?.length > 0 && (
@@ -345,14 +331,11 @@ const JewelryPage = () => {
                   )}
                 </div>
 
-                <h3 className="service-price">
-                  {totalPrice.toFixed(2)} BHD
-                </h3>
+                <h3 className="service-price">{totalPrice.toFixed(2)} BHD</h3>
               </div>
 
               <div className="jewelry-overview-wrapper">
                 <div className="jewelry-inputs">
-
                   {jewelry.type?.toLowerCase() === "ring" && (
                     <select
                       value={size}
@@ -377,7 +360,6 @@ const JewelryPage = () => {
                   />
 
                   <span className="add-or-wishlist">
-
                     <button
                       disabled={!user || isAdding}
                       onClick={user ? handleAdd : undefined}
@@ -387,12 +369,12 @@ const JewelryPage = () => {
 
                     <img
                       src={heartIcon}
-                      className={`icon ${(!user || isWishlistUpdating) && "disabled"}`}
+                      className={`icon ${
+                        (!user || isWishlistUpdating) && "disabled"
+                      }`}
                       title={user ? "Wishlist" : "Sign in required"}
                       onClick={
-                        user && !isWishlistUpdating
-                          ? handleWishlist
-                          : undefined
+                        user && !isWishlistUpdating ? handleWishlist : undefined
                       }
                     />
 
@@ -401,11 +383,9 @@ const JewelryPage = () => {
                       className={`icon ${!user && "disabled"}`}
                       onClick={() => user && setShowComparison(true)}
                     />
-
                   </span>
                 </div>
               </div>
-
             </div>
           </div>
 
@@ -445,7 +425,6 @@ const JewelryPage = () => {
               },
             ]}
           />
-
         </div>
       )}
     </>

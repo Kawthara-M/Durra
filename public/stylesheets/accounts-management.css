@@ -145,13 +145,17 @@
   border-bottom: 2px solid var(--accent-color);
 }
 
-.close-modal-btn {
+.close-modal-btn, .close-modal-btn:hover {
   background: transparent;
   border: none;
   font-size: 1.1rem;
   cursor: pointer;
   color: var(--accent-color);
   width: fit-content;
+}
+
+.close-modal-btn:hover{
+  font-size: 1.2rem;
 }
 
 .add-user-form {
@@ -208,7 +212,7 @@
   font-weight: 600;
 }
 
-.cancel-add-user-btn {
+.cancel-add-user-btn, .cancel-add-user-btn:hover {
   background: transparent;
   color: var(--accent-color) !important;
 }

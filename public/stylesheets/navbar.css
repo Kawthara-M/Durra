@@ -239,7 +239,7 @@
   top: 3.5rem;
   background: var(--nav-bg);
   border: 2px solid var(--accent-color);
-  border-radius: 2px;
+  border-radius: 4px;
   padding: 0.6rem;
   display: flex;
   flex-direction: column;
@@ -280,10 +280,10 @@
 .profile-menu a:hover,
 .menu-btn:hover {
   color: var(--a-hover-color);
+  background-color: transparent;
   font-weight: bold;
 }
 
-/* media queries are the one's responsible for showing the nav as a hidden menu for smaller screens*/
 
 @media (max-width: 800px) {
   #search {

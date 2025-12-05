@@ -40,6 +40,7 @@ import Requests from "./pages/Requests"
 import AdminDashboard from "./pages/AdminDashboard"
 import AccountsManagement from "./pages/AccountsManagement"
 import Shipments from "./pages/Shipments"
+import ContactUs from "./pages/ContactUS"
 
 import "./App.css"
 
@@ -123,6 +124,11 @@ function App() {
             <Route
               path="/shipments"
               element={<Shipments />}
+            />
+
+            <Route
+              path="/contact-us"
+              element={<ContactUs />}
             />
           </Routes>
         </main>
