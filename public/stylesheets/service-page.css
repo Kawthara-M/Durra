@@ -132,10 +132,10 @@
 }
 
 .service-information h2 {
-  color: #111;
   font-size: 1.9rem;
   font-weight: 700;
   letter-spacing: 0.3px;
+  opacity: .8;
 }
 
 #jeweler-service-description {
@@ -171,7 +171,7 @@
 }
 
 .service-description {
-  color: #222;
+  opacity: 1 !important;
   line-height: 2rem;
 }
 

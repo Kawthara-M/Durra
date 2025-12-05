@@ -44,7 +44,7 @@ body.dark {
   --text-color: #f1f1f1;
   --nav-bg: #2c2c2c;
   --btn-bg: #6f0101;
-  --btn-hover:#1a1a1a;
+  --btn-hover: #1a1a1a;
   --accent-color: #f1f1f1;
   --btn-color: #f1f1f1;
   --card-bg-color: #1f1f1f;
@@ -108,7 +108,7 @@ h6 {
 p {
   text-align: justify;
   font-size: var(--font-size-text-s);
-  color:var(--text-color);
+  color: var(--text-color);
   line-height: 1.4rem;
 }
 
@@ -180,6 +180,7 @@ input {
   margin-bottom: 1rem;
   box-sizing: border-box;
   background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 input[type="radio"],
@@ -191,13 +192,12 @@ button,
 input,
 select {
   font-family: "Playfair", serif;
-  color: var(--text-color);
 }
 
 textarea {
   padding: 0.5rem;
   border: 1px solid #bbb;
-  background-color: var(--bg-color);
+  background-color: transparent;
   color: var(--text-color);
 }
 
