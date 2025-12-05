@@ -31,6 +31,11 @@ const CollectionPage = () => {
   const [showShopModal, setShowShopModal] = useState(false)
   const [shopModalMessage, setShopModalMessage] = useState("")
 
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [addModalMessage, setAddModalMessage] = useState("")
+  const [isAdding, setIsAdding] = useState(false)
+  const [isWishlistUpdating, setIsWishlistUpdating] = useState(false)
+
   const {
     currentIndex: currentImageIndex,
     handleNext,
@@ -70,7 +75,7 @@ const CollectionPage = () => {
   }
 
   const addItemToOrder = async () => {
-    if (!user || !collection) return
+    if (!user || !collection) return false
 
     const currentOrder = order || {}
     const currentOrderId = currentOrder.orderId
@@ -116,6 +121,11 @@ const CollectionPage = () => {
       }
 
       if (!currentOrderId) {
+        const itemShopId =
+          typeof collection.shop === "object"
+            ? collection.shop?._id
+            : collection.shop
+
         const payload = {
           jewelryOrder: updatedJewelryOrder,
           serviceOrder: updatedServiceOrder,
@@ -130,10 +140,11 @@ const CollectionPage = () => {
             ),
           collectionMethod: "delivery",
           notes: "",
+          shop: itemShopId || null,
         }
 
         const createdOrder = await createOrder(payload)
-        const orderDoc = createdOrder
+        const orderDoc = createdOrder.order || createdOrder
         const finalOrderId = orderDoc._id
 
         setOrderId(finalOrderId)
@@ -151,7 +162,7 @@ const CollectionPage = () => {
           shop: orderDoc.shop,
         })
 
-        return
+        return true
       }
 
       const updatedOrderDoc = await updateOrder(currentOrderId, {
@@ -164,11 +175,14 @@ const CollectionPage = () => {
         ...newItem,
         shop: updatedOrderDoc.shop,
       })
+
+      return true
     } catch (err) {
       console.error(
         "Failed to add collection to cart:",
         err.response?.data || err
       )
+      return false
     }
   }
 
@@ -199,7 +213,17 @@ const CollectionPage = () => {
       }
     }
 
-    await addItemToOrder()
+    setIsAdding(true)
+    const success = await addItemToOrder()
+    if (success) {
+      setAddModalMessage("This collection has been added to your cart.")
+    } else {
+      setAddModalMessage(
+        "An error occurred while adding this collection to your cart."
+      )
+    }
+    setShowAddModal(true)
+    setIsAdding(false)
   }
 
   const handleClearCartAndAdd = async () => {
@@ -255,6 +279,10 @@ const CollectionPage = () => {
       })
 
       setShowShopModal(false)
+      setAddModalMessage(
+        "Your cart was updated and this collection has been added."
+      )
+      setShowAddModal(true)
     } catch (err) {
       console.error("Failed to clear cart and add:", err.response?.data || err)
       setShowShopModal(false)
@@ -263,6 +291,8 @@ const CollectionPage = () => {
 
   const handleWishlist = async () => {
     if (!user || !collection) return
+
+    setIsWishlistUpdating(true)
 
     const newEntry = {
       favouritedItem: collection._id,
@@ -290,6 +320,7 @@ const CollectionPage = () => {
               : it.favouritedItem
           return id !== collection._id
         })
+        setAddModalMessage("Removed from your wishlist.")
       } else {
         updatedItems = [
           ...wishlist.items.map((it) => ({
@@ -301,17 +332,23 @@ const CollectionPage = () => {
           })),
           newEntry,
         ]
+        setAddModalMessage("Added to your wishlist.")
       }
 
       await User.put(`/wishlist/${wishlist._id}`, { items: updatedItems })
       window.dispatchEvent(new Event("wishlist-updated"))
+      setShowAddModal(true)
     } catch (err) {
       if (err.response?.status === 404) {
         await User.post("/wishlist", { items: [newEntry] })
         window.dispatchEvent(new Event("wishlist-updated"))
+        setAddModalMessage("Added to your wishlist.")
+        setShowAddModal(true)
       } else {
         console.error("Failed to update wishlist:", err)
       }
+    } finally {
+      setIsWishlistUpdating(false)
     }
   }
 
@@ -370,10 +407,10 @@ const CollectionPage = () => {
                 <span className="add-or-wishlist">
                   <button
                     onClick={handleAdd}
-                    disabled={!user}
+                    disabled={!user || isAdding}
                     title={user ? "Add to Cart" : "Sign in to Add"}
                   >
-                    Add to Cart
+                    {isAdding ? "Adding..." : "Add to Cart"}
                   </button>
                   <img
                     src={heartIcon}
@@ -381,8 +418,12 @@ const CollectionPage = () => {
                     title={
                       user ? "Add to Wishlist" : "Sign in to Add to Wishlist"
                     }
-                    className="icon"
-                    onClick={user ? handleWishlist : undefined}
+                    className={`icon ${
+                      (!user || isWishlistUpdating) && "disabled"
+                    }`}
+                    onClick={
+                      user && !isWishlistUpdating ? handleWishlist : undefined
+                    }
                   />
                 </span>
               </div>
@@ -411,14 +452,13 @@ const CollectionPage = () => {
           <div>
             <h3 className="reviews-heading">Reviews</h3>
             <Reviews
-              creviewedItemId={collectionId}
+              reviewedItemId={collectionId}
               reviewedItemType="Collection"
             />
           </div>
         </div>
       )}
 
-      {/* 🔹 Same confirm modal behaviour as ProductCard */}
       <FeedbackModal
         show={showShopModal}
         type="confirm"
@@ -436,6 +476,20 @@ const CollectionPage = () => {
             onClick: () => {
               setShowShopModal(false)
             },
+          },
+        ]}
+      />
+
+      <FeedbackModal
+        show={showAddModal}
+        type="success"
+        message={addModalMessage}
+        onClose={() => setShowAddModal(false)}
+        actions={[
+          {
+            label: "Close",
+            onClick: () => setShowAddModal(false),
+            primary: true,
           },
         ]}
       />

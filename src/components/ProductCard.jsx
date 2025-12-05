@@ -38,6 +38,16 @@ const ProductCard = ({
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [loginModalMessage, setLoginModalMessage] = useState("")
 
+  // to show feedback when custmer add
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
+  const [isUpdatingWishlist, setIsUpdatingWishlist] = useState(false)
+
+  const [actionFeedback, setActionFeedback] = useState({
+    show: false,
+    type: "success",
+    message: "",
+  })
+
   useEffect(() => {
     if (type === "collection" && metalRates) {
       const price = calculateCollectionPrice(item, metalRates)
@@ -69,33 +79,52 @@ const ProductCard = ({
   const handleAdd = async () => {
     if (!user) return
 
-    const currentOrder = order || {}
+    setIsAddingToCart(true)
 
-    const currentOrderId = currentOrder.orderId
+    try {
+      const currentOrder = order || {}
 
-    const currentShopId =
-      typeof currentOrder.shop === "object"
-        ? currentOrder.shop?._id
-        : currentOrder.shop
+      const currentOrderId = currentOrder.orderId
 
-    const itemShopId =
-      (typeof item.shop === "object" ? item.shop?._id : item.shop) ||
-      (typeof item.service === "object"
-        ? item.service?.shop
-        : item.service?.shop)
+      const currentShopId =
+        typeof currentOrder.shop === "object"
+          ? currentOrder.shop?._id
+          : currentOrder.shop
 
-    if (currentOrderId && currentShopId && itemShopId) {
-      if (String(itemShopId) !== String(currentShopId)) {
-        setShopModalMessage(
-          "Your cart currently contains items from another shop. To add this item, you need to clear your existing cart."
-        )
-        setPendingAddType(type)
-        setShowShopModal(true)
-        return
+      const itemShopId =
+        (typeof item.shop === "object" ? item.shop?._id : item.shop) ||
+        (typeof item.service === "object"
+          ? item.service?.shop
+          : item.service?.shop)
+
+      if (currentOrderId && currentShopId && itemShopId) {
+        if (String(itemShopId) !== String(currentShopId)) {
+          setShopModalMessage(
+            "Your cart currently contains items from another shop. To add this item, you need to clear your existing cart."
+          )
+          setPendingAddType(type)
+          setShowShopModal(true)
+          return
+        }
       }
-    }
 
-    await addItemToOrder(type)
+      await addItemToOrder(type)
+
+      setActionFeedback({
+        show: true,
+        type: "success",
+        message: "Item has been added to your cart.",
+      })
+    } catch (err) {
+      console.error("Failed to add to order:", err.response?.data || err)
+      setActionFeedback({
+        show: true,
+        type: "error",
+        message: "We couldn't add this item to your cart. Please try again.",
+      })
+    } finally {
+      setIsAddingToCart(false)
+    }
   }
 
   const addItemToOrder = async (forcedType) => {
@@ -157,7 +186,6 @@ const ProductCard = ({
         if (existingIndex !== -1) {
           return
         } else {
-          console.log(newItem)
           updatedJewelryOrder.push(newItem)
         }
       } else if (effectiveType === "service") {
@@ -177,6 +205,7 @@ const ProductCard = ({
           updatedServiceOrder.push(newItem)
         }
       }
+
       if (!currentOrderId) {
         const itemShopId =
           (typeof item.shop === "object" ? item.shop?._id : item.shop) ||
@@ -198,15 +227,11 @@ const ProductCard = ({
             ),
           collectionMethod: "delivery",
           notes: "",
-          shop: itemShopId || null, // 🔴 important: send the shop for the first time
+          shop: itemShopId || null,
         }
 
-        console.log("[CREATE ORDER PAYLOAD]", payload)
-
         const createdOrder = await createOrder(payload)
-
         const orderDoc = createdOrder.order || createdOrder
-
         const finalOrderId = orderDoc._id
         setOrderId(finalOrderId)
         setFullOrder(orderDoc)
@@ -235,6 +260,7 @@ const ProductCard = ({
       }
     } catch (err) {
       console.error("Failed to add to order:", err.response?.data || err)
+      throw err // 🔹 let handleAdd decide how to show feedback
     }
   }
 
@@ -294,6 +320,8 @@ const ProductCard = ({
   const handleWishlist = async () => {
     if (!user) return
 
+    setIsUpdatingWishlist(true)
+
     const newEntry = {
       favouritedItem: item._id,
       favouritedItemType:
@@ -340,13 +368,42 @@ const ProductCard = ({
 
       await User.put(`/wishlist/${wishlist._id}`, { items: updatedItems })
       window.dispatchEvent(new Event("wishlist-updated"))
+
+      setActionFeedback({
+        show: true,
+        type: "success",
+        message: exists
+          ? "Item has been removed from your wishlist."
+          : "Item has been added to your wishlist.",
+      })
     } catch (err) {
       if (err.response?.status === 404) {
-        await User.post("/wishlist", { items: [newEntry] })
-        window.dispatchEvent(new Event("wishlist-updated"))
+        try {
+          await User.post("/wishlist", { items: [newEntry] })
+          window.dispatchEvent(new Event("wishlist-updated"))
+          setActionFeedback({
+            show: true,
+            type: "success",
+            message: "Item has been added to your wishlist.",
+          })
+        } catch (innerErr) {
+          console.error(innerErr)
+          setActionFeedback({
+            show: true,
+            type: "error",
+            message: "We couldn't update your wishlist. Please try again.",
+          })
+        }
       } else {
         console.error(err)
+        setActionFeedback({
+          show: true,
+          type: "error",
+          message: "We couldn't update your wishlist. Please try again.",
+        })
       }
+    } finally {
+      setIsUpdatingWishlist(false)
     }
   }
 
@@ -378,28 +435,32 @@ const ProductCard = ({
             <>
               <div className="add-actions">
                 <h6
-                  className={!user ? "disabled-link" : null}
+                  className={!user || isAddingToCart ? "disabled-link" : null}
                   title={!user ? "Sign in to add to Cart" : "Add to Cart"}
                   onClick={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
 
-                    if (!user) {
-                      setLoginModalMessage(
-                        "Please sign in to add items to your cart."
-                      )
-                      setShowLoginModal(true)
+                    if (!user || isAddingToCart) {
+                      if (!user) {
+                        setLoginModalMessage(
+                          "Please sign in to add items to your cart."
+                        )
+                        setShowLoginModal(true)
+                      }
                       return
                     }
 
                     handleAdd()
                   }}
                 >
-                  Add to Cart
+                  {isAddingToCart ? "Adding..." : "Add to Cart"}
                 </h6>
 
                 <h6
-                  className={!user ? "disabled-link" : null}
+                  className={
+                    !user || isUpdatingWishlist ? "disabled-link" : null
+                  }
                   title={
                     !user
                       ? "Sign in to manage Wishlist"
@@ -411,11 +472,13 @@ const ProductCard = ({
                     e.preventDefault()
                     e.stopPropagation()
 
-                    if (!user) {
-                      setLoginModalMessage(
-                        "Please sign in to manage your wishlist."
-                      )
-                      setShowLoginModal(true)
+                    if (!user || isUpdatingWishlist) {
+                      if (!user) {
+                        setLoginModalMessage(
+                          "Please sign in to manage your wishlist."
+                        )
+                        setShowLoginModal(true)
+                      }
                       return
                     }
 
@@ -426,7 +489,13 @@ const ProductCard = ({
                     }
                   }}
                 >
-                  {inWishlistPage ? "Remove" : "Wishlist"}
+                  {isUpdatingWishlist
+                    ? inWishlistPage
+                      ? "Removing..."
+                      : "Updating..."
+                    : inWishlistPage
+                    ? "Remove"
+                    : "Wishlist"}
                 </h6>
               </div>
             </>
@@ -451,6 +520,7 @@ const ProductCard = ({
           <p className="price">{displayPrice()}</p>
         </div>
       </div>
+      {/* Clear cart modal */}
       <FeedbackModal
         show={showShopModal}
         type="confirm"
@@ -474,9 +544,10 @@ const ProductCard = ({
         ]}
       />
 
+      {/* Sign in Modal */}
       <FeedbackModal
         show={showLoginModal}
-        type="warning" 
+        type="warning"
         message={loginModalMessage}
         onClose={() => setShowLoginModal(false)}
         actions={[
@@ -490,6 +561,29 @@ const ProductCard = ({
           {
             label: "Cancel",
             onClick: () => setShowLoginModal(false),
+          },
+        ]}
+      />
+      {/* Add to cart/wishlist modal */}
+      <FeedbackModal
+        show={actionFeedback.show}
+        type={actionFeedback.type}
+        message={actionFeedback.message}
+        onClose={() =>
+          setActionFeedback((prev) => ({
+            ...prev,
+            show: false,
+          }))
+        }
+        actions={[
+          {
+            label: "OK",
+            onClick: () =>
+              setActionFeedback((prev) => ({
+                ...prev,
+                show: false,
+              })),
+            primary: true,
           },
         ]}
       />

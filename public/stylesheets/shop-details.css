@@ -100,14 +100,15 @@
 }
 
 .tab-button.active {
-  border-bottom: 3px solid #8B4513;
-  color: #8B4513;
+  border-bottom: 3px solid var(--accent-color);
+  border-radius: 0;
+  color: var(--accent-color);
   font-weight: 600;
 }
 
 .tab-button:hover {
   background: #f5f5f5;
-  color: #8B4513;
+  color: var(--accent-color);
 }
 
 /* Grid for Jewelry and Services */
@@ -123,15 +124,15 @@
   width: 100%;
 }
 
-/* No items message */
 .no-items {
-  text-align: center;
   padding: 2rem;
-  color: #666;
   font-size: 1.1rem;
 }
 
-/* Responsive Design */
+.no-items p {
+  text-align: center;
+}
+
 @media (max-width: 1200px) {
   .jewelry-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -150,7 +151,7 @@
     text-align: center;
     gap: 1rem;
   }
-  
+
   .shop-logo-large img,
   .logo-placeholder {
     width: 100px;

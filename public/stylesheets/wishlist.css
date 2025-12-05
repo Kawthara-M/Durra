@@ -59,6 +59,16 @@
   color: #f1f1f1;
 }
 
+.wishlist-loading {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
 @media (max-width: 1200px) {
   .wishlist-grid {
     grid-template-columns: repeat(3, 1fr);

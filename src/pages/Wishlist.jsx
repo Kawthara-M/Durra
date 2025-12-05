@@ -10,6 +10,7 @@ const Wishlist = () => {
 
   const [wishlist, setWishlist] = useState(null)
   const [metalRates, setMetalRates] = useState(null)
+  const [isLoading, setIsLoading] = useState(true) // 🔹 NEW
 
   useEffect(() => {
     const getWishlist = async () => {
@@ -18,10 +19,13 @@ const Wishlist = () => {
         if (response?.data?.wishlist) {
           setWishlist(response.data.wishlist)
           console.log(response.data.wishlist)
+        } else {
+          setWishlist({ items: [] })
         }
       } catch (error) {
         if (error.response?.status === 404) {
           console.log("No wishlist exists yet")
+          setWishlist({ items: [] })
         } else {
           console.error("Error fetching wishlist:", error)
         }
@@ -29,12 +33,21 @@ const Wishlist = () => {
     }
 
     const loadRates = async () => {
-      const rates = await fetchMetalRates()
-      setMetalRates(rates)
+      try {
+        const rates = await fetchMetalRates()
+        setMetalRates(rates)
+      } catch (err) {
+        console.error("Error fetching metal rates:", err)
+      }
     }
 
-    getWishlist()
-    loadRates()
+    const loadAll = async () => {
+      setIsLoading(true)
+      await Promise.all([getWishlist(), loadRates()])
+      setIsLoading(false)
+    }
+
+    loadAll()
   }, [])
 
   const handleRemoveLocal = (productId) => {
@@ -61,10 +74,14 @@ const Wishlist = () => {
         </span>
       </div>
 
-      {hasItems ? (
+      {isLoading ? (
+        <div className="wishlist-loading">
+          <div className="loader"></div>
+          <p>Loading your wishlist...</p>
+        </div>
+      ) : hasItems ? (
         <div className="wishlist-grid">
           {wishlist.items.map((item) => {
-            console.log(item)
             const product = item.favouritedItem
             const type = item.favouritedItemType.toLowerCase()
 

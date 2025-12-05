@@ -23,6 +23,11 @@ const ServicePage = () => {
   const [showShopModal, setShowShopModal] = useState(false)
   const [shopModalMessage, setShopModalMessage] = useState("")
 
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [addModalMessage, setAddModalMessage] = useState("")
+  const [isAdding, setIsAdding] = useState(false)
+  const [isWishlistUpdating, setIsWishlistUpdating] = useState(false)
+
   const {
     currentIndex: currentImageIndex,
     handleNext,
@@ -74,6 +79,8 @@ const ServicePage = () => {
     }
 
     try {
+      setIsAdding(true)
+
       if (!currentOrderId) {
         const payload = {
           jewelryOrder: [],
@@ -81,35 +88,45 @@ const ServicePage = () => {
           totalPrice: newItem.totalPrice,
           collectionMethod: "delivery",
           notes: "",
+          shop: itemShopId || null,
         }
 
         const createdOrder = await createOrder(payload)
-        setOrderId(createdOrder._id)
-        setFullOrder(createdOrder)
+        const orderDoc = createdOrder.order || createdOrder
+
+        setOrderId(orderDoc._id)
+        setFullOrder(orderDoc)
         addServiceToOrder(newItem)
-        return
+
+      } else {
+        const updatedServiceOrder = [
+          ...(order.serviceOrder || []).map((entry) => ({
+            service:
+              typeof entry.service === "object"
+                ? entry.service._id
+                : entry.service,
+            jewelry: entry.jewelry || [],
+            totalPrice: Number(entry.totalPrice || 0),
+          })),
+          newItem,
+        ]
+
+        const updatedOrder = await updateOrder(currentOrderId, {
+          serviceOrder: updatedServiceOrder,
+        })
+
+        setFullOrder(updatedOrder)
+        addServiceToOrder(newItem)
       }
 
-      const updatedServiceOrder = [
-        ...(order.serviceOrder || []).map((entry) => ({
-          service:
-            typeof entry.service === "object"
-              ? entry.service._id
-              : entry.service,
-          jewelry: entry.jewelry || [],
-          totalPrice: Number(entry.totalPrice || 0),
-        })),
-        newItem,
-      ]
-
-      const updatedOrder = await updateOrder(currentOrderId, {
-        serviceOrder: updatedServiceOrder,
-      })
-
-      setFullOrder(updatedOrder)
-      addServiceToOrder(newItem)
+      setAddModalMessage("This service has been added to your cart.")
+      setShowAddModal(true)
     } catch (err) {
       console.error("Failed to add to cart:", err)
+      setAddModalMessage("An error occurred while adding this service to cart.")
+      setShowAddModal(true)
+    } finally {
+      setIsAdding(false)
     }
   }
 
@@ -137,6 +154,11 @@ const ServicePage = () => {
       setFullOrder(updatedOrder)
       setOrderId(updatedOrder._id)
       setShowShopModal(false)
+
+      setAddModalMessage(
+        "Your cart was updated and this service has been added."
+      )
+      setShowAddModal(true)
     } catch (err) {
       console.error("Failed to clear cart and add:", err)
       setShowShopModal(false)
@@ -146,6 +168,8 @@ const ServicePage = () => {
   const handleWishlist = async () => {
     if (!user) return
     if (!service) return
+
+    setIsWishlistUpdating(true)
 
     const newEntry = {
       favouritedItem: service._id,
@@ -172,6 +196,8 @@ const ServicePage = () => {
               : it.favouritedItem
           return id !== service._id
         })
+
+        setAddModalMessage("Removed from your wishlist.")
       } else {
         updatedItems = [
           ...wishlist.items.map((it) => ({
@@ -183,17 +209,24 @@ const ServicePage = () => {
           })),
           newEntry,
         ]
+
+        setAddModalMessage("Added to your wishlist.")
       }
 
       await User.put(`/wishlist/${wishlist._id}`, { items: updatedItems })
       window.dispatchEvent(new Event("wishlist-updated"))
+      setShowAddModal(true)
     } catch (err) {
       if (err.response?.status === 404) {
         await User.post("/wishlist", { items: [newEntry] })
         window.dispatchEvent(new Event("wishlist-updated"))
+        setAddModalMessage("Added to your wishlist.")
+        setShowAddModal(true)
       } else {
         console.error("Failed to update wishlist:", err)
       }
+    } finally {
+      setIsWishlistUpdating(false)
     }
   }
 
@@ -230,7 +263,6 @@ const ServicePage = () => {
                 </h2>
                 <h2 className="service-description">Description</h2>
                 <p id="jeweler-service-description">{service.description}</p>
-
               </div>
 
               <div className="jewelry-inputs">
@@ -241,10 +273,10 @@ const ServicePage = () => {
                 <span className="add-or-wishlist">
                   <button
                     onClick={user ? handleAdd : undefined}
-                    disabled={!user}
+                    disabled={!user || isAdding}
                     title={user ? "Add to Cart" : "Sign in to Add"}
                   >
-                    Add to Cart
+                    {isAdding ? "Adding..." : "Add to Cart"}
                   </button>
                   <img
                     src={heartIcon}
@@ -252,15 +284,19 @@ const ServicePage = () => {
                     title={
                       user ? "Add to Wishlist" : "Sign in to Add to Wishlist"
                     }
-                    className={`icon ${!user && "disabled"}`}
-                    onClick={user ? handleWishlist : undefined}
+                    className={`icon ${
+                      (!user || isWishlistUpdating) && "disabled"
+                    }`}
+                    onClick={
+                      user && !isWishlistUpdating ? handleWishlist : undefined
+                    }
                   />
                 </span>
               </div>
             </div>
           </div>
 
-          <div >
+          <div>
             <h3 className="reviews-heading">Reviews</h3>
             <Reviews reviewedItemId={serviceId} reviewedItemType="Service" />
           </div>
@@ -284,6 +320,20 @@ const ServicePage = () => {
             onClick: () => {
               setShowShopModal(false)
             },
+          },
+        ]}
+      />
+
+      <FeedbackModal
+        show={showAddModal}
+        type="success"
+        message={addModalMessage}
+        onClose={() => setShowAddModal(false)}
+        actions={[
+          {
+            label: "Close",
+            onClick: () => setShowAddModal(false),
+            primary: true,
           },
         ]}
       />
