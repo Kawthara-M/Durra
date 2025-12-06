@@ -1,35 +1,43 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+
 import FeedbackModal from "./FeedbackModal"
 import placeholder from "../assets/placeholder.png"
+
 import { useUser } from "../context/UserContext"
 import { useOrder } from "../context/OrderContext"
+
 import {
   calculatePreciousMaterialCost,
   calculateTotalCost,
   calculateCollectionPrice,
-} from "../services/calculator.js"
-import { createOrder, updateOrder, cancelOrder } from "../services/order.js"
-import User from "../services/api.js"
+} from "../services/calculator"
+
+import { createOrder, updateOrder } from "../services/order"
+import User from "../services/api"
 
 const ProductCard = ({
   item,
   type,
   metalRates,
-  inWishlistPage,
-  onRemove,
-  showActions,
+  inWishlistPage = false,
+  onRemove = null,
+  showActions = true,
   showShopName = false,
 }) => {
   const { user } = useUser()
+  const navigate = useNavigate()
+
   const {
     order,
-    addJewelryToOrder,
-    addServiceToOrder,
     setOrderId,
     setFullOrder,
   } = useOrder()
+
   const [collectionPrice, setCollectionPrice] = useState(null)
+
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
+  const [isWishlistUpdating, setIsWishlistUpdating] = useState(false)
 
   const [showShopModal, setShowShopModal] = useState(false)
   const [shopModalMessage, setShopModalMessage] = useState("")
@@ -38,14 +46,11 @@ const ProductCard = ({
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [loginModalMessage, setLoginModalMessage] = useState("")
 
-  // to show feedback when custmer add
-  const [isAddingToCart, setIsAddingToCart] = useState(false)
-  const [isUpdatingWishlist, setIsUpdatingWishlist] = useState(false)
-
   const [actionFeedback, setActionFeedback] = useState({
     show: false,
     type: "success",
     message: "",
+    target: null,
   })
 
   useEffect(() => {
@@ -56,34 +61,79 @@ const ProductCard = ({
   }, [type, item, metalRates])
 
   const getJewelryPrice = () => {
-    const basePrice = item.originPrice || 0
+    const basePrice = item?.originPrice || 0
+
     if (!metalRates) return Number(basePrice.toFixed(2))
+
     const metalCost = calculatePreciousMaterialCost(
       item.preciousMaterials,
       metalRates
     )
-    const total = calculateTotalCost(metalCost, item.originPrice)
+
+    const total = calculateTotalCost(metalCost, basePrice)
     return total.toFixed(2)
   }
 
   const displayPrice = () => {
     if (type === "jewelry") return `${getJewelryPrice()} BHD`
     if (type === "service") return `${item.price?.toFixed(2)} BHD`
-    if (type === "collection") {
+    if (type === "collection")
       return collectionPrice !== null
         ? `${collectionPrice.toFixed(2)} BHD`
         : "—"
-    }
     return null
   }
+
+  const alreadyInCart = () => {
+    if (!order) return false
+
+    if (type === "jewelry" || type === "collection") {
+      return (order.jewelryOrder || []).some((entry) => {
+        const entryId =
+          typeof entry.item === "object" ? entry.item._id : entry.item
+
+        return (
+          String(entryId) === String(item._id) &&
+          entry.itemModel === (type === "jewelry" ? "Jewelry" : "Collection")
+        )
+      })
+    }
+
+    if (type === "service") {
+      return (order.serviceOrder || []).some((entry) => {
+        const serviceId =
+          typeof entry.service === "object"
+            ? entry.service._id
+            : entry.service
+
+        return String(serviceId) === String(item._id)
+      })
+    }
+
+    return false
+  }
+
   const handleAdd = async () => {
-    if (!user) return
+    if (!user) {
+      setLoginModalMessage("Please sign in to add items to your cart.")
+      setShowLoginModal(true)
+      return
+    }
+
+    if (alreadyInCart()) {
+      setActionFeedback({
+        show: true,
+        type: "warning",
+        message: "This item is already in your cart.",
+        target: "cart",
+      })
+      return
+    }
 
     setIsAddingToCart(true)
 
     try {
       const currentOrder = order || {}
-
       const currentOrderId = currentOrder.orderId
 
       const currentShopId =
@@ -92,10 +142,7 @@ const ProductCard = ({
           : currentOrder.shop
 
       const itemShopId =
-        (typeof item.shop === "object" ? item.shop?._id : item.shop) ||
-        (typeof item.service === "object"
-          ? item.service?.shop
-          : item.service?.shop)
+        typeof item.shop === "object" ? item.shop?._id : item.shop
 
       if (currentOrderId && currentShopId && itemShopId) {
         if (String(itemShopId) !== String(currentShopId)) {
@@ -114,13 +161,16 @@ const ProductCard = ({
         show: true,
         type: "success",
         message: "Item has been added to your cart.",
+        target: "cart",
       })
     } catch (err) {
-      console.error("Failed to add to order:", err.response?.data || err)
+      console.error(err)
+
       setActionFeedback({
         show: true,
         type: "error",
-        message: "We couldn't add this item to your cart. Please try again.",
+        message: "We couldn't add this item to your cart.",
+        target: null,
       })
     } finally {
       setIsAddingToCart(false)
@@ -130,197 +180,136 @@ const ProductCard = ({
   const addItemToOrder = async (forcedType) => {
     const effectiveType = forcedType || type
 
-    if (!user) return
+    const currentOrder = order || {}
+    const currentOrderId = currentOrder.orderId
 
-    const currentOrder = order
-    const currentOrderId = currentOrder?.orderId
-
-    let price = 0
-    let newItem = {}
+    let jewelryOrder = [...(currentOrder.jewelryOrder || [])]
+    let serviceOrder = [...(currentOrder.serviceOrder || [])]
 
     if (effectiveType === "jewelry") {
-      price = Number(getJewelryPrice())
-      newItem = {
+      const newItem = {
         item: item._id,
         itemModel: "Jewelry",
         quantity: 1,
-        totalPrice: price,
-        shop: item.shop,
+        totalPrice: Number(getJewelryPrice()),
       }
+      jewelryOrder = [...jewelryOrder, newItem]
     } else if (effectiveType === "collection") {
-      price = Number(collectionPrice)
-      newItem = {
+      const newItem = {
         item: item._id,
         itemModel: "Collection",
         quantity: 1,
-        totalPrice: price,
+        totalPrice: Number(collectionPrice),
       }
-    } else if (effectiveType === "service") {
-      price = Number(item.price || 0)
-      newItem = {
+      jewelryOrder = [...jewelryOrder, newItem]
+    } else {
+      const newItem = {
         service: item._id,
-        jewelry: [{}],
-        totalPrice: price,
+        jewelry: [],
+        totalPrice: Number(item.price || 0),
       }
+      serviceOrder = [...serviceOrder, newItem]
     }
 
-    try {
-      let updatedJewelryOrder = (currentOrder?.jewelryOrder || []).map(
-        (entry) => ({
-          item: typeof entry.item === "object" ? entry.item._id : entry.item,
-          itemModel: entry.itemModel,
-          quantity: entry.quantity ?? 1,
-          totalPrice: Number(entry.totalPrice ?? 0),
-        })
-      )
+    const normalizedJewelryOrder = jewelryOrder.map((entry) => ({
+      item:
+        typeof entry.item === "object"
+          ? entry.item._id
+          : entry.item,
+      itemModel: entry.itemModel,
+      quantity: entry.quantity ?? 1,
+      totalPrice: Number(entry.totalPrice ?? 0),
+      size: entry.size || undefined,
+    }))
 
-      let updatedServiceOrder = [...(currentOrder?.serviceOrder || [])]
+    const normalizedServiceOrder = serviceOrder.map((entry) => ({
+      service:
+        typeof entry.service === "object"
+          ? entry.service._id
+          : entry.service,
+      jewelry: entry.jewelry || [],
+      totalPrice: Number(entry.totalPrice ?? 0),
+    }))
 
-      if (effectiveType === "jewelry" || effectiveType === "collection") {
-        const existingIndex = updatedJewelryOrder.findIndex(
-          (i) =>
-            String(i.item) === String(newItem.item) &&
-            i.itemModel === newItem.itemModel
-        )
+    const payload = {
+      jewelryOrder: normalizedJewelryOrder,
+      serviceOrder: normalizedServiceOrder,
+      shop: typeof item.shop === "object" ? item.shop._id : item.shop,
+      collectionMethod: "delivery",
+      notes: "",
+      totalPrice:
+        normalizedJewelryOrder.reduce(
+          (a, i) => a + Number(i.totalPrice || 0),
+          0
+        ) +
+        normalizedServiceOrder.reduce(
+          (a, i) => a + Number(i.totalPrice || 0),
+          0
+        ),
+    }
 
-        if (existingIndex !== -1) {
-          return
-        } else {
-          updatedJewelryOrder.push(newItem)
-        }
-      } else if (effectiveType === "service") {
-        const existingServiceIndex = updatedServiceOrder.findIndex(
-          (s) => String(s.service) === String(newItem.service)
-        )
-
-        if (existingServiceIndex !== -1) {
-          const existing = updatedServiceOrder[existingServiceIndex]
-          updatedServiceOrder[existingServiceIndex] = {
-            ...existing,
-            totalPrice:
-              Number(existing.totalPrice || 0) +
-              Number(newItem.totalPrice || 0),
-          }
-        } else {
-          updatedServiceOrder.push(newItem)
-        }
-      }
-
-      if (!currentOrderId) {
-        const itemShopId =
-          (typeof item.shop === "object" ? item.shop?._id : item.shop) ||
-          (typeof item.service === "object"
-            ? item.service?.shop
-            : item.service?.shop)
-
-        const payload = {
-          jewelryOrder: updatedJewelryOrder,
-          serviceOrder: updatedServiceOrder,
-          totalPrice:
-            updatedJewelryOrder.reduce(
-              (a, i) => a + Number(i.totalPrice || 0),
-              0
-            ) +
-            updatedServiceOrder.reduce(
-              (a, i) => a + Number(i.totalPrice || 0),
-              0
-            ),
-          collectionMethod: "delivery",
-          notes: "",
-          shop: itemShopId || null,
-        }
-
-        const createdOrder = await createOrder(payload)
-        const orderDoc = createdOrder.order || createdOrder
-        const finalOrderId = orderDoc._id
-        setOrderId(finalOrderId)
-        setFullOrder(orderDoc)
-
-        if (effectiveType === "service") {
-          addServiceToOrder(newItem)
-        } else {
-          addJewelryToOrder({ ...newItem, shop: orderDoc.shop })
-        }
-
-        return
-      }
-
-      if (effectiveType === "service") {
-        const updated = await updateOrder(currentOrderId, {
-          serviceOrder: updatedServiceOrder,
-        })
-        setFullOrder(updated)
-        addServiceToOrder(newItem)
-      } else {
-        const updated = await updateOrder(currentOrderId, {
-          jewelryOrder: updatedJewelryOrder,
-        })
-        setFullOrder(updated)
-        addJewelryToOrder(newItem)
-      }
-    } catch (err) {
-      console.error("Failed to add to order:", err.response?.data || err)
-      throw err // 🔹 let handleAdd decide how to show feedback
+    if (!currentOrderId) {
+      const res = await createOrder(payload)
+      const orderDoc = res.order || res
+      setOrderId(orderDoc._id)
+      setFullOrder(orderDoc)
+    } else {
+      const updated = await updateOrder(currentOrderId, payload)
+      setFullOrder(updated)
     }
   }
 
   const handleClearCartAndAdd = async () => {
-    try {
-      if (!order.orderId) return
+    if (!order?.orderId) return
 
-      const effectiveType = pendingAddType || type
+    const effectiveType = pendingAddType || type
 
-      let jewelryOrder = []
-      let serviceOrder = []
+    let jewelryOrder = []
+    let serviceOrder = []
 
-      if (effectiveType === "jewelry") {
-        jewelryOrder = [
-          {
-            item: item._id,
-            itemModel: "Jewelry",
-            quantity: 1,
-            totalPrice: Number(getJewelryPrice()),
-          },
-        ]
-      } else if (effectiveType === "collection") {
-        jewelryOrder = [
-          {
-            item: item._id,
-            itemModel: "Collection",
-            quantity: 1,
-            totalPrice: Number(collectionPrice),
-          },
-        ]
-      } else if (effectiveType === "service") {
-        serviceOrder = [
-          {
-            service: item._id,
-            jewelry: [],
-            totalPrice: Number(item.price || 0),
-          },
-        ]
-      }
-
-      const res = await updateOrder(order.orderId, {
-        jewelryOrder,
-        serviceOrder,
-        shop: typeof item.shop === "object" ? item.shop._id : item.shop,
-      })
-
-      setFullOrder(res)
-      setShowShopModal(false)
-      setPendingAddType(null)
-    } catch (err) {
-      console.error("Failed to clear cart and add:", err.response?.data || err)
-      setShowShopModal(false)
-      setPendingAddType(null)
+    if (effectiveType === "service") {
+      serviceOrder = [
+        { service: item._id, jewelry: [], totalPrice: Number(item.price || 0) },
+      ]
+    } else {
+      jewelryOrder = [
+        {
+          item: item._id,
+          itemModel:
+            effectiveType === "collection" ? "Collection" : "Jewelry",
+          quantity: 1,
+          totalPrice:
+            effectiveType === "collection"
+              ? Number(collectionPrice)
+              : Number(getJewelryPrice()),
+        },
+      ]
     }
+
+    const res = await updateOrder(order.orderId, {
+      jewelryOrder,
+      serviceOrder,
+      shop: typeof item.shop === "object" ? item.shop._id : item.shop,
+    })
+
+    setFullOrder(res)
+    setShowShopModal(false)
+    setPendingAddType(null)
+
+    setActionFeedback({
+      show: true,
+      type: "success",
+      message: "Item has been added to your cart.",
+      target: "cart",
+    })
   }
 
   const handleWishlist = async () => {
-    if (!user) return
-
-    setIsUpdatingWishlist(true)
+    if (!user) {
+      setLoginModalMessage("Please sign in to manage your wishlist.")
+      setShowLoginModal(true)
+      return
+    }
 
     const newEntry = {
       favouritedItem: item._id,
@@ -333,33 +322,39 @@ const ProductCard = ({
     }
 
     try {
-      const response = await User.get("/wishlist")
-      const wishlist = response.data.wishlist
+      setIsWishlistUpdating(true)
+
+      const res = await User.get("/wishlist")
+      const wishlist = res.data.wishlist
 
       const exists = wishlist.items.some(
-        (it) =>
-          (typeof it.favouritedItem === "string"
-            ? it.favouritedItem
-            : it.favouritedItem._id) === item._id
+        (i) =>
+          String(
+            typeof i.favouritedItem === "object"
+              ? i.favouritedItem._id
+              : i.favouritedItem
+          ) === String(item._id)
       )
 
       let updatedItems
 
       if (exists) {
         updatedItems = wishlist.items.filter(
-          (it) =>
-            (typeof it.favouritedItem === "string"
-              ? it.favouritedItem
-              : it.favouritedItem._id) !== item._id
+          (i) =>
+            String(
+              typeof i.favouritedItem === "object"
+                ? i.favouritedItem._id
+                : i.favouritedItem
+            ) !== String(item._id)
         )
-        if (typeof onRemove === "function") onRemove(item._id)
+        if (onRemove) onRemove(item._id)
       } else {
         updatedItems = [
           ...wishlist.items.map((it) => ({
             favouritedItem:
-              typeof it.favouritedItem === "string"
-                ? it.favouritedItem
-                : it.favouritedItem._id,
+              typeof it.favouritedItem === "object"
+                ? it.favouritedItem._id
+                : it.favouritedItem,
             favouritedItemType: it.favouritedItemType,
           })),
           newEntry,
@@ -373,52 +368,23 @@ const ProductCard = ({
         show: true,
         type: "success",
         message: exists
-          ? "Item has been removed from your wishlist."
-          : "Item has been added to your wishlist.",
+          ? "Removed from wishlist."
+          : "Added to wishlist.",
+        target: "wishlist",
       })
     } catch (err) {
-      if (err.response?.status === 404) {
-        try {
-          await User.post("/wishlist", { items: [newEntry] })
-          window.dispatchEvent(new Event("wishlist-updated"))
-          setActionFeedback({
-            show: true,
-            type: "success",
-            message: "Item has been added to your wishlist.",
-          })
-        } catch (innerErr) {
-          console.error(innerErr)
-          setActionFeedback({
-            show: true,
-            type: "error",
-            message: "We couldn't update your wishlist. Please try again.",
-          })
-        }
-      } else {
-        console.error(err)
-        setActionFeedback({
-          show: true,
-          type: "error",
-          message: "We couldn't update your wishlist. Please try again.",
-        })
-      }
+      console.error(err)
     } finally {
-      setIsUpdatingWishlist(false)
+      setIsWishlistUpdating(false)
     }
   }
 
   const url =
-    user?.role === "Jeweler"
-      ? type === "collection"
-        ? `/show-collection/${item?._id}`
-        : type === "service"
-        ? `/show-service/${item?._id}`
-        : `/show-jewelry/${item?._id}`
-      : type === "collection"
-      ? `/collections/${item?._id}`
+    type === "collection"
+      ? `/collections/${item._id}`
       : type === "service"
-      ? `/services/${item?._id}`
-      : `/jewelry/${item?._id}`
+      ? `/services/${item._id}`
+      : `/jewelry/${item._id}`
 
   return (
     <>
@@ -431,96 +397,53 @@ const ProductCard = ({
               className="search-card-image"
             />
           </Link>
+
           {showActions && (
-            <>
-              <div className="add-actions">
-                <h6
-                  className={!user || isAddingToCart ? "disabled-link" : null}
-                  title={!user ? "Sign in to add to Cart" : "Add to Cart"}
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
+            <div className="add-actions">
+              <h6
+                onClick={handleAdd}
+                className={!user || isAddingToCart ? "disabled-link" : ""}
+                title={!user ? "Sign in to add" : "Add to cart"}
+              >
+                {isAddingToCart ? "Adding..." : "Add to Cart"}
+              </h6>
 
-                    if (!user || isAddingToCart) {
-                      if (!user) {
-                        setLoginModalMessage(
-                          "Please sign in to add items to your cart."
-                        )
-                        setShowLoginModal(true)
-                      }
-                      return
-                    }
-
-                    handleAdd()
-                  }}
-                >
-                  {isAddingToCart ? "Adding..." : "Add to Cart"}
-                </h6>
-
-                <h6
-                  className={
-                    !user || isUpdatingWishlist ? "disabled-link" : null
-                  }
-                  title={
-                    !user
-                      ? "Sign in to manage Wishlist"
-                      : inWishlistPage
-                      ? "Remove from Wishlist"
-                      : "Add to Wishlist"
-                  }
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-
-                    if (!user || isUpdatingWishlist) {
-                      if (!user) {
-                        setLoginModalMessage(
-                          "Please sign in to manage your wishlist."
-                        )
-                        setShowLoginModal(true)
-                      }
-                      return
-                    }
-
-                    handleWishlist()
-
-                    if (inWishlistPage && typeof onRemove === "function") {
-                      onRemove(item._id)
-                    }
-                  }}
-                >
-                  {isUpdatingWishlist
-                    ? inWishlistPage
-                      ? "Removing..."
-                      : "Updating..."
+              <h6
+                onClick={handleWishlist}
+                className={!user || isWishlistUpdating ? "disabled-link" : ""}
+                title={
+                  !user
+                    ? "Sign in to manage wishlist"
                     : inWishlistPage
-                    ? "Remove"
-                    : "Wishlist"}
-                </h6>
-              </div>
-            </>
+                    ? "Remove from wishlist"
+                    : "Add to wishlist"
+                }
+              >
+                {isWishlistUpdating
+                  ? "Updating..."
+                  : inWishlistPage
+                  ? "Remove"
+                  : "Wishlist"}
+              </h6>
+            </div>
           )}
         </div>
 
         <div className="card-info">
-          <div>
-            <Link to={url}>
-              <h3 className="service-card__title">{item.name}</h3>
-            </Link>
-            {showShopName && (
-              <p className="shop-name">
-                {typeof item.shop === "object"
-                  ? item.shop?.name || "Shop"
-                  : item.favouritedItem?.shop.name
-                  ? item.favouritedItem.shop.name
-                  : "Shop"}
-              </p>
-            )}
-          </div>
+          <Link to={url}>
+            <h3>{item.name}</h3>
+          </Link>
+
+          {showShopName && (
+            <p className="shop-name">
+              {typeof item.shop === "object" ? item.shop?.name : item.shop}
+            </p>
+          )}
+
           <p className="price">{displayPrice()}</p>
         </div>
       </div>
-      {/* Clear cart modal */}
+
       <FeedbackModal
         show={showShopModal}
         type="confirm"
@@ -530,21 +453,11 @@ const ProductCard = ({
           setPendingAddType(null)
         }}
         actions={[
-          {
-            label: "Clear Cart and Add",
-            onClick: handleClearCartAndAdd,
-          },
-          {
-            label: "Cancel",
-            onClick: () => {
-              setShowShopModal(false)
-              setPendingAddType(null)
-            },
-          },
+          { label: "Clear Cart and Add", onClick: handleClearCartAndAdd },
+          { label: "Cancel", onClick: () => setShowShopModal(false) },
         ]}
       />
 
-      {/* Sign in Modal */}
       <FeedbackModal
         show={showLoginModal}
         type="warning"
@@ -558,42 +471,46 @@ const ProductCard = ({
               navigate("/sign-in")
             },
           },
-          {
-            label: "Cancel",
-            onClick: () => setShowLoginModal(false),
-          },
+          { label: "Cancel", onClick: () => setShowLoginModal(false) },
         ]}
       />
-      {/* Add to cart/wishlist modal */}
+
       <FeedbackModal
         show={actionFeedback.show}
         type={actionFeedback.type}
         message={actionFeedback.message}
         onClose={() =>
-          setActionFeedback((prev) => ({
-            ...prev,
-            show: false,
-          }))
+          setActionFeedback((p) => ({ ...p, show: false }))
         }
         actions={[
           {
             label: "OK",
             onClick: () =>
-              setActionFeedback((prev) => ({
-                ...prev,
-                show: false,
-              })),
-            primary: true,
+              setActionFeedback((p) => ({ ...p, show: false })),
           },
+          ...(actionFeedback.target
+            ? [
+                {
+                  label:
+                    actionFeedback.target === "cart"
+                      ? "View Cart"
+                      : "View Wishlist",
+                  primary: true,
+                  onClick: () => {
+                    const dest =
+                      actionFeedback.target === "cart"
+                        ? "/cart"
+                        : "/wishlist"
+                    setActionFeedback((p) => ({ ...p, show: false }))
+                    navigate(dest)
+                  },
+                },
+              ]
+            : []),
         ]}
       />
     </>
   )
-}
-
-ProductCard.defaultProps = {
-  inWishlistPage: false,
-  onRemove: null,
 }
 
 export default ProductCard

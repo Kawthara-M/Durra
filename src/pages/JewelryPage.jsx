@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 
 import Reviews from "../components/Reviews"
 import Comparsion from "../components/Comparsion"
@@ -23,6 +23,7 @@ import "../../public/stylesheets/customer-jewelry-page.css"
 const JewelryPage = () => {
   const [jewelry, setJewelry] = useState()
   const { jewelryId } = useParams()
+  const navigate = useNavigate()
   const { user } = useUser()
 
   const { order, addJewelryToOrder, setOrderId, setFullOrder } = useOrder()
@@ -37,10 +38,15 @@ const JewelryPage = () => {
   const [showShopModal, setShowShopModal] = useState(false)
   const [shopModalMessage, setShopModalMessage] = useState("")
 
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [addModalMessage, setAddModalMessage] = useState("")
   const [isAdding, setIsAdding] = useState(false)
   const [isWishlistUpdating, setIsWishlistUpdating] = useState(false)
+
+  const [actionFeedback, setActionFeedback] = useState({
+    show: false,
+    type: "success",
+    message: "",
+    target: null,
+  })
 
   const {
     currentIndex: currentImageIndex,
@@ -48,9 +54,6 @@ const JewelryPage = () => {
     handlePrev,
   } = imageSlider(jewelry?.images)
 
-  // --------------------------
-  // LOAD JEWELRY
-  // --------------------------
   useEffect(() => {
     const getJewelry = async () => {
       try {
@@ -86,10 +89,34 @@ const JewelryPage = () => {
     getRates()
   }, [jewelry])
 
-  const handleChange = (e) => setQuantity(parseInt(e.target.value || 1))
+  const handleChange = (e) =>
+    setQuantity(parseInt(e.target.value || 1, 10) || 1)
+
+  const alreadyInCart = () => {
+    if (!order || !jewelry) return false
+
+    return (order.jewelryOrder || []).some((entry) => {
+      const entryId =
+        typeof entry.item === "object" ? entry.item._id : entry.item
+      return (
+        String(entryId) === String(jewelry._id) &&
+        entry.itemModel === "Jewelry"
+      )
+    })
+  }
 
   const handleAdd = async () => {
     if (!user || !jewelry) return
+
+    if (alreadyInCart()) {
+      setActionFeedback({
+        show: true,
+        type: "warning",
+        message: "This item is already in your cart.",
+        target: "cart",
+      })
+      return
+    }
 
     const currentOrder = order || {}
     const currentOrderId = currentOrder.orderId
@@ -142,16 +169,18 @@ const JewelryPage = () => {
         setFullOrder(orderDoc)
         addJewelryToOrder(newItem)
       } else {
-        const updatedJewelryOrder = [
-          ...(order.jewelryOrder || []).map((entry) => ({
-            item: typeof entry.item === "object" ? entry.item._id : entry.item,
+        const normalizedJewelryOrder = (order.jewelryOrder || []).map(
+          (entry) => ({
+            item:
+              typeof entry.item === "object" ? entry.item._id : entry.item,
             itemModel: entry.itemModel,
             quantity: entry.quantity ?? 1,
             totalPrice: Number(entry.totalPrice ?? 0),
             size: entry.size || undefined,
-          })),
-          newItem,
-        ]
+          })
+        )
+
+        const updatedJewelryOrder = [...normalizedJewelryOrder, newItem]
 
         const updated = await updateOrder(currentOrderId, {
           jewelryOrder: updatedJewelryOrder,
@@ -161,12 +190,20 @@ const JewelryPage = () => {
         addJewelryToOrder(newItem)
       }
 
-      setAddModalMessage("This item has been added to your cart.")
-      setShowAddModal(true)
+      setActionFeedback({
+        show: true,
+        type: "success",
+        message: "This item has been added to your cart.",
+        target: "cart",
+      })
     } catch (err) {
       console.error("Failed to add to cart", err)
-      setAddModalMessage("An error occurred while adding to cart.")
-      setShowAddModal(true)
+      setActionFeedback({
+        show: true,
+        type: "error",
+        message: "An error occurred while adding to cart.",
+        target: null,
+      })
     } finally {
       setIsAdding(false)
     }
@@ -200,10 +237,12 @@ const JewelryPage = () => {
 
       setShowShopModal(false)
 
-      setAddModalMessage(
-        "Your cart was updated and the jewelry has been added."
-      )
-      setShowAddModal(true)
+      setActionFeedback({
+        show: true,
+        type: "success",
+        message: "Your cart was updated and the jewelry has been added.",
+        target: "cart",
+      })
     } catch (err) {
       console.error("Failed to replace cart", err)
       setShowShopModal(false)
@@ -215,12 +254,12 @@ const JewelryPage = () => {
 
     setIsWishlistUpdating(true)
 
-    try {
-      const newEntry = {
-        favouritedItem: jewelry._id,
-        favouritedItemType: "Jewelry",
-      }
+    const newEntry = {
+      favouritedItem: jewelry._id,
+      favouritedItemType: "Jewelry",
+    }
 
+    try {
       const res = await User.get("/wishlist")
       const wishlist = res.data.wishlist
 
@@ -232,6 +271,7 @@ const JewelryPage = () => {
       )
 
       let updatedItems
+      let message
 
       if (exists) {
         updatedItems = wishlist.items.filter(
@@ -240,8 +280,7 @@ const JewelryPage = () => {
               ? i.favouritedItem._id
               : i.favouritedItem) !== jewelry._id
         )
-
-        setAddModalMessage("Removed from your wishlist.")
+        message = "Removed from your wishlist."
       } else {
         updatedItems = [
           ...wishlist.items.map((it) => ({
@@ -253,8 +292,7 @@ const JewelryPage = () => {
           })),
           newEntry,
         ]
-
-        setAddModalMessage("Added to your wishlist.")
+        message = "Added to your wishlist."
       }
 
       await User.put(`/wishlist/${wishlist._id}`, {
@@ -262,16 +300,41 @@ const JewelryPage = () => {
       })
 
       window.dispatchEvent(new Event("wishlist-updated"))
-      setShowAddModal(true)
+
+      setActionFeedback({
+        show: true,
+        type: "success",
+        message,
+        target: "wishlist",
+      })
     } catch (err) {
       if (err.response?.status === 404) {
-        await User.post("/wishlist", { items: [newEntry] })
-
-        window.dispatchEvent(new Event("wishlist-updated"))
-        setAddModalMessage("Added to your wishlist.")
-        setShowAddModal(true)
+        try {
+          await User.post("/wishlist", { items: [newEntry] })
+          window.dispatchEvent(new Event("wishlist-updated"))
+          setActionFeedback({
+            show: true,
+            type: "success",
+            message: "Added to your wishlist.",
+            target: "wishlist",
+          })
+        } catch (innerErr) {
+          console.error(innerErr)
+          setActionFeedback({
+            show: true,
+            type: "error",
+            message: "We couldn't update your wishlist. Please try again.",
+            target: null,
+          })
+        }
       } else {
         console.error("Wishlist update failed", err)
+        setActionFeedback({
+          show: true,
+          type: "error",
+          message: "We couldn't update your wishlist. Please try again.",
+          target: null,
+        })
       }
     } finally {
       setIsWishlistUpdating(false)
@@ -363,6 +426,7 @@ const JewelryPage = () => {
                     <button
                       disabled={!user || isAdding}
                       onClick={user ? handleAdd : undefined}
+                      title={user ? "Add to Cart" : "Sign in to Add"}
                     >
                       {isAdding ? "Adding..." : "Add to Cart"}
                     </button>
@@ -372,7 +436,9 @@ const JewelryPage = () => {
                       className={`icon ${
                         (!user || isWishlistUpdating) && "disabled"
                       }`}
-                      title={user ? "Wishlist" : "Sign in required"}
+                      title={
+                        user ? "Add to Wishlist" : "Sign in to Add to Wishlist"
+                      }
                       onClick={
                         user && !isWishlistUpdating ? handleWishlist : undefined
                       }
@@ -381,6 +447,11 @@ const JewelryPage = () => {
                     <img
                       src={comparsionIcon}
                       className={`icon ${!user && "disabled"}`}
+                      title={
+                        user
+                          ? "Compare with other pieces"
+                          : "Sign in to compare pieces"
+                      }
                       onClick={() => user && setShowComparison(true)}
                     />
                   </span>
@@ -389,7 +460,111 @@ const JewelryPage = () => {
             </div>
           </div>
 
-          <Reviews reviewedItemId={jewelryId} reviewedItemType="Jewelry" />
+          <div className="jewelry-details-wrapper">
+            <div
+              className="jewelry-details"
+              onClick={() => setIsExpanded((prev) => !prev)}
+            >
+              <h3 className="jewelry-details-heading">Details</h3>
+              <p>{isExpanded ? "-" : "+"}</p>
+            </div>
+            {isExpanded && (
+              <div className="jewelry-extra-details">
+                <div className="extra-details-wrapper">
+                  <span>
+                    <h5>Main Material</h5>
+                    {jewelry.mainMaterial}
+                  </span>
+                  <span>
+                    <h5>Total Weight</h5>
+                    {jewelry.totalWeight}g
+                  </span>
+                  <span>
+                    <h5>Production Cost</h5>
+                    {jewelry.productionCost} BHD
+                  </span>
+                </div>
+
+                {jewelry.preciousMaterials?.length > 0 && (
+                  <div>
+                    <h4>Precious Metals</h4>
+                    <ul className="list-details">
+                      {jewelry.preciousMaterials.map((material, index) => (
+                        <li key={index}>
+                          {material.karat}K {material.name} - {material.weight}g
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {jewelry.pearls?.length > 0 && (
+                  <div>
+                    <h4>Pearls</h4>
+                    <ul className="list-details">
+                      {jewelry.pearls.map((pearl, index) => (
+                        <li key={index}>
+                          {pearl.number}x {pearl.type} {pearl.shape}{" "}
+                          {pearl.color} Pearl - {pearl.weight}g
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {jewelry.diamonds?.length > 0 && (
+                  <div>
+                    <h4>Diamonds</h4>
+                    <ul className="list-details">
+                      {jewelry.diamonds.map((diamond, index) => (
+                        <li key={index}>
+                          {diamond.number}x {diamond.type} Diamond -{" "}
+                          {diamond.weight}g
+                          <br />
+                          <span>
+                            Color: {diamond.color}, Clarity: {diamond.clarity},
+                            Cut: {diamond.cutGrade}, Shape: {diamond.shape}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {jewelry.otherMaterials?.length > 0 && (
+                  <div>
+                    <h4>Metals</h4>
+                    <ul className="list-details">
+                      {jewelry.otherMaterials.map((m, index) => (
+                        <li key={index}>
+                          {m.name}x - {m.weight}g
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {jewelry.certifications?.length > 0 && (
+                  <div>
+                    <h4>Certifications:</h4>
+                    <ul className="list-details">
+                      {jewelry.certifications.map((m, index) => (
+                        <li key={index}>
+                          {formatCertificationName(m.name)}: report{" "}
+                          {m.reportNumber} issued on {m.reportDate}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <h3 className="reviews-heading">Reviews</h3>
+            <Reviews reviewedItemId={jewelryId} reviewedItemType="Jewelry" />
+          </div>
 
           {showComparison && (
             <Comparsion
@@ -413,16 +588,46 @@ const JewelryPage = () => {
           )}
 
           <FeedbackModal
-            type="success"
-            show={showAddModal}
-            message={addModalMessage}
-            onClose={() => setShowAddModal(false)}
+            type={actionFeedback.type}
+            show={actionFeedback.show}
+            message={actionFeedback.message}
+            onClose={() =>
+              setActionFeedback((prev) => ({
+                ...prev,
+                show: false,
+              }))
+            }
             actions={[
               {
-                label: "Close",
-                onClick: () => setShowAddModal(false),
-                primary: true,
+                label: "OK",
+                onClick: () =>
+                  setActionFeedback((prev) => ({
+                    ...prev,
+                    show: false,
+                  })),
               },
+              ...(actionFeedback.target
+                ? [
+                    {
+                      label:
+                        actionFeedback.target === "cart"
+                          ? "View Cart"
+                          : "View Wishlist",
+                      onClick: () => {
+                        setActionFeedback((prev) => ({
+                          ...prev,
+                          show: false,
+                        }))
+                        navigate(
+                          actionFeedback.target === "cart"
+                            ? "/cart"
+                            : "/wishlist"
+                        )
+                      },
+                      primary: true,
+                    },
+                  ]
+                : []),
             ]}
           />
         </div>
