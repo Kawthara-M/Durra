@@ -23,14 +23,14 @@
 }
 
 body.light {
-  --bg-color: #fffaf0; /*the background color of the main content*/
-  /* old color: #f9f3f3*/
-  --footer-bg: #420202;
-  --nav-bg: #fffaf0;
+  --bg-color: #f9f3f3; /*the background color of the main content*/
+  /* old color: #f9f3f3 #fffaf0*/
+  --footer-bg: #280101;
+  --nav-bg: #fce8e8;
   --text-color: rgb(39, 38, 38);
   --text-contrast-color: #f1f1f1;
   --btn-bg: #6f0101;
-  --btn-hover: #970a0a;
+  --btn-hover: #670202;
   --btn-color: #f1f1f1;
   --btn-hover-color: #f1f1f1;
   --btn-contrast-color: rgb(39, 38, 38);
@@ -38,6 +38,7 @@ body.light {
   --a-hover-color: #5f0f0f;
   --card-bg-color: #fefdfc;
 }
+
 
 body.dark {
   --bg-color: #1a1a1a;
