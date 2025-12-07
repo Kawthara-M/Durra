@@ -4,7 +4,7 @@
 </h1>
 
 **By:** [Kawthar Mohammad](https://github.com/Kawthara-M) | [Ghadeer Abdulla](https://github.com/igha07) | [Ragad Abdulla](https://github.com/RagadAbdulla) <br>
-**Date:** x / x / 2025
+**Date:** 12 / 08 / 2025
 
 ## 📌 Description
 
@@ -42,10 +42,6 @@ Durra mainly provides an interface for jewelers and customers.
 Durra has been developed with the end-user prioritized, so a first-time user is not to have a hard time figuring things out.
 To ensure that, a careful analysis of the requirements was conducted. The obtained requirements were translated into several diagrams to guide the development.
 
-### Use Case Diagram
-
- <img src="public/assets/Use Case Diagram.png"  width="100%" height="100%" style="vertical-align:middle; ">
-
 ### Entity Relationship Diagram (ERD)
 
   <img src="public/assets/ERD.jpg"  width="100%" height="100%" style="vertical-align:middle; ">
@@ -54,7 +50,7 @@ To ensure that, a careful analysis of the requirements was conducted. The obtain
 
 - React.js (front-end)
 - React.js libraries (e.g. Recharts, Chart.js)
-- Node.js, Express Framework, MongoDB (backend)
+- Node.js, Express Framework, MongoDB (back-end)
 
 ## 🗺️ Prototype
 
