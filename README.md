@@ -73,6 +73,7 @@ The following figma prototypes present a visual blueprint of the platform's user
 
 <!-- - Locations Autocomplete (front-end): [Geoapify Autocomplete](https://www.geoapify.com/) -->
 
+- Live metal rates: [metals.dev](https://metals.dev/dashboard)
 - Search Logic (back-end): [Medium Platform](https://medium.com/@aniagudo.godson/running-a-simple-search-query-on-mongodb-atlas-using-express-nodejs-2-refining-search-queries-49949ce5c4a1)
 - Password Validator (front-end): [geeksforgeeks](https://www.geeksforgeeks.org/reactjs/create-a-password-validator-using-reactjs/)
 - Feedback Modal (front-end): [uiverse.io](https://uiverse.io/akshat-patel28/quick-baboon-29)
