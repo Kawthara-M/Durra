@@ -99,6 +99,7 @@ const Cart = () => {
     const updated = []
     for (const item of arr) {
       if (item.itemModel === "Jewelry") {
+        console.log("here")
         const jewel = item.item
         const preciousCost = calculatePreciousMaterialCost(
           jewel.preciousMaterials,

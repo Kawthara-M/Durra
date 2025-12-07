@@ -28,11 +28,7 @@ const ProductCard = ({
   const { user } = useUser()
   const navigate = useNavigate()
 
-  const {
-    order,
-    setOrderId,
-    setFullOrder,
-  } = useOrder()
+  const { order, setOrderId, setFullOrder } = useOrder()
 
   const [collectionPrice, setCollectionPrice] = useState(null)
 
@@ -102,9 +98,7 @@ const ProductCard = ({
     if (type === "service") {
       return (order.serviceOrder || []).some((entry) => {
         const serviceId =
-          typeof entry.service === "object"
-            ? entry.service._id
-            : entry.service
+          typeof entry.service === "object" ? entry.service._id : entry.service
 
         return String(serviceId) === String(item._id)
       })
@@ -212,10 +206,7 @@ const ProductCard = ({
     }
 
     const normalizedJewelryOrder = jewelryOrder.map((entry) => ({
-      item:
-        typeof entry.item === "object"
-          ? entry.item._id
-          : entry.item,
+      item: typeof entry.item === "object" ? entry.item._id : entry.item,
       itemModel: entry.itemModel,
       quantity: entry.quantity ?? 1,
       totalPrice: Number(entry.totalPrice ?? 0),
@@ -224,9 +215,7 @@ const ProductCard = ({
 
     const normalizedServiceOrder = serviceOrder.map((entry) => ({
       service:
-        typeof entry.service === "object"
-          ? entry.service._id
-          : entry.service,
+        typeof entry.service === "object" ? entry.service._id : entry.service,
       jewelry: entry.jewelry || [],
       totalPrice: Number(entry.totalPrice ?? 0),
     }))
@@ -275,8 +264,7 @@ const ProductCard = ({
       jewelryOrder = [
         {
           item: item._id,
-          itemModel:
-            effectiveType === "collection" ? "Collection" : "Jewelry",
+          itemModel: effectiveType === "collection" ? "Collection" : "Jewelry",
           quantity: 1,
           totalPrice:
             effectiveType === "collection"
@@ -367,9 +355,7 @@ const ProductCard = ({
       setActionFeedback({
         show: true,
         type: "success",
-        message: exists
-          ? "Removed from wishlist."
-          : "Added to wishlist.",
+        message: exists ? "Removed from wishlist." : "Added to wishlist.",
         target: "wishlist",
       })
     } catch (err) {
@@ -379,11 +365,19 @@ const ProductCard = ({
     }
   }
 
+  const isJeweler = user?.role === "Jeweler"
+
   const url =
     type === "collection"
-      ? `/collections/${item._id}`
+      ? isJeweler
+        ? `/show-collection/${item._id}`
+        : `/collections/${item._id}`
       : type === "service"
-      ? `/services/${item._id}`
+      ? isJeweler
+        ? `/show-service/${item._id}`
+        : `/services/${item._id}`
+      : isJeweler
+      ? `/show-jewelry/${item._id}`
       : `/jewelry/${item._id}`
 
   return (
@@ -479,14 +473,11 @@ const ProductCard = ({
         show={actionFeedback.show}
         type={actionFeedback.type}
         message={actionFeedback.message}
-        onClose={() =>
-          setActionFeedback((p) => ({ ...p, show: false }))
-        }
+        onClose={() => setActionFeedback((p) => ({ ...p, show: false }))}
         actions={[
           {
             label: "OK",
-            onClick: () =>
-              setActionFeedback((p) => ({ ...p, show: false })),
+            onClick: () => setActionFeedback((p) => ({ ...p, show: false })),
           },
           ...(actionFeedback.target
             ? [
@@ -498,9 +489,7 @@ const ProductCard = ({
                   primary: true,
                   onClick: () => {
                     const dest =
-                      actionFeedback.target === "cart"
-                        ? "/cart"
-                        : "/wishlist"
+                      actionFeedback.target === "cart" ? "/cart" : "/wishlist"
                     setActionFeedback((p) => ({ ...p, show: false }))
                     navigate(dest)
                   },

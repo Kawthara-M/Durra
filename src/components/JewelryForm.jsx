@@ -510,7 +510,7 @@ const JewelryForm = () => {
                 },
               },
               {
-                label: "Go to Jewelry List",
+                label: "View Jewelry List",
                 onClick: () => navigate("/jeweler-jewelry"),
               },
             ]

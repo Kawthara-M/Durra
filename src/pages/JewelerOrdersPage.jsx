@@ -5,6 +5,7 @@ import Filter from "../components/Filter.jsx"
 import { STATUS_DISPLAY_MAP } from "../services/statusMap.js"
 import User from "../services/api.js"
 import filter from "../assets/filter.png"
+import placeholder from "../assets/placeholder.png"
 import "../../public/stylesheets/jeweler-orders.css"
 
 const JewelerOrderPage = () => {
@@ -132,7 +133,7 @@ const JewelerOrderPage = () => {
                   <div className="order-image">
                     {order.jewelryOrder?.length > 0 ? (
                       <img
-                        src={order.jewelryOrder[0].item?.images[0]}
+                        src={order.jewelryOrder[0].item?.images[0] || placeholder}
                         alt="Jewelry"
                       />
                     ) : order.serviceOrder?.length > 0 ? (

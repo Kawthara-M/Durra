@@ -74,7 +74,7 @@ const Jewelry = () => {
           User.get("/collections/"),
           fetchMetalRates(),
         ])
-
+console.log(rates)
         setJewelry(jewelryRes.data.jewelry)
         setFilteredJewelry(jewelryRes.data.jewelry)
 

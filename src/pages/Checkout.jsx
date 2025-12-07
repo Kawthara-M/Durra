@@ -81,18 +81,70 @@ const Checkout = () => {
     }
   }
 
+  const calcOrderSubtotal = (orderDoc) => {
+    if (!orderDoc) return 0
+
+    const jewelrySum = (orderDoc.jewelryOrder || []).reduce(
+      (sum, i) => sum + (i.totalPrice || 0),
+      0
+    )
+
+    const serviceSum = (orderDoc.serviceOrder || []).reduce(
+      (sum, i) => sum + (i.totalPrice || 0),
+      0
+    )
+
+    return jewelrySum + serviceSum
+  }
+
   useEffect(() => {
     const init = async () => {
       try {
         const pending = await getPendingOrder()
         if (pending) {
           setFullOrder(pending)
-          setSubtotal(pending.totalPrice || 0)
-          if (pending.shop) await fetchShop(pending.shop._id || pending.shop)
+
+          const orderSubtotal = calcOrderSubtotal(pending)
+          setSubtotal(orderSubtotal)
+          console.log(subtotal)
+
+          if (pending.shop) {
+            await fetchShop(pending.shop._id || pending.shop)
+          }
+
+          await fetchProfile()
+          await fetchAddresses()
+          return
         }
 
-        await fetchProfile()
-        await fetchAddresses()
+        const stored = JSON.parse(localStorage.getItem("submittedOrder"))
+        if (stored && stored.status === "submitted" && stored.orderId) {
+          waitForJeweler(stored.orderId)
+
+          try {
+            const res = await User.get(`/orders/${stored.orderId}`)
+            if (res.data.order) {
+              console.log("res", res)
+              const orderDoc = res.data.order
+              setFullOrder(orderDoc)
+
+              const orderSubtotal = calcOrderSubtotal(orderDoc)
+              setSubtotal(orderSubtotal)
+
+              if (orderDoc.shop) {
+                await fetchShop(orderDoc.shop._id || orderDoc.shop)
+              }
+            }
+          } catch (err) {
+            console.error("Failed to fetch submitted order for cart:", err)
+          }
+
+          await fetchProfile()
+          await fetchAddresses()
+          return
+        }
+
+        setSubtotal(0)
       } catch (err) {
         console.error("Error loading checkout:", err)
       } finally {
@@ -142,15 +194,22 @@ const Checkout = () => {
 
   const isOrderValid = () => {
     if (!user) return false
-    if (!order || subtotal === 0) return false
+    console.log(subtotal)
+    if (!order || subtotal <= 0) return false
     if (!paymentMethod) return false
+    const isDelivery = deliveryMethod === "delivery"
+    const isPickup = deliveryMethod === "pickup"
 
-    if (deliveryMethod === "delivery") {
+    if (!isDelivery && !isPickup) return false
+
+    if (isDelivery) {
+      console.log("here")
+      if (!selectedAddress) return false
+
       const addr = addresses.find(
         (a) => String(a._id) === String(selectedAddress)
       )
       if (!addr) return false
-
     }
 
     return true
@@ -458,7 +517,7 @@ const Checkout = () => {
                     checked={paymentMethod === "Cash"}
                     onChange={(e) => setPaymentMethod(e.target.value)}
                   />
-                  <label htmlFor="payment-cash"> Cash on Delivery</label>
+                  <label htmlFor="payment-cash"> Cash Payment</label>
                 </span>
                 <span className="payment-option">
                   <input

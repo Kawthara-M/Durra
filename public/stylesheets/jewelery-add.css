@@ -741,8 +741,8 @@
   }
 
   .add-sidebar a {
-    flex-shrink: 0; /* don't get squeezed */
-    white-space: nowrap; /* no internal wrap */
+    flex-shrink: 0; 
+    white-space: nowrap; 
   }
 
   .delete-image {
@@ -750,10 +750,7 @@
     right: 4%;
   }
 
-  /* .pearl-type,
-  .diamond-type {
-    width: 100% !important;
-  } */
+
 }
 
 @media (max-width: 614px) {

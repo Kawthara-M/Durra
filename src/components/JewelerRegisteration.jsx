@@ -38,29 +38,21 @@ const JewelerRegisteration = () => {
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 900px)")
 
-    const handleChange = (e) => {
+    const handleChangeMq = (e) => {
       setBgImage(e.matches ? smallImage : sideImage)
     }
 
-    handleChange(mq)
+    handleChangeMq(mq)
 
-    mq.addEventListener("change", handleChange)
-    return () => mq.removeEventListener("change", handleChange)
+    mq.addEventListener("change", handleChangeMq)
+    return () => mq.removeEventListener("change", handleChangeMq)
   }, [])
-
-  const handleChangeInput = (e) => {
-    setFormValues({ ...formValues, [e.target.name]: e.target.value })
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setErrorMessage("")
 
     try {
-      const formData = new FormData()
-      formData.append("details", JSON.stringify(formValues))
-      console.log(formData)
-
       await User.post("/requests", { details: formValues })
 
       setFormValues(initialState)
@@ -80,6 +72,51 @@ const JewelerRegisteration = () => {
       setShowModal(true)
     }
   }
+
+  const jewelerTerms = [
+    {
+      title: "Introduction",
+      content:
+        "Welcome to Durra. By registering as a jeweler, you agree to comply with and be bound by these terms and conditions.",
+    },
+    {
+      title: "Use of Platform",
+      content:
+        "You agree to use the platform for lawful business purposes only and to provide accurate, up-to-date information about your shop and products.",
+    },
+    {
+      title: "Products and Listings",
+      content:
+        "You are responsible for ensuring that all product descriptions, images, prices, and availability details are truthful, accurate, and not misleading.",
+    },
+    {
+      title: "Review and Approval",
+      content:
+        "All registration requests are subject to review by Durra’s administrative team, who may approve, reject, or request modifications.",
+    },
+    {
+      title: "Privacy & Security",
+      content:
+        "Any personal or business information you provide will be handled in accordance with Durra’s Terms and Conditions and applicable laws.",
+    },
+    {
+      title: "Liability",
+      content:
+        "Durra is not liable for indirect or consequential losses arising from your use of the platform or issues between you and customers.",
+    },
+    {
+      title: "Governing Law",
+      content:
+        "These terms are governed by the laws of Bahrain, and you agree to the jurisdiction of Bahraini courts in the event of any dispute.",
+    },
+    {
+      title: "Partner Policy",
+      content:
+        "As a partner jeweler, you are responsible for the authenticity, quality, and legality of all products you list. Durra may remove any product or suspend accounts that breach these terms.",
+      highlight: true,
+    },
+  ]
+
   return (
     <>
       <div className="registeration-wrapper">
@@ -166,7 +203,7 @@ const JewelerRegisteration = () => {
                 !formValues.cr ||
                 !agreed
               }
-              onClick={(e) => handleSubmit(e)}
+              onClick={handleSubmit}
             >
               Register
             </button>
@@ -177,22 +214,30 @@ const JewelerRegisteration = () => {
           type={modalType}
           message={modalMessage}
           onClose={() => setShowModal(false)}
-        />{" "}
+        />
       </div>
+
       {showTermsModal && (
         <div className="modal-overlay">
-          {" "}
           <div className="modal">
-            {" "}
-            <h2>Terms and Conditions</h2>{" "}
-            <p>
-              {" "}
-              By registering, you agree to our platform rules, privacy policies,
-              and all legal requirements associated with being a jeweler on our
-              platform.{" "}
-            </p>{" "}
-            <button onClick={() => setShowTermsModal(false)}>Close</button>{" "}
-          </div>{" "}
+            <h2>Terms and Conditions</h2>
+
+            <div className="terms-modal-content">
+              {jewelerTerms.map((sec, idx) => (
+                <div
+                  key={idx}
+                  className={`terms-section ${
+                    sec.highlight ? "terms-section-highlight" : ""
+                  }`}
+                >
+                  <h5>{sec.title}</h5>
+                  <p>{sec.content}</p>
+                </div>
+              ))}
+            </div>
+
+            <button onClick={() => setShowTermsModal(false)}>Close</button>
+          </div>
         </div>
       )}
     </>

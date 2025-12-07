@@ -1,34 +1,42 @@
-// export const fetchMetalRates = async () => {
-//   try {
-//     const url =
-//       "https://api.metals.dev/v1/latest?api_key=GF9QACGGAWN9BJKRDDYO374KRDDYO&currency=BHD&unit=g"
-//     const response = await fetch(url, {
-//       headers: {
-//         Accept: "application/json",
-//       },
-//     })
-
-//     const result = await response.json()
-//     return result?.metals || {}
-//   } catch (error) {
-//     console.error("Failed to fetch metal rates", error)
-//     throw new Error("Failed to load metal rates")
-//   }
-// }
-
-// to save api req available
 export const fetchMetalRates = async () => {
-  return {
-    gold: 50,
-    silver: 0.7,
-    platinum: 25,
-    // etc
+  const FALLBACK_RATES = {
+    gold: 24.5,
+    silver: 0.32,
+    platinum: 31.1,
+  }
+
+  try {
+    const res = await fetch(import.meta.env.VITE_METALS_API)
+
+    if (!res.ok) {
+      throw new Error("API error or quota exceeded")
+    }
+
+    const data = await res.json()
+
+
+    const normalized = data.metals || data
+
+    localStorage.setItem("metalRatesCache", JSON.stringify(normalized))
+
+    return normalized
+  } catch (err) {
+    console.warn("Rates API failed, using fallback:", err.message)
+
+    const cached = localStorage.getItem("metalRatesCache")
+    if (cached) {
+      console.log("Using cached metal rates")
+      return JSON.parse(cached)
+    }
+
+    console.log("Using default backup metal rates")
+    return FALLBACK_RATES
   }
 }
-// Helper to convert karat to percent (e.g. 18k = 0.75)
+
 export const getKaratMultiplier = (karat) => {
   const k = parseFloat(karat)
-  if (isNaN(k)) return 1 // fallback to pure metal
+  if (isNaN(k)) return 1
   return k / 24
 }
 
@@ -49,13 +57,14 @@ export const getKaratAdjustedPricePerGram = (
 export const calculatePreciousMaterialCost = (materials, metalRates) => {
   if (!materials || !metalRates) return 0
   console.log(materials)
+  console.log(metalRates)
 
   let total = 0
   for (const mat of materials) {
     const rate = metalRates[mat.name?.toLowerCase()] || 0
     total += rate * mat.weight
   }
-
+  console.log(total)
   return total
 }
 
@@ -68,9 +77,11 @@ export const calculateTotalCost = (
 }
 
 export const calculateCollectionPrice = (collection, metalRates) => {
+  console.log("here")
   if (!metalRates || !collection?.jewelry?.length) return null
   let jewelryCostSum = 0
   for (const jewel of collection.jewelry) {
+    console.log(jewel)
     const metalCost = calculatePreciousMaterialCost(
       jewel.preciousMaterials,
       metalRates
@@ -81,7 +92,6 @@ export const calculateCollectionPrice = (collection, metalRates) => {
   }
 
   const final = jewelryCostSum + collection.originPrice
-  
 
   return Math.max(final, 0)
 }

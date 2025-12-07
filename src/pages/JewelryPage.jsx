@@ -48,6 +48,12 @@ const JewelryPage = () => {
     target: null,
   })
 
+  const [authModal, setAuthModal] = useState({
+    show: false,
+    target: null,
+    message: "",
+  })
+
   const {
     currentIndex: currentImageIndex,
     handleNext,
@@ -99,10 +105,34 @@ const JewelryPage = () => {
       const entryId =
         typeof entry.item === "object" ? entry.item._id : entry.item
       return (
-        String(entryId) === String(jewelry._id) &&
-        entry.itemModel === "Jewelry"
+        String(entryId) === String(jewelry._id) && entry.itemModel === "Jewelry"
       )
     })
+  }
+
+  const openAuthModal = (target) => {
+    let message = "Please sign in to continue."
+    if (target === "cart") {
+      message = "Please sign in to add items to your cart."
+    } else if (target === "wishlist") {
+      message = "Please sign in to add items to your wishlist."
+    } else if (target === "comparison") {
+      message = "Please sign in to compare jewelry pieces."
+    }
+
+    setAuthModal({
+      show: true,
+      target,
+      message,
+    })
+  }
+
+  const handleAddClick = () => {
+    if (!user) {
+      openAuthModal("cart")
+      return
+    }
+    handleAdd()
   }
 
   const handleAdd = async () => {
@@ -171,8 +201,7 @@ const JewelryPage = () => {
       } else {
         const normalizedJewelryOrder = (order.jewelryOrder || []).map(
           (entry) => ({
-            item:
-              typeof entry.item === "object" ? entry.item._id : entry.item,
+            item: typeof entry.item === "object" ? entry.item._id : entry.item,
             itemModel: entry.itemModel,
             quantity: entry.quantity ?? 1,
             totalPrice: Number(entry.totalPrice ?? 0),
@@ -246,6 +275,16 @@ const JewelryPage = () => {
     } catch (err) {
       console.error("Failed to replace cart", err)
       setShowShopModal(false)
+    }
+  }
+
+  const handleWishlistClick = () => {
+    if (!user) {
+      openAuthModal("wishlist")
+      return
+    }
+    if (!isWishlistUpdating) {
+      handleWishlist()
     }
   }
 
@@ -349,6 +388,14 @@ const JewelryPage = () => {
     return name
   }
 
+  const handleComparisonClick = () => {
+    if (!user) {
+      openAuthModal("comparison")
+      return
+    }
+    setShowComparison(true)
+  }
+
   return (
     <>
       {jewelry && (
@@ -393,12 +440,11 @@ const JewelryPage = () => {
                     </>
                   )}
                 </div>
-
-                <h3 className="service-price">{totalPrice.toFixed(2)} BHD</h3>
               </div>
 
               <div className="jewelry-overview-wrapper">
                 <div className="jewelry-inputs">
+                  <h3 className="service-price">{totalPrice.toFixed(2)} BHD</h3>
                   {jewelry.type?.toLowerCase() === "ring" && (
                     <select
                       value={size}
@@ -424,8 +470,8 @@ const JewelryPage = () => {
 
                   <span className="add-or-wishlist">
                     <button
-                      disabled={!user || isAdding}
-                      onClick={user ? handleAdd : undefined}
+                      disabled={isAdding}
+                      onClick={handleAddClick}
                       title={user ? "Add to Cart" : "Sign in to Add"}
                     >
                       {isAdding ? "Adding..." : "Add to Cart"}
@@ -439,9 +485,7 @@ const JewelryPage = () => {
                       title={
                         user ? "Add to Wishlist" : "Sign in to Add to Wishlist"
                       }
-                      onClick={
-                        user && !isWishlistUpdating ? handleWishlist : undefined
-                      }
+                      onClick={handleWishlistClick}
                     />
 
                     <img
@@ -452,7 +496,7 @@ const JewelryPage = () => {
                           ? "Compare with other pieces"
                           : "Sign in to compare pieces"
                       }
-                      onClick={() => user && setShowComparison(true)}
+                      onClick={handleComparisonClick}
                     />
                   </span>
                 </div>
@@ -586,6 +630,41 @@ const JewelryPage = () => {
               ]}
             />
           )}
+
+          <FeedbackModal
+            type="notice"
+            show={authModal.show}
+            message={authModal.message}
+            onClose={() =>
+              setAuthModal((prev) => ({
+                ...prev,
+                show: false,
+              }))
+            }
+            actions={[
+              {
+                label: "Not now",
+                onClick: () =>
+                  setAuthModal((prev) => ({
+                    ...prev,
+                    show: false,
+                  })),
+              },
+              {
+                label: "Sign In",
+                primary: true,
+                onClick: () => {
+                  setAuthModal((prev) => ({
+                    ...prev,
+                    show: false,
+                  }))
+                  navigate("/login", {
+                    state: { from: `/jewelry/${jewelryId}` },
+                  })
+                },
+              },
+            ]}
+          />
 
           <FeedbackModal
             type={actionFeedback.type}

@@ -170,7 +170,7 @@ const SummaryView = ({ formData, handleChange }) => {
           value={
             formData.totalPrice === undefined || formData.totalPrice === ""
               ? totalCost.toFixed(2)
-              : formData.totalPrice
+              : parseFloat(formData.totalPrice) +parseFloat(formData.productionCost)
           }
           onChange={(e) => handleChange(e)}
           min="0"

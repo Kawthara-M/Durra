@@ -93,7 +93,6 @@ const Profile = () => {
   const [showManual, setShowManual] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [modalMessage, setModalMessage] = useState("")
-
   const [modalType, setModalType] = useState("success")
   const [modalActions, setModalActions] = useState([])
 
@@ -154,7 +153,7 @@ const Profile = () => {
   }
 
   const openConfirmDeleteModal = (addressId, displayName) => {
-    setModalType("success")
+    setModalType("confirm")
     setModalMessage(
       `Are you sure you want to delete "${displayName || "this address"}"?`
     )
@@ -167,6 +166,90 @@ const Profile = () => {
           setShowModal(false)
           setModalActions([])
           triggerSuccessModal("Address deleted successfully.")
+        },
+      },
+      {
+        label: "Cancel",
+        onClick: () => {
+          setShowModal(false)
+          setModalActions([])
+        },
+      },
+    ])
+
+    setShowModal(true)
+  }
+
+  const openConfirmProfileUpdate = () => {
+    setModalType("confirm")
+    setModalMessage("Are you sure you want to update your shop profile?")
+
+    setModalActions([
+      {
+        label: "Update",
+        onClick: async () => {
+          setShowModal(false)
+          setModalActions([])
+          await handleUpdate()
+        },
+      },
+      {
+        label: "Cancel",
+        onClick: () => {
+          setShowModal(false)
+          setModalActions([])
+        },
+      },
+    ])
+
+    setShowModal(true)
+  }
+
+  const openConfirmAccountDelete = () => {
+    if (!profile?.user?._id) return
+
+    setModalType("confirm")
+    setModalMessage(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    )
+
+    setModalActions([
+      {
+        label: "Delete",
+        onClick: async () => {
+          try {
+            // close current confirm modal
+            setShowModal(false)
+            setModalActions([])
+
+            await User.delete(`/auth/${profile.user._id}`)
+
+            setModalType("success")
+            setModalMessage("Your account has been deleted successfully.")
+            setModalActions([
+              {
+                label: "OK",
+                onClick: () => {
+                  setShowModal(false)
+                  setModalActions([])
+                  localStorage.clear()
+                  window.location.href = "/"
+                },
+              },
+            ])
+            setShowModal(true)
+          } catch (error) {
+            console.error("Failed to delete account:", error)
+            const msg =
+              error.response?.data?.msg ||
+              error.response?.data?.error ||
+              "Failed to delete account. Please try again."
+
+            setModalType("error")
+            setModalMessage(msg)
+            setModalActions([])
+            setShowModal(true)
+          }
         },
       },
       {
@@ -216,7 +299,11 @@ const Profile = () => {
       }))
 
       setModalType("success")
-      setModalMessage("Profile updated successfully.")
+      setModalMessage(
+        user.role === "Jeweler"
+          ? "Your jeweler profile has been updated successfully."
+          : "Profile updated successfully."
+      )
       setModalActions([])
       setShowModal(true)
     } catch (error) {
@@ -529,7 +616,7 @@ const Profile = () => {
           </div>
 
           <div className="profile-details">
-            {/* Account Address View */}
+            {/* Account Information View */}
             {view === "Account Information" && (
               <div className="account-information">
                 <div className="account-information-inputs">
@@ -621,14 +708,28 @@ const Profile = () => {
                     </>
                   )}
                 </div>
+<div>
+                {user?.role === "Customer" && (
+                  <button
+                    type="button"
+                    className="delete-account-link"
+                    onClick={openConfirmAccountDelete}
+                  >
+                    Delete Account
+                  </button>
+                )}
 
                 <button
                   className="update-button"
                   disabled={!validatePhone(userInfo.phone)}
-                  onClick={handleUpdate}
+                  onClick={
+                    user?.role === "Jeweler"
+                      ? openConfirmProfileUpdate
+                      : handleUpdate
+                  }
                 >
                   Update
-                </button>
+                </button></div>
               </div>
             )}
 

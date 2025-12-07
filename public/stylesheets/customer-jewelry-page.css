@@ -57,7 +57,7 @@
 
 .jewelry-inputs .ring-size-selector {
   background-color: transparent;
-  width: auto;
+  width: 50%;
   margin: 0;
 }
 
@@ -86,8 +86,9 @@
   align-items: center;
   gap: 0.4rem;
 }
-.customer-jewelry-page .jeweler-service-details .service-price {
-  font-size: 1.8rem;
+.customer-jewelry-page .service-price {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
 }
 
 .jewelry-certifications {
@@ -157,12 +158,31 @@
 }
 
 @media (max-width: 1100px) {
+  .service-page-content {
+    justify-content: flex-start;
+  }
+  .customer-jewelry-page .service-information {
+    height: fit-content !important;
+    justify-content: flex-start !important;
+    flex: none;
+    gap:1rem;
+  }
   .customer-jewelry-page .card,
   .customer-jewelry-page + .feedback-modal-overlay .card,
   .checkout-wrapper .card,
   .cart-wrapper .card,
   .wishlist-page .card {
     width: 55%;
+  }
+  .jewelry-inputs {
+    width: 80%;
+  }
+
+  .jewelry-inputs input[type="number"],
+  .jewelry-inputs .ring-size-selector {
+    min-width: 10%;
+    width: 80%;
+    margin: 0;
   }
 }
 
@@ -199,7 +219,8 @@
     margin: 0;
   }
 
-  .jewelry-inputs input[type="number"] {
+  .jewelry-inputs input[type="number"],
+  .jewelry-inputs .ring-size-selector {
     min-width: 10%;
     width: 35%;
     margin: 0;

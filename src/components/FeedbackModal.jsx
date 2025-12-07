@@ -29,10 +29,10 @@ const FeedbackModal = ({
           color: "#d10000",
           title: "Error",
         }
-      case "warning": 
+      case "warning":
         return {
           icon: <FaExclamationTriangle className="icon" />,
-          color: "#daa402ff", 
+          color: "#daa402ff",
           title: "Warning",
         }
 
@@ -41,6 +41,12 @@ const FeedbackModal = ({
           icon: <FaExclamationTriangle className="icon" />,
           color: "#d8af09ff",
           title: "Confirmation",
+        }
+      case "notice":
+        return {
+          icon: <FaExclamationTriangle className="icon" />,
+          color: "#005f9e", 
+          title: "Notice",
         }
       default:
         return {
@@ -64,6 +70,33 @@ const FeedbackModal = ({
       onClick={(e) => e.stopPropagation()}
     >
       <div className="card" onClick={(e) => e.stopPropagation()}>
+        <div className="feedback-wrapper">
+          <div className="icon-and-message">
+            <div className="icon-container">{icon}</div>
+
+            <div className="message-text-container">
+              <p className="message-text" style={{ color }}>
+                {title}
+              </p>
+              <p className="sub-text">{message}</p>
+            </div>
+          </div>
+          <div className="feedback-actions">
+            {actions.map((action, index) => (
+              <button
+                key={index}
+                type="button"
+                className="feedback-buttons"
+                onClick={(e) => {
+                  stopAll(e)
+                  action.onClick && action.onClick(e)
+                }}
+              >
+                {action.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <span
           className="modal-close-btn"
           onClick={(e) => {
@@ -73,31 +106,6 @@ const FeedbackModal = ({
         >
           ✕
         </span>
-        <div className="icon-and-message">
-          <div className="icon-container">{icon}</div>
-
-          <div className="message-text-container">
-            <p className="message-text" style={{ color }}>
-              {title}
-            </p>
-            <p className="sub-text">{message}</p>
-          </div>
-        </div>
-        <div className="feedback-actions">
-          {actions.map((action, index) => (
-            <button
-              key={index}
-              type="button"
-              className="feedback-buttons"
-              onClick={(e) => {
-                stopAll(e)
-                action.onClick && action.onClick(e)
-              }}
-            >
-              {action.label}
-            </button>
-          ))}
-        </div>
       </div>
     </div>
   )
