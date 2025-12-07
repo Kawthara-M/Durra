@@ -9,9 +9,16 @@
 }
 
 .profile + .feedback-modal-overlay .card {
-  width: fit-content;
-  padding: 0.6rem 7rem;
+  /* width: fit-content; */
+  justify-content: unset !important;
+  padding: 0.6rem 1rem;
   padding-left: 0.6rem;
+  gap: 2rem;
+}
+
+.feedback-wrapper {
+  flex: 1;
+  margin: 0 auto;
 }
 
 .profile-left,
@@ -258,7 +265,8 @@
 }
 
 .default-button,
-.default-label, .default-label:hover {
+.default-label,
+.default-label:hover {
   background-color: transparent !important;
   color: red !important;
   text-align: right;
@@ -400,6 +408,24 @@
   gap: 0.5rem;
 }
 
+.delete-account-link {
+  background: none;
+  border: none;
+  color: #b00020;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-bottom: 0;
+  align-self: flex-start;
+  text-align: left;
+}
+
+.delete-account-link:hover {
+  opacity: 0.8;
+  background-color: transparent;
+  color:var(--accent-color);
+}
+
 @media (min-width: 700px) {
   .road-block-row {
     flex-direction: row;
@@ -420,6 +446,14 @@
   .upload-btn {
     bottom: 0;
     right: 0;
+  }
+
+  .profile + .feedback-modal-overlay .card {
+    width: 50% !important;
+    justify-content: unset !important;
+    padding: 0.6rem 1rem;
+    padding-left: 0.6rem;
+    gap: 2rem;
   }
 }
 @media (max-width: 1100px) {

@@ -33,6 +33,7 @@ const CollectionPage = () => {
 
   const [showAddModal, setShowAddModal] = useState(false)
   const [addModalMessage, setAddModalMessage] = useState("")
+  const [addModalType, setAddModalType] = useState("success") // NEW
   const [isAdding, setIsAdding] = useState(false)
   const [isWishlistUpdating, setIsWishlistUpdating] = useState(false)
 
@@ -72,6 +73,19 @@ const CollectionPage = () => {
   const handleChange = (e) => {
     const val = parseInt(e.target.value, 10)
     setQuantity(Number.isNaN(val) ? 1 : val)
+  }
+
+  const alreadyInCart = () => {
+    if (!order || !collection) return false
+
+    return (order.jewelryOrder || []).some((entry) => {
+      const entryId =
+        typeof entry.item === "object" ? entry.item._id : entry.item
+      return (
+        String(entryId) === String(collection._id) &&
+        entry.itemModel === "Collection"
+      )
+    })
   }
 
   const addItemToOrder = async () => {
@@ -189,6 +203,13 @@ const CollectionPage = () => {
   const handleAdd = async () => {
     if (!user || !collection) return
 
+    if (alreadyInCart()) {
+      setAddModalType("warning")
+      setAddModalMessage("This collection is already in your cart.")
+      setShowAddModal(true)
+      return
+    }
+
     const currentOrder = order || {}
     const currentOrderId = currentOrder.orderId
 
@@ -216,8 +237,10 @@ const CollectionPage = () => {
     setIsAdding(true)
     const success = await addItemToOrder()
     if (success) {
+      setAddModalType("success")
       setAddModalMessage("This collection has been added to your cart.")
     } else {
+      setAddModalType("error")
       setAddModalMessage(
         "An error occurred while adding this collection to your cart."
       )
@@ -279,6 +302,7 @@ const CollectionPage = () => {
       })
 
       setShowShopModal(false)
+      setAddModalType("success")
       setAddModalMessage(
         "Your cart was updated and this collection has been added."
       )
@@ -320,6 +344,7 @@ const CollectionPage = () => {
               : it.favouritedItem
           return id !== collection._id
         })
+        setAddModalType("success")
         setAddModalMessage("Removed from your wishlist.")
       } else {
         updatedItems = [
@@ -332,6 +357,7 @@ const CollectionPage = () => {
           })),
           newEntry,
         ]
+        setAddModalType("success")
         setAddModalMessage("Added to your wishlist.")
       }
 
@@ -342,6 +368,7 @@ const CollectionPage = () => {
       if (err.response?.status === 404) {
         await User.post("/wishlist", { items: [newEntry] })
         window.dispatchEvent(new Event("wishlist-updated"))
+        setAddModalType("success")
         setAddModalMessage("Added to your wishlist.")
         setShowAddModal(true)
       } else {
@@ -482,7 +509,7 @@ const CollectionPage = () => {
 
       <FeedbackModal
         show={showAddModal}
-        type="success"
+        type={addModalType}  
         message={addModalMessage}
         onClose={() => setShowAddModal(false)}
         actions={[

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import "../../public/stylesheets/Home.css"
 import bg2 from "../assets/bg2.jpeg"
 import bg4 from "../assets/bg4.png"
@@ -6,6 +7,7 @@ import bg5 from "../assets/bg5.png"
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const navigate = useNavigate()
 
   const slides = [
     { id: 1, image: bg2, alt: "Luxury Gold Collection" },
@@ -56,18 +58,19 @@ const Home = () => {
       </section>
 
       <section className="hp-models-section">
-        <div className="hp-model-card">
+        <div
+          className="hp-model-card"
+          onClick={() => navigate(`/shops/${`6935ae3896814a11377f9684`}`)}
+        >
           <div className="hp-model-image-placeholder">
             <img src="src/assets/bracelet21k.jpg" />
-            <a href="/collections" className="hp-shop-now">
-              Shop Now
-            </a>
+            <a className="hp-shop-now">Shop Now</a>
           </div>
           <p>“Where elegance meets heritage.”</p>
         </div>
         <div className="hp-model-card">
-          <div className="hp-model-image-placeholder">
-            <img src="src/assets/possiblebanner1.jpg" />
+          <div className="hp-model-image-placeholder" onClick={()=>navigate(`/jewelry`)}>
+            <img src="src/assets/new home.png" />
             <a href="/collections" className="hp-shop-now">
               Shop Now
             </a>
@@ -75,7 +78,10 @@ const Home = () => {
           <p>“Fine Bahraini gold collections.”</p>
         </div>
         <div className="hp-model-card">
-          <div className="hp-model-image-placeholder">
+          <div
+            className="hp-model-image-placeholder"
+            onClick={() => navigate(`/shops/${`6935ae3896814a11377f9684`}`)}
+          >
             <img src="src/assets/Bangles1.jpg" />
             <a href="/collections" className="hp-shop-now">
               Shop Now

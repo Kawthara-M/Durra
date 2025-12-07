@@ -70,6 +70,7 @@ function App() {
 
             <Route path="/search" element={<Search />} />
             <Route path="/shops" element={<Shops />} />
+            <Route path="/shops/:shopId" element={<ShopDetails />} />
             <Route path="/jewelry" element={<Jewelry />} />
             <Route path="/services" element={<Services />} />
             <Route path="/jewelry/:jewelryId" element={<JewelryPage />} />

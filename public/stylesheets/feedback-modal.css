@@ -23,10 +23,10 @@
   position: relative;
   overflow: hidden;
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   justify-content: space-around;
   gap: 0.4rem;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
 }
 
 .icon-and-message {
@@ -76,8 +76,9 @@
 .feedback-actions {
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 10px;
+  margin: 0 auto;
   margin-top: 10px;
 }
 
@@ -96,9 +97,9 @@
 }
 
 .modal-close-btn {
-  position: absolute;
+  /* position: absolute;
   top: 8px;
-  right: 12px;
+  right: 12px; */
   cursor: pointer;
   font-size: 1.2rem;
   color: #555;
@@ -112,7 +113,7 @@
 
 @media (max-width: 1200px) {
   .card {
-    width: fit-content;
+    width: 50%;
   }
 }
 
@@ -121,3 +122,10 @@
     min-width: 60vw !important;
   }
 }
+
+@media (max-width: 600px) {
+  .card {
+    width: 80%;
+  }
+}
+

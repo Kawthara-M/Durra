@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import User from "../services/api"
 import ProductCard from "../components/ProductCard"
+import { fetchMetalRates } from "../services/calculator" 
 import "../../public/stylesheets/shop-details.css"
 
 const ShopDetails = () => {
@@ -12,20 +13,24 @@ const ShopDetails = () => {
   const [services, setServices] = useState([])
   const [activeTab, setActiveTab] = useState("jewelry")
   const [loading, setLoading] = useState(true)
+  const [metalRates, setMetalRates] = useState(null) 
 
   useEffect(() => {
     const fetchShopData = async () => {
       try {
         setLoading(true)
+        const [shopResponse, jewelryResponse, servicesResponse, rates] =
+          await Promise.all([
+            User.get(`/shops/${shopId}`),
+            User.get(`/jewelry/shop/${shopId}`),
+            User.get(`/services/shop/${shopId}`),
+            fetchMetalRates(),
+          ])
 
-        const shopResponse = await User.get(`/shops/${shopId}`)
         setShop(shopResponse.data.shop)
-
-        const jewelryResponse = await User.get(`/jewelry/shop/${shopId}`)
         setJewelries(jewelryResponse.data.jewelries || [])
-
-        const servicesResponse = await User.get(`/services/shop/${shopId}`)
         setServices(servicesResponse.data.services || [])
+        setMetalRates(rates || null) 
       } catch (error) {
         console.error("Failed to fetch shop data", error)
       } finally {
@@ -75,7 +80,6 @@ const ShopDetails = () => {
           </div>
           <div className="shop-info">
             <h1 className="shop-title">{shop.name}</h1>
-            {/* <p className="shop-cr">CR: {shop.cr}</p> */}
             {shop.description && (
               <p className="shop-description-large">{shop.description}</p>
             )}
@@ -110,7 +114,7 @@ const ShopDetails = () => {
                   key={jewelry._id}
                   item={jewelry}
                   type="jewelry"
-                  metalRates={null}
+                  metalRates={metalRates} 
                   onClick={() => handleJewelryClick(jewelry._id)}
                   showShopName
                   showActions
@@ -124,6 +128,7 @@ const ShopDetails = () => {
           )}
         </div>
       )}
+
       {activeTab === "services" && (
         <div className="items-section">
           {services.length > 0 ? (
@@ -135,7 +140,7 @@ const ShopDetails = () => {
                   type="service"
                   showShopName
                   showActions
-                  metalRates={null} // not needed for services
+                  metalRates={null} 
                   onClick={() => handleServiceClick(service._id)}
                 />
               ))}
