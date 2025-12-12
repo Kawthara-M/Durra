@@ -76,7 +76,6 @@ const JewelryForm = () => {
     const fetchJewelry = async () => {
       try {
         const response = await User.get(`/jewelry/${jewelryId}`)
-        console.log(response)
         const data = response.data.jewelry
 
         const transformedData = {
@@ -203,7 +202,6 @@ const JewelryForm = () => {
   }
 
   const validateMaterialWeight = (section, updatedList) => {
-    console.log("Validating weight for:", section, updatedList)
     const totalWeightLimit = parseFloat(formData.totalWeight || 0)
 
     const totalMaterialWeight = updatedList.reduce((acc, item) => {
@@ -403,7 +401,6 @@ const JewelryForm = () => {
 
       if (Object.keys(validationErrors).length > 0) {
         setErrors(validationErrors)
-        console.log(validationErrors)
         return
       } else {
         setErrors(null)
@@ -416,7 +413,6 @@ const JewelryForm = () => {
     const validationErrors = validateForm(formData)
 
     if (Object.keys(validationErrors).length > 0) {
-      console.log("here")
       setErrors(validationErrors)
       return
     }
@@ -471,7 +467,6 @@ const JewelryForm = () => {
           data.append("images", imageObj.file)
         })
 
-      console.log("Submitting to backend...", data)
 
       const response = isEdit
         ? await User.put(`/jewelry/${jewelryId}`, data, {

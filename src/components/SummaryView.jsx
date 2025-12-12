@@ -17,7 +17,6 @@ const SummaryView = ({ formData, handleChange }) => {
         const rates = await fetchMetalRates()
         setMetalRates(rates)
         setLoadingRates(false)
-        console.log(formData)
       } catch (error) {
         setErrorRates(error.message || "Failed to load metal rates")
         setLoadingRates(false)

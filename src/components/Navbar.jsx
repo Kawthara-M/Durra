@@ -86,7 +86,6 @@ const Navbar = () => {
     }
 
     fetchPendingOrder()
-    console.log(user)
     const handleOrderUpdate = () => fetchPendingOrder()
     window.addEventListener("order-updated", handleOrderUpdate)
 

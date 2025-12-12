@@ -18,13 +18,11 @@ const Wishlist = () => {
         const response = await User.get("/wishlist")
         if (response?.data?.wishlist) {
           setWishlist(response.data.wishlist)
-          console.log(response.data.wishlist)
         } else {
           setWishlist({ items: [] })
         }
       } catch (error) {
         if (error.response?.status === 404) {
-          console.log("No wishlist exists yet")
           setWishlist({ items: [] })
         } else {
           console.error("Error fetching wishlist:", error)

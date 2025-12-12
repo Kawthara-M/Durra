@@ -15,7 +15,6 @@ const Shops = () => {
         const response = await User.get("/shops/")
         setShops(response.data.shops)
         setFilteredShops(response.data.shops)
-        console.log(response.data)
       } catch (error) {
         console.error("Failed to fetch shops", error)
       }
