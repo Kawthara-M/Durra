@@ -106,7 +106,6 @@ const Checkout = () => {
 
           const orderSubtotal = calcOrderSubtotal(pending)
           setSubtotal(orderSubtotal)
-          console.log(subtotal)
 
           if (pending.shop) {
             await fetchShop(pending.shop._id || pending.shop)
@@ -124,7 +123,6 @@ const Checkout = () => {
           try {
             const res = await User.get(`/orders/${stored.orderId}`)
             if (res.data.order) {
-              console.log("res", res)
               const orderDoc = res.data.order
               setFullOrder(orderDoc)
 
@@ -188,13 +186,11 @@ const Checkout = () => {
       })
     } catch (err) {
       console.error("Add address error:", err)
-      alert("Could not add address.")
     }
   }
 
   const isOrderValid = () => {
     if (!user) return false
-    console.log(subtotal)
     if (!order || subtotal <= 0) return false
     if (!paymentMethod) return false
     const isDelivery = deliveryMethod === "delivery"
@@ -203,7 +199,6 @@ const Checkout = () => {
     if (!isDelivery && !isPickup) return false
 
     if (isDelivery) {
-      console.log("here")
       if (!selectedAddress) return false
 
       const addr = addresses.find(
@@ -284,7 +279,6 @@ const Checkout = () => {
       waitForJeweler(idToUse)
     } catch (err) {
       console.error("Failed to place order:", err)
-      alert("Error placing order. Try again later.")
     }
   }
 

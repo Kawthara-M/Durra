@@ -31,7 +31,6 @@ export const useOrderWait = () => {
       try {
         const res = await User.get(`/orders/${orderId}`)
         const status = res.data.order.status
-        console.log("[useOrderWait] poll status:", status)
 
         const prev = lastStatusRef.current
         lastStatusRef.current = status
@@ -61,7 +60,6 @@ export const useOrderWait = () => {
   }
 
   const cancelWait = async (orderId) => {
-    console.log("[useOrderWait] cancel wait", orderId)
     clearPoll()
 
     try {
@@ -82,12 +80,10 @@ export const useOrderWait = () => {
   }
 
   const clearTimeoutFlag = () => {
-    console.log("[useOrderWait] clearTimeoutFlag()")
     setTimedOut(false)
   }
 
   const clearResultStatus = () => {
-    console.log("[useOrderWait] clearResultStatus()")
     setResultStatus(null)
     setResultOrder(null)
   }

@@ -35,7 +35,6 @@ const JewelerCollectionPage = () => {
         const response = await User.get(`/collections/${collectionId}`)
         const fetchedCollection = response.data.collection
         setCollection(fetchedCollection)
-        console.log(response.data.collection)
 
         const metalRates = await fetchMetalRates()
 

@@ -31,14 +31,8 @@ const JewelerOrderPage = () => {
         _status: status,
         status: STATUS_DISPLAY_MAP[status] || status,
       }))
-      console.log("Current status:", order._status)
     } catch (error) {
       console.error("Error updating status:", error)
-      alert(
-        error.response?.data?.message ||
-          error.response?.data?.msg ||
-          "Failed to update order status."
-      )
     }
   }
 

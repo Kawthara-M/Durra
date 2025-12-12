@@ -34,7 +34,6 @@ const Search = () => {
           params: { search: query },
         })
         setResults(response.data)
-        console.log(response.data)
       } catch (err) {
         console.error("Search fetch error:", err)
         setResults([])

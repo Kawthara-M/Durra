@@ -25,11 +25,9 @@ export const fetchMetalRates = async () => {
 
     const cached = localStorage.getItem("metalRatesCache")
     if (cached) {
-      console.log("Using cached metal rates")
       return JSON.parse(cached)
     }
 
-    console.log("Using default backup metal rates")
     return FALLBACK_RATES
   }
 }
@@ -56,15 +54,12 @@ export const getKaratAdjustedPricePerGram = (
 
 export const calculatePreciousMaterialCost = (materials, metalRates) => {
   if (!materials || !metalRates) return 0
-  console.log(materials)
-  console.log(metalRates)
 
   let total = 0
   for (const mat of materials) {
     const rate = metalRates[mat.name?.toLowerCase()] || 0
     total += rate * mat.weight
   }
-  console.log(total)
   return total
 }
 
@@ -77,11 +72,9 @@ export const calculateTotalCost = (
 }
 
 export const calculateCollectionPrice = (collection, metalRates) => {
-  console.log("here")
   if (!metalRates || !collection?.jewelry?.length) return null
   let jewelryCostSum = 0
   for (const jewel of collection.jewelry) {
-    console.log(jewel)
     const metalCost = calculatePreciousMaterialCost(
       jewel.preciousMaterials,
       metalRates
