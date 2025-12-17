@@ -51,6 +51,7 @@ To ensure that, a careful analysis of the requirements was conducted. The obtain
 - React.js (front-end)
 - React.js libraries (e.g. Recharts, Chart.js)
 - Node.js, Express Framework, MongoDB (back-end)
+- Metals.Dev API (front-end live prices)
 
 <!--## 🗺️ Prototype
 
