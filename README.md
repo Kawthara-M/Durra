@@ -52,11 +52,11 @@ To ensure that, a careful analysis of the requirements was conducted. The obtain
 - React.js libraries (e.g. Recharts, Chart.js)
 - Node.js, Express Framework, MongoDB (back-end)
 
-## 🗺️ Prototype
+<!--## 🗺️ Prototype
 
 The following figma prototypes present a visual blueprint of the platform's user interface and layout structure. Designed in a high-fidelity format, they served as an initial inspiration for development.
 
-<!-- include link -->
+ include link -->
 
 ## Future Updates
 
