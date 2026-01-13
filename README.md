@@ -8,36 +8,33 @@
 
 ## 📌 Description
 
-**Durra** is the arabic pronunciation of pearl and things of value, and was chosen to intitle the web-based platform matching between jewelrs and jewelry seekers in Bahrain. All guided by the vision of preserving Bahrain's jewelry heritage and culture.
+**Durra** is the arabic pronunciation of pearl and things of value, and was chosen to intitle the web-based platform matching between jewelers and jewelry seekers in Bahrain. All guided by the vision of preserving Bahrain's jewelry heritage and culture.
 Durra mainly provides an interface for jewelers and customers.
 
 ### Customer Features
-
 - Search and Filter
-- Add to Wish List
+- Wish List
 - Add Jewelry, Collections, and Services to Cart
+- Review Ordered Items
 - Compare between Jewelry Pieces
 - Precious Metals Live Prices
 
 ### Jeweler Features
-
 - Offer Jewelry, Collections, and Services
 - Receive Orders
 - Accept/Reject Orders
 - Update Order Status
 
 ### Admin Features
-
 - Review Platform Statistics
 - Account Management
 - Requests Management
 
 ### Driver Features
-
 - View Assigned Shipments
 - Update Shipment Status
 
-## 🚀 Getting Started
+## 🚀 Planning & Diagrams
 
 Durra has been developed with the end-user prioritized, so a first-time user is not to have a hard time figuring things out.
 To ensure that, a careful analysis of the requirements was conducted. The obtained requirements were translated into several diagrams to guide the development.
@@ -65,6 +62,8 @@ The following figma prototypes present a visual blueprint of the platform's user
 - Multi Language Support
 - Online Order Tracking
 - Mobile platform
+
+| Even though Durra has not yet been deployed, a static website to provide more details about can be reached: [About Durra](https://durra.surge.sh/) |
 
 ## Attributations
 
